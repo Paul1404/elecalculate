@@ -1,3 +1,8 @@
+## Über diesen Fork
+
+Dieser Fork dient ausschließlich zu Bildungszwecken, um Netzwerksicherheitsaspekte wie Cross-Site Scripting (XSS) praktisch zu untersuchen und zu beheben.
+
+
 # Elecalculate
 
 <a href="https://elecalculate.com">
