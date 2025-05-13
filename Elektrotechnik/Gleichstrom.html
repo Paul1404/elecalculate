@@ -540,23 +540,6 @@
     </div>
     <script>
 
-    function escapeHTML(str) {
-        return String(str).replace(/[&<>"']/g, function(m) {
-            return ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#39;'
-            })[m];
-        });
-    }
-
-    function getEscapedValue(id) {
-        return escapeHTML(document.getElementById(id).value);
-    }
-    
-
     // slider
     document.getElementById("modeSwitch").addEventListener("change", function () {
         const modeLabel = document.getElementById("modeLabel");
