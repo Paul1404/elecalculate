@@ -479,15 +479,15 @@
         {
             let result_Sinus = ``;
 
-            const ut = document.getElementById("ut-Sinus").value;
-            const up = document.getElementById("up-Sinus").value;
-            const upp = document.getElementById("upp-Sinus").value;
-            //const Udc = document.getElementById("Udc-Sinus").value;
-            const Ueff = document.getElementById("Ueff-Sinus").value;
-            const f = document.getElementById("f-Sinus").value;
-            const t = document.getElementById("t-Sinus").value;
-            const T = document.getElementById("T-Sinus").value;
-            const phi = document.getElementById("Winkel-Sinus").value;
+            const ut = getEscapedValue("ut-Sinus");
+            const up = getEscapedValue("up-Sinus");
+            const upp = getEscapedValue("upp-Sinus");
+            //const Udc = getEscapedValue("Udc-Sinus");
+            const Ueff = getEscapedValue("Ueff-Sinus");
+            const f = getEscapedValue("f-Sinus");
+            const t = getEscapedValue("t-Sinus");
+            const T = getEscapedValue("T-Sinus");
+            const phi = getEscapedValue("Winkel-Sinus");
 
             if(!ut)     // Momentanwert
             {
@@ -956,7 +956,7 @@
         {
             let result_Rechteck = ``;
 
-            const ut = document.getElementById("ut-Rechteck").value;
+            const ut = getEscapedValue("ut-Rechteck");
 
             if(!ut)     // Momentanwert
             {
@@ -977,9 +977,9 @@
         {
             let result_Dreieck = ``;
 
-            const Ueff = document.getElementById("Ueff-Dreieck").value;
-            const up = document.getElementById("up-Dreieck").value;
-            const upp = document.getElementById("upp-Dreieck").value;
+            const Ueff = getEscapedValue("Ueff-Dreieck");
+            const up = getEscapedValue("up-Dreieck");
+            const upp = getEscapedValue("upp-Dreieck");
 
             if(!up)     // Peakwert
             {
@@ -1072,12 +1072,12 @@
         {
             let result_PWM = ``;
 
-            const up = document.getElementById("up-PWM").value;
-            const Ueff = document.getElementById("Ueff-PWM").value;
-            const f = document.getElementById("f-PWM").value;
-            const tin = document.getElementById("tin-PWM").value;
-            const T = document.getElementById("T-PWM").value;
-            const g = document.getElementById("g-PWM").value;
+            const up = getEscapedValue("up-PWM");
+            const Ueff = getEscapedValue("Ueff-PWM");
+            const f = getEscapedValue("f-PWM");
+            const tin = getEscapedValue("tin-PWM");
+            const T = getEscapedValue("T-PWM");
+            const g = getEscapedValue("g-PWM");
 
             if(!up)     // Peakwert
             {

@@ -217,16 +217,16 @@
 
                 let result = ``;
 
-                const I1 = document.getElementById("I1").value;
-                const I2 = document.getElementById("I2").value;
-                const g = document.getElementById("g").value;
-                const a = document.getElementById("a").value;
-                const P1 = document.getElementById("P1").value;
-                const P2 = document.getElementById("P2").value;
-                const U1 = document.getElementById("U1").value;
-                const U2 = document.getElementById("U2").value;
-                const V = document.getElementById("V").value;
-                const D = document.getElementById("D").value;
+                const I1 = getEscapedValue("I1");
+                const I2 = getEscapedValue("I2");
+                const g = getEscapedValue("g");
+                const a = getEscapedValue("a");
+                const P1 = getEscapedValue("P1");
+                const P2 = getEscapedValue("P2");
+                const U1 = getEscapedValue("U1");
+                const U2 = getEscapedValue("U2");
+                const V = getEscapedValue("V");
+                const D = getEscapedValue("D");
 		/*add:
   		U2 = U1*10^(g/20)
     	U2 = U1*10^(-a/20)

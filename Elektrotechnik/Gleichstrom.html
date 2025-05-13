@@ -540,6 +540,23 @@
     </div>
     <script>
 
+    function escapeHTML(str) {
+        return String(str).replace(/[&<>"']/g, function(m) {
+            return ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[m];
+        });
+    }
+
+    function getEscapedValue(id) {
+        return escapeHTML(document.getElementById(id).value);
+    }
+    
+
     // slider
     document.getElementById("modeSwitch").addEventListener("change", function () {
         const modeLabel = document.getElementById("modeLabel");
@@ -563,10 +580,10 @@
     {
         let result = ``;
 
-        const I = document.getElementById("I").value;
-        const R = document.getElementById("R").value;
-        const P = document.getElementById("P").value;
-        const U = document.getElementById("U").value;
+        const I = getEscapedValue("I");
+        const R = getEscapedValue("R");
+        const P = getEscapedValue("P");
+        const U = getEscapedValue("U");
 
         if(U && R && !I && !P)
         {
@@ -734,12 +751,12 @@
     {
         let result_unb = ``;
 
-        const I = document.getElementById("I_unb").value;
-        const R1 = document.getElementById("R1_unb").value;
-        const R2 = document.getElementById("R2_unb").value;
-        const Uin = document.getElementById("Uin_unb").value;
-        const U1 = document.getElementById("U1_unb").value;
-        const Uout = document.getElementById("Uout_unb").value;
+        const I = getEscapedValue("I_unb");
+        const R1 = getEscapedValue("R1_unb");
+        const R2 = getEscapedValue("R2_unb");
+        const Uin = getEscapedValue("Uin_unb");
+        const U1 = getEscapedValue("U1_unb");
+        const Uout = getEscapedValue("Uout_unb");
 
         if(!Uout && Uin && R1 && R2)
         {
@@ -801,15 +818,15 @@
     {
         let result_bel = ``;
 
-        const Iges = document.getElementById("Iges_bel").value;
-        const IR2 = document.getElementById("IR2_bel").value;
-        const IRL = document.getElementById("IRL_bel").value;
-        const R1 = document.getElementById("R1_bel").value;
-        const R2 = document.getElementById("R2_bel").value;
-        const RL = document.getElementById("RL_bel").value;
-        const Uin = document.getElementById("Uin_bel").value;
-        const U1 = document.getElementById("U1_bel").value;
-        const Uout = document.getElementById("Uout_bel").value;
+        const Iges = getEscapedValue("Iges_bel");
+        const IR2 = getEscapedValue("IR2_bel");
+        const IRL = getEscapedValue("IRL_bel");
+        const R1 = getEscapedValue("R1_bel");
+        const R2 = getEscapedValue("R2_bel");
+        const RL = getEscapedValue("RL_bel");
+        const Uin = getEscapedValue("Uin_bel");
+        const U1 = getEscapedValue("U1_bel");
+        const Uout = getEscapedValue("Uout_bel");
 
         if(!Uout && Uin && R1 && R2 && RL)
         {
@@ -897,22 +914,18 @@
             }
         }
 
-        function calculate(opv) 
+        function calculate(opv)
         {
             let result_S_P  = ``;
-            // const r1 = parseFloat(document.getElementById('r1').value);
-            // const r2 = parseFloat(document.getElementById('r2').value);
-            const r1 = document.getElementById("r1").value;
-            const r2 = document.getElementById("r2").value;
+            const r1 = escapeHTML(getEscapedValue("r1"));
+            const r2 = escapeHTML(getEscapedValue("r2"));
 
-            // debugger;
             if(opv === 'serie_schaltung')
             {
                 if(r1 && r2)
                 {
-                    debugger;
                     result_S_P += `
-                        R<sub>ges</sub> = 
+                        R<sub>ges</sub> =
                         R<sub>1</sub> + R<sub>2</sub>
                     =
                         ${r1}&Omega; + ${r2}&Omega;
@@ -925,20 +938,20 @@
                 if(r1 && r2)
                 {
                     result_S_P += `
-                    Widerstand R<sub>ges</sub> = 
+                    Widerstand R<sub>ges</sub> =
                         <div class ="fraction">
                             <span >1</span><br>
                             <span class="fraction-denumerator"><!--class="fraction-denumerator"-->
                             <div style="border-top: 1px solid white;"><div class ="fraction">
                                 <span >1</span><br>
                                 <span class="fraction-denumerator">R<sub>1</sub></span>
-                            </div>  
-                        + 
+                            </div>
+                        +
                             <div class ="fraction">
                                 <span >1</span><br>
                                 <span class="fraction-denumerator">R<sub>2</sub></span>
                             </div></div> </span>
-                        </div> 
+                        </div>
                     =
                     <div class ="fraction">
                         <span >1</span><br>
@@ -946,8 +959,8 @@
                         <div style="border-top: 1px solid white;"><div class ="fraction">
                             <span >1</span><br>
                             <span class="fraction-denumerator">${r1}&Omega;</span>
-                        </div>  
-                    + 
+                        </div>
+                    +
                         <div class ="fraction">
                             <span >1</span><br>
                             <span class="fraction-denumerator">${r2}&Omega;</span>
@@ -958,8 +971,8 @@
             }
 
             document.getElementById('result_S_P').innerHTML = result_S_P;
-            debugger;
         }
+
 
     </script>
     <script src="../scripts.js"></script>

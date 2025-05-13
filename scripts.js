@@ -5,6 +5,53 @@ function changeSlide(n) {
     showSlides(slideIndex += n);
 }
 
+/**
+ * Sicherheit: Schutz vor DOM XSS
+ *
+ * Diese Hilfsfunktionen dienen dazu, Benutzereingaben aus Formularfeldern
+ * sicher auszulesen. Verwende immer getEscapedValue("inputId") anstelle von
+ * direktem .value-Zugriff, wenn Benutzereingaben per innerHTML ins DOM
+ * eingefügt werden.
+ *
+ * Beispiel:
+ *   // UNSICHER (anfällig für XSS)
+ *   const name = document.getElementById("name").value;
+ *   element.innerHTML = name;
+ *
+ *   // SICHER (XSS-geschützt)
+ *   const name = getEscapedValue("name");
+ *   element.innerHTML = name;
+ *
+ * Hinweis: Diese Änderung wurde im Rahmen eines Forks zur Verbesserung der
+ * Sicherheit vorgenommen.
+ */
+
+/**
+ * Escaped HTML-Sonderzeichen, um XSS zu verhindern.
+ * @param {string} str - Zu escapender String.
+ * @returns {string} - Escapeter String.
+ */
+function escapeHTML(str) {
+    return String(str).replace(/[&<>"']/g, function(m) {
+        return ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        })[m];
+    });
+}
+
+/**
+ * Liest und escaped den Wert eines Input-Feldes anhand der ID.
+ * @param {string} id - Die ID des Input-Elements.
+ * @returns {string} - Der escapete Wert.
+ */
+function getEscapedValue(id) {
+    return escapeHTML(document.getElementById(id).value);
+}
+
 function showSlides(n) {
     let slides = document.getElementsByClassName("slide");
     if (n > slides.length) { slideIndex = 1 }
