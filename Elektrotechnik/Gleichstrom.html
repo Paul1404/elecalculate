@@ -897,25 +897,30 @@
             }
         }
 
-    function calculate(opv) {
-        let result_S_P = ``;
-        const r1 = getEscapedValue("r1");
-        const r2 = getEscapedValue("r2");
+        function calculate(opv)
+        {
+            let result_S_P  = ``;
+            const r1 = escapeHTML(getEscapedValue("r1"));
+            const r2 = escapeHTML(getEscapedValue("r2"));
 
-        if (opv === 'serie_schaltung') {
-            if (r1 && r2) {
-                result_S_P += `
-                    R<sub>ges</sub> =
-                    R<sub>1</sub> + R<sub>2</sub>
-                =
-                    ${r1}&Omega; + ${r2}&Omega;
-                = ${formatWithPrefix(parseInput(r1) + parseInput(r2), "&Omega;")}<br>`;
+            if(opv === 'serie_schaltung')
+            {
+                if(r1 && r2)
+                {
+                    result_S_P += `
+                        R<sub>ges</sub> =
+                        R<sub>1</sub> + R<sub>2</sub>
+                    =
+                        ${r1}&Omega; + ${r2}&Omega;
+                    = ${formatWithPrefix(parseInput(r1) + parseInput(r2), "&Omega;")}<br>`;
+                }
             }
-        }
 
-        if (opv === 'parallel_schaltung') {
-            if (r1 && r2) {
-                result_S_P += `
+            if(opv === 'parallel_schaltung')
+            {
+                if(r1 && r2)
+                {
+                    result_S_P += `
                     Widerstand R<sub>ges</sub> =
                         <div class ="fraction">
                             <span >1</span><br>
@@ -944,12 +949,13 @@
                             <span class="fraction-denumerator">${r2}&Omega;</span>
                         </div></div> </span>
                     </div>
-                    = ${formatWithPrefix(1 / ((1 / parseInput(r1)) + (1 / parseInput(r2))), "&Omega;")}<br>`;
+                    = ${formatWithPrefix(1/((1/parseInput(r1)) + (1/parseInput(r2))), "&Omega;")}<br>`;
+                }
             }
+
+            document.getElementById('result_S_P').innerHTML = result_S_P;
         }
 
-        document.getElementById('result_S_P').innerHTML = result_S_P;
-    }
 
     </script>
     <script src="../scripts.js"></script>
