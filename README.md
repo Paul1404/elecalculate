@@ -18,6 +18,29 @@ Dieser Fork dient ausschließlich zu Bildungszwecken, um Netzwerksicherheitsaspe
 - Generates each step to reach the solution
 - Updated regularly
 
+### 🧪 Automatisiertes Testen & Sicherheit
+
+Dieser Fork enthält eine **umfassende Cypress End-to-End-Test-Suite** für alle Rechner und Glossar-/Suchfunktionen.
+
+- **Automatisierte Regressionstests** für alle Rechner und Formulare
+- **Getestet im interaktiven und Headless-/CI-Modus**
+- **Bereit für CI/CD-Integration**
+- **Sicheres Refactoring:** Ermöglicht testgetriebene Absicherung gegen XSS und Eingabevalidierung
+
+#### **So führst du die Tests aus**
+
+1. [Node.js](https://nodejs.org/) installieren
+2. [Python 3.12](https://www.python.org/downloads/release/python-3120/) Sollte auch installiert sein (Standard bei den Großteil der Distributionen)
+3. `npm install` ausführen
+4. Seite starten und Tests ausführen:
+   - Headless: `npm run cy:run`
+   - Interaktiv: `npm run cy:open`
+
+> **Hinweis:**
+> Die Test-Suite und Node.js-Tools sind für Entwickler und Maintainer gedacht.
+> Endnutzer benötigen **kein** Node.js, um die Seite zu verwenden.
+
+
 ## Follow Elecalculate
 Stay updated by following elecalculate on Social Media:
 
