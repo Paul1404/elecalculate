@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "cypress": "^14.3.3",
+    "start-server-and-test": "^2.0.12"
+  },
+  "scripts": {
+    "serve": "python3 -m http.server 80",
+    "cy:run": "start-server-and-test serve http://localhost:80 'cypress run'",
+    "cy:open": "start-server-and-test serve http://localhost:80 'cypress open'"
+  }
+}
