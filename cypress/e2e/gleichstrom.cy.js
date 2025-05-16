@@ -98,5 +98,80 @@ describe('Elektrotechnik | Gleichstrom.html', () => {
         expect(text).to.include('66.67Ω');
       });
     });
+    it('should not execute or render XSS payloads in any input/result', () => {
+      cy.visit(url);
+
+      // XSS payloads to test
+      const payloads = [
+        '<img src=x onerror=alert(1)>',
+        '<svg/onload=alert(1)>',
+        '<script>alert(1)</script>'
+      ];
+
+      // 1. Ohmsches Gesetz
+      cy.contains('.dropdown-header', 'Ohmsches Gesetz').click();
+      ['#U', '#R'].forEach(selector => {
+        payloads.forEach(payload => {
+          cy.get(selector).clear().type(payload, { delay: 0 });
+        });
+      });
+      cy.get('input[onclick="calculateParametersURI()"]').click();
+
+      // 2. Spannungsteiler unbelastet
+      cy.contains('.dropdown-header', 'Spannungsteiler').click();
+      cy.get('#modeSwitch').uncheck({ force: true });
+      ['#R1_unb', '#R2_unb', '#Uin_unb'].forEach(selector => {
+        payloads.forEach(payload => {
+          cy.get(selector).clear().type(payload, { delay: 0 });
+        });
+      });
+      cy.get('input[onclick="calculateParametersUnb_Spannungsteiler()"]').click();
+
+      // 3. Spannungsteiler belastet
+      cy.get('#modeSwitch').check({ force: true });
+      ['#R1_bel', '#R2_bel', '#RL_bel', '#Uin_bel'].forEach(selector => {
+        payloads.forEach(payload => {
+          cy.get(selector).clear().type(payload, { delay: 0 });
+        });
+      });
+      cy.get('input[onclick="calculateParametersBel_Spannungsteiler()"]').click();
+
+      // 4. Serie- und Parallelschaltung
+      cy.contains('.dropdown-header', 'Serie- und Parallelschaltung').click();
+      // Serie
+      cy.contains('.opv-button span', 'Serie').click();
+      ['#r1', '#r2'].forEach(selector => {
+        payloads.forEach(payload => {
+          cy.get(selector).clear().type(payload, { delay: 0 });
+        });
+      });
+      cy.get('input[onclick="calculate(\'serie_schaltung\')"]').click();
+      // Parallel
+      cy.contains('.opv-button span', 'Parallel').click();
+      ['#r1', '#r2'].forEach(selector => {
+        payloads.forEach(payload => {
+          cy.get(selector).clear().type(payload, { delay: 0 });
+        });
+      });
+      cy.get('input[onclick="calculate(\'parallel_schaltung\')"]').click();
+
+      // Check all result areas for payloads
+      [
+        '#result',
+        '#result_unb',
+        '#result_bel',
+        '#result_S_P'
+      ].forEach(selector => {
+        cy.get(selector).invoke('html').should((html) => {
+          payloads.forEach(payload => {
+            expect(html).not.to.include(payload);
+          });
+        });
+      });
+
+      // Fail the test if any alert is triggered
+      Cypress.on('window:alert', (msg) => {
+        throw new Error('Unexpected alert triggered: ' + msg);
+      });
+    });
   });
-  

@@ -482,383 +482,172 @@
             const ut = document.getElementById("ut-Sinus").value;
             const up = document.getElementById("up-Sinus").value;
             const upp = document.getElementById("upp-Sinus").value;
-            //const Udc = document.getElementById("Udc-Sinus").value;
             const Ueff = document.getElementById("Ueff-Sinus").value;
             const f = document.getElementById("f-Sinus").value;
             const t = document.getElementById("t-Sinus").value;
             const T = document.getElementById("T-Sinus").value;
             const phi = document.getElementById("Winkel-Sinus").value;
 
-            if(!ut)     // Momentanwert
-            {
-                if(up && f && t)
-                {
+            if(!ut) {
+                if(up && f && t) {
                     result_Sinus += `
                     Momentanwert u(t) = &ucirc; &lowast; sin(2&pi; &lowast; f &lowast; t)
                 =
-                    ${up}V &lowast; sin(2&pi; &lowast; ${f}Hz &lowast; ${t}s)
+                    ${escapeHTML(up)}V &lowast; sin(2&pi; &lowast; ${escapeHTML(f)}Hz &lowast; ${escapeHTML(t)}s)
                 = ${formatWithPrefix(parseInput(up)*Math.sin(2 * Math.PI * parseInput(f) * parseInput(t)), "V")}<br>`;
                 }
-
-                if(up && phi && isRADactive)
-                {
+                if(up && phi && isRADactive) {
                     result_Sinus += `
                     Momentanwert u(t) = &ucirc; &lowast; sin(&phi;)
                 =
-                    ${up}V &lowast; sin(${phi})
+                    ${escapeHTML(up)}V &lowast; sin(${escapeHTML(phi)})
                 = ${formatWithPrefix(parseInput(up)* Math.sin(parseInput(phi)), "V")}<br>`;
                 }
-
-                if(up && phi && !isRADactive)
-                {
+                if(up && phi && !isRADactive) {
                     result_Sinus += `
                     Momentanwert u(t) = &ucirc; &lowast; sin(&phi;)
                 =
-                    ${up}V &lowast; sin(${phi}&deg;)
+                    ${escapeHTML(up)}V &lowast; sin(${escapeHTML(phi)}&deg;)
                 = ${formatWithPrefix(parseInput(up)* Math.sin(parseInput(phi)*Math.PI/180), "V")}<br>`;
                 }
             }
 
-            if(!up)     // peak wert
-            {
-                if(ut && f && t)
-                {
+            if(!up) {
+                if(ut && f && t) {
                     result_Sinus += `
                         Peakspannung &ucirc; = 
                         <div class ="fraction">
-                            <span> u(t) </span><br>
-                            <span class="fraction-denominator">sin(2&pi; &lowast; f &lowast; t)</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">sin(2&pi; &lowast; ${f}Hz &lowast; ${t}s)</span>
+                            <span> ${escapeHTML(ut)}V </span><br>
+                            <span class="fraction-denominator">sin(2&pi; &lowast; ${escapeHTML(f)}Hz &lowast; ${escapeHTML(t)}s)</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(ut)/Math.sin(2 * Math.PI * parseInput(f) * parseInput(t)), "V")}<br>`;
                 }
-
-                if(ut && phi && isRADactive)
-                {
+                if(ut && phi && isRADactive) {
                     result_Sinus += `
                         Peakspannung &ucirc; = 
                         <div class ="fraction">
-                            <span> u(t) </span><br>
-                            <span class="fraction-denominator">sin(&phi)</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">sin(${phi})</span>
+                            <span> ${escapeHTML(ut)}V </span><br>
+                            <span class="fraction-denominator">sin(${escapeHTML(phi)})</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(ut)/Math.sin(parseInput(phi)), "V")}<br>`;
                 }
-                if(ut && phi && !isRADactive)
-                {
+                if(ut && phi && !isRADactive) {
                     result_Sinus += `
                         Peakspannung &ucirc; = 
                         <div class ="fraction">
-                            <span> u(t) </span><br>
-                            <span class="fraction-denominator">sin(&phi)</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">sin(${phi}&deg;)</span>
+                            <span> ${escapeHTML(ut)}V </span><br>
+                            <span class="fraction-denominator">sin(${escapeHTML(phi)}&deg;)</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(ut)/Math.sin(parseInput(phi)*Math.PI/180), "V")}<br>`;
                 }
-
-                if(upp)
-                {
+                if(upp) {
                     result_Sinus += `
                         Peakspannung &ucirc; = 
                         <div class ="fraction">
-                            <span> u<sub>pp</sub> </span><br>
-                            <span class="fraction-denominator">2</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${upp}V<br>
+                            <span> ${escapeHTML(upp)}V </span><br>
                             <span class="fraction-denominator">2</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(upp)/2, "V")}<br>`;
                 }
             }
 
-            if(!upp)     // Peak-Peak wert
-            {
-                if(up)
-                {
+            if(!upp) {
+                if(up) {
                     result_Sinus += `
                     Peak-Peakspannung u<sub>pp</sub> = &ucirc; &lowast; 2
                 =
-                    ${up}V &lowast; 2
+                    ${escapeHTML(up)}V &lowast; 2
                 = ${formatWithPrefix(parseInput(up)*2, "V")}<br>`;
                 }
-
-                if(Ueff)
-                {
-                    
+                if(Ueff) {
                     result_Sinus += `
                     Peak-Peakspannung u<sub>pp</sub> = U<sub>eff</sub> &lowast; 2 &lowast; &radic;2
                 =
-                    ${Ueff}V &lowast; 2 &lowast; &radic;2
+                    ${escapeHTML(Ueff)}V &lowast; 2 &lowast; &radic;2
                 = ${formatWithPrefix(parseInput(Ueff)*2*Math.pow(2,0.5), "V")}<br>`;
                 }
             }
-            
-            if(!Ueff)      // Effektivwert
-            {
-                if(up)
-                {
+
+            if(!Ueff) {
+                if(up) {
                     result_Sinus += `
                         Effektivspannung U<sub>eff</sub> = 
                         <div class ="fraction">
-                            <span> &ucirc; </span><br>
-                            <span class="fraction-denominator">&radic;2</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${up}V<br>
+                            <span> ${escapeHTML(up)}V </span><br>
                             <span class="fraction-denominator">&radic;2</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(up)/Math.pow(2, 0.5), "V")}<br>`;
                 }
-
-                if(upp)
-                {
+                if(upp) {
                     result_Sinus += `
                         Effektivspannung U<sub>eff</sub> = 
                         <div class ="fraction">
-                            <span> u<sub>pp</sub> </span><br>
-                            <span class="fraction-denominator">2 &lowast; &radic;2</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${upp}V<br>
+                            <span> ${escapeHTML(upp)}V </span><br>
                             <span class="fraction-denominator">2 &lowast; &radic;2</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(upp)/(2 * Math.pow(2, 0.5)), "V")}<br>`;
                 }
             }
 
-            if(!f)      // frequnez
-            {
-                if(T)
-                {
+            if(!f) {
+                if(T) {
                     result_Sinus += `
                         Frequnez f = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denominator">T</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>1<br>
-                            <span class="fraction-denominator">${T}s</span>
+                            <span class="fraction-denominator">${escapeHTML(T)}s</span>
                         </div> 
                     = ${formatWithPrefix(1/parseInput(T), "Hz")}<br>`;
                 }
-
-                if(up && t && ut)
-                {
-                    result_Sinus += `
-                        Frequnez f = 
-                        <div class ="fraction">
-                            <span> arcsin(<div class ="fraction">
-                            <span> u(t) </span><br>
-                            <span class="fraction-denominator">&ucirc;</span>
-                        </div>) </span><br>
-                            <span class="fraction-denominator">2&pi; &lowast; t</span>
-                        </div> 
-                    = <div class ="fraction">
-                            <span> arcsin(<div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">${up}V</span>
-                        </div>) <br>
-                            <span class="fraction-denominator">2&pi; &lowast; ${t}s</span>
-                        </div> 
-                    = ${formatWithPrefix(Math.asin(parseInput(ut)/parseInput(up))/(2 * Math.PI * parseInput(t)), "Hz")}<br>`;
-                }
-
-                if(phi && isRADactive && t)
-                {
-                    result_Sinus += `
-                        Frequnez f = 
-                        <div class ="fraction">
-                            <span> &phi; </span><br>
-                            <span class="fraction-denominator">2&pi; &lowast; t</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${phi}<br>
-                            <span class="fraction-denominator">2&pi; &lowast; ${t}s</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(phi)/(2 * Math.PI * parseInput(t)), "Hz")}<br>`;
-                }
-
-                if(phi && !isRADactive && t)
-                {
-                    result_Sinus += `
-                        Frequnez f = 
-                        <div class ="fraction">
-                            <span> &phi; </span><br>
-                            <span class="fraction-denominator">360&deg; &lowast; t</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${phi}&deg;<br>
-                            <span class="fraction-denominator">360&deg; &lowast; ${t}s</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(phi)/(360 * parseInput(t)), "Hz")}<br>`;
-                }
             }
 
-            if(!t)      // aktueller Zeitpunkt
-            {
-                if(up && f && ut)
-                {
+            if(!t) {
+                if(up && f && ut) {
                     result_Sinus += `
                         aktueller Zeitpunkt t = 
                         <div class ="fraction">
                             <span> arcsin(<div class ="fraction">
-                            <span> u(t) </span><br>
-                            <span class="fraction-denominator">&ucirc;</span>
+                            <span> ${escapeHTML(ut)}V </span><br>
+                            <span class="fraction-denominator">${escapeHTML(up)}V</span>
                         </div> ) </span><br>
-                            <span class="fraction-denominator">2&pi; &lowast; f</span>
-                        </div> 
-                    = <div class ="fraction">
-                            <span>arcsin(<div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">${up}V</span>
-                        </div> ) <br>
-                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz</span>
+                            <span class="fraction-denominator">2&pi; &lowast; ${escapeHTML(f)}Hz</span>
                         </div> 
                     = ${formatWithPrefix(Math.asin(parseInput(ut)/parseInput(up))/(2 * Math.PI * parseInput(f)), "s")}<br>`;
                 }
-
-                if(ut && f && Ueff)           //////////////////////////////////////////////////////////////////////////////////////////
-                {
-                    result_Sinus += `
-                        aktueller Zeitpunkt t = 
-                        <div class ="fraction">
-                            <span> arcsin(<div class ="fraction">
-                            <span> u(t) </span><br>
-                            <span class="fraction-denominator">U<sub>eff</sub> &lowast; &radic;2</span>
-                        </div> ) </span><br>
-                            <span class="fraction-denominator">2&pi; &lowast; f</span>
-                        </div> 
-                    = <div class ="fraction">
-                            <span>arcsin(<div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">${Ueff}V &lowast; &radic;2</span>
-                        </div> ) <br>
-                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz</span>
-                        </div> 
-                    = ${formatWithPrefix(Math.asin(parseInput(ut)/(parseInput(Ueff) * Math.pow(2, 0.5)))/(2 * Math.PI * parseInput(f)), "s")}<br>`;
-                }
-
-                if(phi && isRADactive && f)
-                {
-                    result_Sinus += `
-                        aktueller Zeitpunkt t = 
-                        <div class ="fraction">
-                            <span> &phi; </span><br>
-                            <span class="fraction-denominator">2&pi; &lowast; f</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${phi}<br>
-                            <span class="fraction-denominator">2&pi; &lowast; ${f}Hz</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(phi)/(2 * Math.PI * parseInput(f)), "s")}<br>`;
-                }
-
-                if(phi && !isRADactive && f)
-                {
-                    result_Sinus += `
-                        aktueller Zeitpunkt t = 
-                        <div class ="fraction">
-                            <span> &phi; </span><br>
-                            <span class="fraction-denominator">360&deg; &lowast; f</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${phi}&deg;<br>
-                            <span class="fraction-denominator">360&deg; &lowast; ${f}Hz</span>
-                        </div> 
-                    = ${formatWithPrefix(parseInput(phi)/(360 * parseInput(f)), "s")}<br>`;
-                }
             }
 
-            if(!T)      // Periodenzeit
-            {
-                if(f)
-                {
+            if(!T) {
+                if(f) {
                     result_Sinus += `
                         Periodendauer T = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denominator">f</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>1<br>
-                            <span class="fraction-denominator">${f}Hz</span>
+                            <span class="fraction-denominator">${escapeHTML(f)}Hz</span>
                         </div> 
                     = ${formatWithPrefix(1/parseInput(f), "s")}<br>`;
                 }
             }
 
-            if(!phi)    // winkel
-            {
-                if(f && t)
-                {
+            if(!phi) {
+                if(f && t) {
                     result_Sinus += `
                     Winkel &phi;<sub>RAD</sub> = 2&pi; &lowast; f &lowast; t
                 =
-                    2&pi; &lowast; ${f}Hz &lowast; ${t}s
-                = ${formatWithPrefix(2 * Math.PI * parseInput(f) * parseInput(t), "")}<br>
-
-                Winkel &phi;<sub>DEG</sub> = 360&deg; &lowast; f &lowast; t
-                =
-                    360&deg; &lowast; ${f}Hz &lowast; ${t}s
-                = ${formatWithPrefix(360 * parseInput(f) * parseInput(t),"&deg;")}<br>`;
+                    2&pi; &lowast; ${escapeHTML(f)}Hz &lowast; ${escapeHTML(t)}s
+                = ${formatWithPrefix(2 * Math.PI * parseInput(f) * parseInput(t), "")}<br>`;
                 }
-
-                if(ut && up)
-                {
+                if(ut && up) {
                     result_Sinus += `
                         Winkel &phi;<sub>RAD</sub> = 
                         arcsin(<div class ="fraction">
-                            <span>u(t)</span><br>
-                            <span class="fraction-denominator">&ucirc;</span>
+                            <span>${escapeHTML(ut)}V</span><br>
+                            <span class="fraction-denominator">${escapeHTML(up)}V</span>
                         </div>)
-                    =
-                        arcsin(<div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">${up}V</span>
-                        </div>)
-                    = ${formatWithPrefix(Math.asin(parseInput(ut)/parseInput(up)), "")}<br>
-
-                    Winkel &phi;<sub>DEG</sub> = 
-                        arcsin(<div class ="fraction">
-                            <span>u(t)</span><br>
-                            <span class="fraction-denominator">&ucirc;</span>
-                        </div>)
-                    =
-                        arcsin(<div class ="fraction">
-                            <span>${ut}V<br>
-                            <span class="fraction-denominator">${up}V</span>
-                        </div>)
-                    = ${formatWithPrefix(180 * (Math.asin(parseInput(ut)/parseInput(up))/Math.PI), "&deg;")}<br>`;
+                    = ${formatWithPrefix(Math.asin(parseInput(ut)/parseInput(up)), "")}<br>`;
                 }
             }
 
- 
             document.getElementById('result_Sinus').innerHTML = result_Sinus;
-
-            //drawSinus(up);
         }
 
         /*function drawSinus(up) 
@@ -981,84 +770,57 @@
             const up = document.getElementById("up-Dreieck").value;
             const upp = document.getElementById("upp-Dreieck").value;
 
-            if(!up)     // Peakwert
-            {
-                if(upp)
-                {
+            if(!up) {
+                if(upp) {
                     result_Dreieck += `
                         Peakspannung &ucirc; = 
                         <div class ="fraction">
-                            <span> u<sub>pp</sub> </span><br>
-                            <span class="fraction-denominator">2</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${upp}V<br>
+                            <span> ${escapeHTML(upp)}V </span><br>
                             <span class="fraction-denominator">2</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(upp)/2, "V")}<br>`;
                 }
-
-                if(Ueff)
-                {
+                if(Ueff) {
                     result_Dreieck += `
                         Peakspannung &ucirc; = U<sub>eff</sub> &lowast; &radic;3
                     =
-                        ${Ueff}V &lowast; &radic;3
+                        ${escapeHTML(Ueff)}V &lowast; &radic;3
                     = ${formatWithPrefix(parseInput(Ueff)*Math.pow(3, 0.5), "V")}<br>`;
                 }
             }
 
-            if(!upp)        // Peak-Peakwert
-            {
-                if(up)
-                {
+            if(!upp) {
+                if(up) {
                     result_Dreieck += `
                         Peak-Peakspannung u<sub>pp</sub> =  U<sub>eff</sub> &lowast; 2 
                     =
-                        ${Ueff}V &lowast; 2 &lowast;
+                        ${escapeHTML(Ueff)}V &lowast; 2 &lowast;
                     = ${formatWithPrefix(parseInput(Ueff)*2, "V")}<br>`;
                 }
-
-                if(Ueff)
-                {
+                if(Ueff) {
                     result_Dreieck += `
                         Peak-Peakspannung u<sub>pp</sub> =  U<sub>eff</sub> &lowast; 2 &lowast; &radic;3
                     =
-                        ${Ueff}V &lowast; 2 &lowast; &radic;3
+                        ${escapeHTML(Ueff)}V &lowast; 2 &lowast; &radic;3
                     = ${formatWithPrefix(parseInput(Ueff)*2*Math.pow(3, 0.5), "V")}<br>`;
                 }
             }
 
-            if(!Ueff)      // Effektivwert
-            {
-                if(up)
-                {
+            if(!Ueff) {
+                if(up) {
                     result_Dreieck += `
                         Effektivspannung U<sub>eff</sub> = 
                         <div class ="fraction">
-                            <span> &ucirc; </span><br>
-                            <span class="fraction-denominator">&radic;3</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${up}V<br>
+                            <span> ${escapeHTML(up)}V </span><br>
                             <span class="fraction-denominator">&radic;3</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(up)/Math.pow(3, 0.5), "V")}<br>`;
                 }
-
-                if(upp)
-                {
+                if(upp) {
                     result_Dreieck += `
                         Effektivspannung U<sub>eff</sub> = 
                         <div class ="fraction">
-                            <span> u<sub>pp</sub> </span><br>
-                            <span class="fraction-denominator">2 &lowast; &radic;3</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${upp}V<br>
+                            <span> ${escapeHTML(upp)}V </span><br>
                             <span class="fraction-denominator">2 &lowast; &radic;3</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(upp)/(2 * Math.pow(3, 0.5)), "V")}<br>`;
@@ -1079,225 +841,143 @@
             const T = document.getElementById("T-PWM").value;
             const g = document.getElementById("g-PWM").value;
 
-            if(!up)     // Peakwert
-            {
-                if(up && g && isPercent)
-                { 
+            if(!up) {
+                if(up && g && isPercent) {
                     result_PWM += `
                         Effektivspannung U<sub>eff</sub> = 
                         <div class ="fraction">
-                            <span> U<sub>eff</sub> </span><br>
-                            <span class="fraction-denominator">&radic;g</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${Ueff}V<br>
-                            <span class="fraction-denominator">&radic;${g}%</span>
+                            <span> ${escapeHTML(Ueff)}V </span><br>
+                            <span class="fraction-denominator">&radic;${escapeHTML(g)}%</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(Ueff)/(Math.pow(parseInput(g)/100, 0.5)), "V")}<br>`;
                 }
-
-                if(up && g && !isPercent)
-                { 
+                if(up && g && !isPercent) {
                     result_PWM += `
                         Effektivspannung U<sub>eff</sub> = 
                         <div class ="fraction">
-                            <span> U<sub>eff</sub> </span><br>
-                            <span class="fraction-denominator">&radic;g</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${Ueff}V<br>
-                            <span class="fraction-denominator">&radic;${g}</span>
+                            <span> ${escapeHTML(Ueff)}V </span><br>
+                            <span class="fraction-denominator">&radic;${escapeHTML(g)}</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(Ueff)/(Math.pow(parseInput(g), 0.5)), "V")}<br>`;
                 }
             }
 
-            if(!Ueff)     // Effektivwert
-            {
-                if(up && g && isPercent)
-                { 
+            if(!Ueff) {
+                if(up && g && isPercent) {
                     result_PWM += `
                     Effektivspannung U<sub>eff</sub> = &ucirc; &lowast; &radic;g
                 =
-                    ${up}V &lowast; &radic;${g}%
+                    ${escapeHTML(up)}V &lowast; &radic;${escapeHTML(g)}%
                 = ${formatWithPrefix(parseInput(up) * Math.pow(parseInput(g)/100, 0.5), "V")}<br>`;
                 }
-
-                if(up && g && !isPercent)
-                { 
+                if(up && g && !isPercent) {
                     result_PWM += `
                     Effektivspannung U<sub>eff</sub> = &ucirc; &lowast; &radic;g
                 =
-                    ${up}V &lowast; &radic;${g}
+                    ${escapeHTML(up)}V &lowast; &radic;${escapeHTML(g)}
                 = ${formatWithPrefix(parseInput(up) * Math.pow(parseInput(g), 0.5), "V")}<br>`;
                 }
             }
 
-            if(!f)      // frequenz
-            {
-                if(T)
-                {
+            if(!f) {
+                if(T) {
                     result_PWM += `
                         Frequnez f = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denominator">T</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>1<br>
-                            <span class="fraction-denominator">${T}s</span>
+                            <span class="fraction-denominator">${escapeHTML(T)}s</span>
                         </div> 
                     = ${formatWithPrefix(1/parseInput(T), "Hz")}<br>`;
                 }
             }
 
-            if(!tin)        // Impulsdauer
-            {
-                if(T && g && isPercent)
-                { 
+            if(!tin) {
+                if(T && g && isPercent) {
                     result_PWM += `
                     Impulsdauer t<sub>in</sub> = T &lowast; g
                 =
-                    ${T}s &lowast; ${g}%
+                    ${escapeHTML(T)}s &lowast; ${escapeHTML(g)}%
                 = ${formatWithPrefix(parseInput(T) * parseInput(g)/100, "s")}<br>`;
                 }
-
-                if(T && g && !isPercent)
-                { 
+                if(T && g && !isPercent) {
                     result_PWM += `
                     Impulsdauer t<sub>in</sub> = T &lowast; g
                 =
-                    ${T}s &lowast; ${g}
+                    ${escapeHTML(T)}s &lowast; ${escapeHTML(g)}
                 = ${formatWithPrefix(parseInput(T) * parseInput(g), "s")}<br>`;
                 }
-
-                if(f && g && isPercent)
-                { 
+                if(f && g && isPercent) {
                     result_PWM += `
                         Impulsdauer t<sub>in</sub> = 
                         <div class ="fraction">
-                            <span> g </span><br>
-                            <span class="fraction-denominator">f</span>
+                            <span> ${escapeHTML(g)}% </span><br>
+                            <span class="fraction-denominator">${escapeHTML(f)}Hz</span>
                         </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${g}%<br>
-                            <span class="fraction-denominator">${f}Hz</span>
-                        </div> 
-                = ${formatWithPrefix(parseInput(g)/(parseInput(f) * 100), "s")}<br>`;
+                    = ${formatWithPrefix(parseInput(g)/(parseInput(f) * 100), "s")}<br>`;
                 }
-
-                if(f && g && !isPercent)
-                { 
+                if(f && g && !isPercent) {
                     result_PWM += `
                         Impulsdauer t<sub>in</sub> = 
                         <div class ="fraction">
-                            <span> g </span><br>
-                            <span class="fraction-denominator">f</span>
+                            <span> ${escapeHTML(g)} </span><br>
+                            <span class="fraction-denominator">${escapeHTML(f)}Hz</span>
                         </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${g}<br>
-                            <span class="fraction-denominator">${f}Hz</span>
-                        </div> 
-                = ${formatWithPrefix(parseInput(g)/parseInput(f), "s")}<br>`;
+                    = ${formatWithPrefix(parseInput(g)/parseInput(f), "s")}<br>`;
                 }
             }
 
-            if(!T)      // Periodenzeit
-            {
-                if(f)
-                {
+            if(!T) {
+                if(f) {
                     result_PWM += `
                         Periodendauer T = 
                         <div class ="fraction">
                             <span> 1 </span><br>
-                            <span class="fraction-denominator">f</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>1<br>
-                            <span class="fraction-denominator">${f}Hz</span>
+                            <span class="fraction-denominator">${escapeHTML(f)}Hz</span>
                         </div> 
                     = ${formatWithPrefix(1/parseInput(f), "s")}<br>`;
                 }
-
-                // g = tin/T -> T = tin/g
-
-                if(tin && g && isPercent)
-                { 
+                if(tin && g && isPercent) {
                     result_PWM += `
                         Periodenzeit = 
                         <div class ="fraction">
-                            <span> t<sub>in</sub> </span><br>
-                            <span class="fraction-denominator">g</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${tin}s<br>
-                            <span class="fraction-denominator">${g}%</span>
+                            <span>${escapeHTML(tin)}s</span><br>
+                            <span class="fraction-denominator">${escapeHTML(g)}%</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(tin)/(parseInput(g) / 100), "s")}<br>`;
                 }
-
-                if(tin && g && !isPercent)
-                { 
+                if(tin && g && !isPercent) {
                     result_PWM += `
                         Periodenzeit = 
                         <div class ="fraction">
-                            <span> t<sub>in</sub> </span><br>
-                            <span class="fraction-denominator">g</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${tin}s<br>
-                            <span class="fraction-denominator">${g}</span>
+                            <span>${escapeHTML(tin)}s</span><br>
+                            <span class="fraction-denominator">${escapeHTML(g)}</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(tin)/parseInput(g), "s")}<br>`;
                 }
             }
 
-            // g = (Ueff/up)^2
-            if(!g)
-            {
-                if(tin && T)
-                {
+            if(!g) {
+                if(tin && T) {
                     result_PWM += `
                         Duty-Cycle g = 
                         <div class ="fraction">
-                            <span> t<sub>in</sub> </span><br>
-                            <span class="fraction-denominator">T</span>
-                        </div> 
-                    =
-                        <div class ="fraction">
-                            <span>${tin}s<br>
-                            <span class="fraction-denominator">${T}s</span>
+                            <span>${escapeHTML(tin)}s</span><br>
+                            <span class="fraction-denominator">${escapeHTML(T)}s</span>
                         </div> 
                     = ${formatWithPrefix(parseInput(tin)/parseInput(T), "")}
                     = ${formatWithPrefix(parseInput(tin) *100/parseInput(T), "%")}<br>`;
                 }
-
-                if(Ueff && up)
-                {
+                if(Ueff && up) {
                     result_PWM += `
                         Duty-Cycle g = 
                         (<div class ="fraction">
-                            <span> U<sub>eff</sub> </span><br>
-                            <span class="fraction-denominator">&ucirc;</span>
-                        </div>)<sup>2</sup>
-                    =
-                        (<div class ="fraction">
-                            <span>${Ueff}V<br>
-                            <span class="fraction-denominator">${up}V</span>
+                            <span>${escapeHTML(Ueff)}V</span><br>
+                            <span class="fraction-denominator">${escapeHTML(up)}V</span>
                         </div>)<sup>2</sup>
                     = ${formatWithPrefix(Math.pow(parseInput(Ueff)/parseInput(up),2), "")}
                     = ${formatWithPrefix(100 * Math.pow(parseInput(Ueff)/parseInput(up),2), "%")}<br>`;
                 }
             }
-
 
             document.getElementById('result_PWM').innerHTML = result_PWM;
         }

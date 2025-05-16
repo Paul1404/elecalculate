@@ -1,0 +1,443 @@
+
+> cy:run
+> start-server-and-test serve http://localhost:80 'cypress run'
+
+1: starting server using command "npm run serve"
+and when url "[ 'http://localhost:80' ]" is responding with HTTP status code 200
+running tests using command "cypress run"
+
+
+> serve
+> python3 -m http.server 80
+
+
+====================================================================================================
+
+  (Run Starting)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Cypress:        14.3.3                                                                         │
+  │ Browser:        Electron 130 (headless)                                                        │
+  │ Node Version:   v22.15.0 (/root/.nvm/versions/node/v22.15.0/bin/node)                          │
+  │ Specs:          12 found (filter.cy.js, gleichstrom.cy.js, hst.cy.js, kondensator.cy.js, magne │
+  │                 tismus.cy.js, mathe.cy.js, schwingkreis.cy.js, spule.cy.js, transformator.cy.j │
+  │                 s, verstaerkung_daempfung.cy.js, wechselstrom.cy.js, werkstoffe.cy.js)         │
+  │ Searched:       cypress/e2e/**/*.cy.{js,ts}                                                    │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  filter.cy.js                                                                   (1 of 12)
+
+
+  Elektrotechnik | Filter.html
+    ✓ should calculate Blindwiderstand XC for Hochpass RC (867ms)
+    ✓ should calculate Blindwiderstand XL for Hochpass RL (713ms)
+    ✓ should calculate Blindwiderstand XC for Tiefpass RC (748ms)
+    ✓ should calculate Blindwiderstand XL for Tiefpass RL (761ms)
+    ✓ should calculate Grenzfrequenz for Hochpass RC (733ms)
+    ✓ should calculate Grenzfrequenz for Tiefpass RC (723ms)
+    ✓ should not execute or render XSS payloads in any input/result (5443ms)
+
+
+  7 passing (10s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        7                                                                                │
+  │ Passing:      7                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     10 seconds                                                                       │
+  │ Spec Ran:     filter.cy.js                                                                     │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  gleichstrom.cy.js                                                              (2 of 12)
+
+
+  Elektrotechnik | Gleichstrom.html
+    ✓ should calculate Ohmsches Gesetz (URI) (727ms)
+    ✓ should calculate unbelasteter Spannungsteiler (936ms)
+    ✓ should calculate belasteter Spannungsteiler (1212ms)
+    ✓ should calculate Serienschaltung (744ms)
+    ✓ should calculate Parallelschaltung (734ms)
+    ✓ should not execute or render XSS payloads in any input/result (7098ms)
+
+
+  6 passing (12s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        6                                                                                │
+  │ Passing:      6                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     11 seconds                                                                       │
+  │ Spec Ran:     gleichstrom.cy.js                                                                │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  hst.cy.js                                                                      (3 of 12)
+
+
+  HST Glossar
+    ✓ should display the glossary table and some known terms (117ms)
+    ✓ should filter glossary entries by search (317ms)
+    ✓ should scroll to the correct letter when using alphabet nav (116ms)
+    ✓ should not execute or render XSS payloads in the search or table (557ms)
+
+
+  4 passing (1s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        4                                                                                │
+  │ Passing:      4                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     1 second                                                                         │
+  │ Spec Ran:     hst.cy.js                                                                        │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  kondensator.cy.js                                                              (4 of 12)
+
+
+  Elektrotechnik | Kondensator.html
+    ✓ should calculate Kapazität C from Q and U (726ms)
+    ✓ should calculate Spannung U from E and s (697ms)
+    ✓ should calculate Energie W from C and U (673ms)
+    ✓ should calculate Zeitkonstante tau for RC-Glied (699ms)
+    ✓ should not execute or render XSS payloads in any input/result (3742ms)
+
+
+  5 passing (7s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        5                                                                                │
+  │ Passing:      5                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     6 seconds                                                                        │
+  │ Spec Ran:     kondensator.cy.js                                                                │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  magnetismus.cy.js                                                              (5 of 12)
+
+
+  Elektrotechnik | Magnetismus.html
+    ✓ should calculate Strom I from Theta and N (606ms)
+    ✓ should calculate Kraft F from B and A (592ms)
+    ✓ should calculate Durchflutung Theta from H and l (560ms)
+    ✓ should calculate Windungszahl N from Theta and I (545ms)
+    ✓ should not execute or render XSS payloads in any input/result (3487ms)
+
+
+  5 passing (6s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        5                                                                                │
+  │ Passing:      5                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     5 seconds                                                                        │
+  │ Spec Ran:     magnetismus.cy.js                                                                │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  mathe.cy.js                                                                    (6 of 12)
+
+
+  Mathe.html Kreisberechnung
+    ✓ should calculate area from radius (559ms)
+    ✓ should calculate radius from area (546ms)
+    ✓ should reset all fields (437ms)
+    ✓ should not execute or render XSS payloads in inputs (1288ms)
+
+
+  4 passing (3s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        4                                                                                │
+  │ Passing:      4                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     2 seconds                                                                        │
+  │ Spec Ran:     mathe.cy.js                                                                      │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  schwingkreis.cy.js                                                             (7 of 12)
+
+
+  Elektrotechnik | Schwingkreis.html
+    ✓ should calculate Blindwiderstand XL for Serienschwingkreis (743ms)
+    ✓ should calculate Blindwiderstand XC for Serienschwingkreis (724ms)
+    ✓ should calculate Resonanzfrequenz for Serienschwingkreis (719ms)
+    ✓ should calculate Blindwiderstand XL for Parallelschwingkreis (680ms)
+    ✓ should calculate Blindwiderstand XC for Parallelschwingkreis (717ms)
+    ✓ should calculate Resonanzfrequenz for Parallelschwingkreis (715ms)
+    ✓ should not execute or render XSS payloads in any input/result (3211ms)
+
+
+  7 passing (8s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        7                                                                                │
+  │ Passing:      7                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     7 seconds                                                                        │
+  │ Spec Ran:     schwingkreis.cy.js                                                               │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  spule.cy.js                                                                    (8 of 12)
+
+
+  Elektrotechnik | Spule.html
+    ✓ should calculate Strom I from Phi, N, and L (956ms)
+    ✓ should calculate Induktivität L from ur, N, A, and l (1188ms)
+    ✓ should calculate Magnetischer Fluss Phi from L, I, and N (862ms)
+    ✓ should calculate Induzierte Spannung U from Phi, t, and N (875ms)
+    ✓ should not execute or render XSS payloads in any input/result (4047ms)
+
+
+  5 passing (8s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        5                                                                                │
+  │ Passing:      5                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     8 seconds                                                                        │
+  │ Spec Ran:     spule.cy.js                                                                      │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  transformator.cy.js                                                            (9 of 12)
+
+
+  Elektrotechnik | Transformator.html
+    ✓ should calculate Übersetzungsverhältnis (ue) from I1 and I2 (604ms)
+    ✓ should calculate Spannung U2 from U1 and ue (553ms)
+    ✓ should calculate Leistung P2 from P1 and eta (583ms)
+    ✓ should calculate Windungszahl N2 from N1 and ue (571ms)
+    ✓ should calculate Wirkungsgrad eta from P1 and P2 (581ms)
+    ✓ should not execute or render XSS payloads in any input/result (4902ms)
+
+
+  6 passing (8s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        6                                                                                │
+  │ Passing:      6                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     7 seconds                                                                        │
+  │ Spec Ran:     transformator.cy.js                                                              │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  verstaerkung_daempfung.cy.js                                                  (10 of 12)
+
+
+  Elektrotechnik | Verstaerkung_Daempfung.html
+    ✓ should calculate Verstärkungsmaß g from I1 and I2 (598ms)
+    ✓ should calculate Dämpfungsmaß a from I1 and I2 (541ms)
+    ✓ should calculate Verstärkungsfaktor V from I1 and I2 (544ms)
+    ✓ should calculate Dämpfungsfaktor D from I1 and I2 (531ms)
+    ✓ should calculate Ausgangsstrom I2 from I1 and g (577ms)
+    ✓ should calculate Ausgangsspannung U2 from U1 and g (574ms)
+    ✓ should calculate Ausgangsleistung P2 from P1 and g (560ms)
+    ✓ should not execute or render XSS payloads in any input/result (2529ms)
+
+
+  8 passing (7s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        8                                                                                │
+  │ Passing:      8                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     6 seconds                                                                        │
+  │ Spec Ran:     verstaerkung_daempfung.cy.js                                                     │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  wechselstrom.cy.js                                                            (11 of 12)
+
+
+  Elektrotechnik | Wechselstrom.html
+    ✓ should calculate Sinus Effektivwert (951ms)
+    - should calculate Rechteck Effektivwert
+    ✓ should calculate Dreieck Effektivwert (856ms)
+    ✓ should calculate PWM Effektivwert (630ms)
+    ✓ should not execute or render XSS payloads in any input/result (3412ms)
+
+
+  4 passing (6s)
+  1 pending
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        5                                                                                │
+  │ Passing:      4                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      1                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     5 seconds                                                                        │
+  │ Spec Ran:     wechselstrom.cy.js                                                               │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  werkstoffe.cy.js                                                              (12 of 12)
+
+
+  Allgemein | Werkstoffe.html
+    ✓ should calculate Spezifischer Widerstand with correct value (959ms)
+    ✓ should calculate Temperaturabhängigkeit Widerstände with correct value (910ms)
+    ✓ should calculate Stromdichte with correct value (654ms)
+    ✓ should not execute or render XSS payloads in any input/result (4392ms)
+
+
+  4 passing (7s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        4                                                                                │
+  │ Passing:      4                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     7 seconds                                                                        │
+  │ Spec Ran:     werkstoffe.cy.js                                                                 │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+====================================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ ✔  filter.cy.js                             00:10        7        7        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  gleichstrom.cy.js                        00:11        6        6        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  hst.cy.js                                00:01        4        4        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  kondensator.cy.js                        00:06        5        5        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  magnetismus.cy.js                        00:05        5        5        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  mathe.cy.js                              00:02        4        4        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  schwingkreis.cy.js                       00:07        7        7        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  spule.cy.js                              00:08        5        5        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  transformator.cy.js                      00:07        6        6        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  verstaerkung_daempfung.cy.js             00:06        8        8        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  wechselstrom.cy.js                       00:05        5        4        -        1        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  werkstoffe.cy.js                         00:07        4        4        -        -        - │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    ✔  All specs passed!                        01:21       66       65        -        1        -  
+
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...
+
+Keyboard interrupt received, exiting.

@@ -70,4 +70,38 @@ describe('Elektrotechnik | Transformator.html', () => {
           expect(text).to.include('800.00m');
         });
       });
+    it('should not execute or render XSS payloads in any input/result', () => {
+      cy.visit(url);
+
+      // XSS payloads to test
+      const payloads = [
+        '<img src=x onerror=alert(1)>',
+        '<svg/onload=alert(1)>',
+        '<script>alert(1)</script>'
+      ];
+
+      // Try payloads in all relevant input fields
+      [
+        '#I1', '#I2', '#U1', '#U2', '#ue', '#P1', '#P2', '#eta', '#N1', '#N2'
+      ].forEach(selector => {
+        payloads.forEach(payload => {
+          cy.get(selector).clear().type(payload, { delay: 0 });
+        });
+      });
+
+      // Trigger calculation
+      cy.get('input[onclick="calculateParameters()"]').click();
+
+      // Check the result area for payloads
+      cy.get('#result').invoke('html').should((html) => {
+        payloads.forEach(payload => {
+          expect(html).not.to.include(payload);
+        });
+      });
+
+      // Fail the test if any alert is triggered
+      Cypress.on('window:alert', (msg) => {
+        throw new Error('Unexpected alert triggered: ' + msg);
+      });
+    });
   });

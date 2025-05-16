@@ -7,6 +7,15 @@ function changeSlide(n) {
     showSlides(slideIndex += n);
 }
 
+function escapeHTML(str) {
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
 function showSlides(n) {
     let slides = document.getElementsByClassName("slide");
     if (!slides || slides.length === 0) return; // No slides, do nothing

@@ -66,4 +66,54 @@ describe('Elektrotechnik | Kondensator.html', () => {
         expect(text).to.include('1.00s');
       });
     });
+    
+    it('should not execute or render XSS payloads in any input/result', () => {
+    cy.visit(url);
+
+    // XSS payloads to test
+    const payloads = [
+      '<img src=x onerror=alert(1)>',
+      '<svg/onload=alert(1)>',
+      '<script>alert(1)</script>'
+    ];
+
+    // 1. Kondensator berechnungen
+    cy.contains('.dropdown-header', 'Kondensator berechnungen').click();
+    [
+      '#Q', '#U', '#C', '#E', '#s'
+    ].forEach(selector => {
+      payloads.forEach(payload => {
+        cy.get(selector).clear().type(payload, { delay: 0 });
+      });
+    });
+    cy.get('input[onclick="calculateCapacitorParameters()"]').click();
+
+    // 2. RC-Glied
+    cy.contains('.dropdown-header', 'RC-Glied').click();
+    [
+      '#R_RC', '#C_RC'
+    ].forEach(selector => {
+      payloads.forEach(payload => {
+        cy.get(selector).clear().type(payload, { delay: 0 });
+      });
+    });
+    cy.get('input[onclick="calculateRC()"]').click();
+
+    // Check all result areas for payloads
+    [
+      '#result',
+      '#result_RC'
+    ].forEach(selector => {
+      cy.get(selector).invoke('html').should((html) => {
+        payloads.forEach(payload => {
+          expect(html).not.to.include(payload);
+        });
+      });
+    });
+
+    // Fail the test if any alert is triggered
+    Cypress.on('window:alert', (msg) => {
+      throw new Error('Unexpected alert triggered: ' + msg);
+    });
   });
+});

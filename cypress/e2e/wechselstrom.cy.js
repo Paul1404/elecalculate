@@ -70,5 +70,59 @@ describe('Elektrotechnik | Wechselstrom.html', () => {
         expect(text).to.include('5.00V');
       });
     });
+    it('should not execute or render XSS payloads in any input/result', () => {
+      cy.visit(url);
+
+      // XSS payloads to test
+      const payloads = [
+        '<img src=x onerror=alert(1)>',
+        '<svg/onload=alert(1)>',
+        '<script>alert(1)</script>'
+      ];
+
+      // Sinus
+      cy.contains('.img-button span', 'Sinus').click();
+      ['#up-Sinus', '#upp-Sinus'].forEach(selector => {
+        payloads.forEach(payload => {
+          cy.get(selector).clear().type(payload, { delay: 0 });
+        });
+      });
+      cy.get('input[onclick="calculate_Sinus()"]').click();
+
+      // Dreieck
+      cy.contains('.img-button span', 'Dreieck').click();
+      ['#up-Dreieck', '#upp-Dreieck'].forEach(selector => {
+        payloads.forEach(payload => {
+          cy.get(selector).clear().type(payload, { delay: 0 });
+        });
+      });
+      cy.get('input[onclick="calculate_Dreieck()"]').click();
+
+      // PWM
+      cy.contains('.img-button span', 'PWM').click();
+      ['#up-PWM', '#g-PWM'].forEach(selector => {
+        payloads.forEach(payload => {
+          cy.get(selector).clear().type(payload, { delay: 0 });
+        });
+      });
+      cy.get('input[onclick="calculate_PWM()"]').click();
+
+      // Check all result areas for payloads
+      [
+        '#result_Sinus',
+        '#result_Dreieck',
+        '#result_PWM'
+      ].forEach(selector => {
+        cy.get(selector).invoke('html').should((html) => {
+          payloads.forEach(payload => {
+            expect(html).not.to.include(payload);
+          });
+        });
+      });
+
+      // Fail the test if any alert is triggered
+      Cypress.on('window:alert', (msg) => {
+        throw new Error('Unexpected alert triggered: ' + msg);
+    });
   });
-  
+});

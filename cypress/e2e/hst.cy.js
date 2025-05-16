@@ -36,5 +36,34 @@ describe('HST Glossar', () => {
       // Optionally, check that the term "SRAM" is present
       cy.contains('SRAM').should('exist');
     });
+
+    it('should not execute or render XSS payloads in the search or table', () => {
+      cy.visit(url);
+
+      // XSS payloads to test
+      const payloads = [
+        '<img src=x onerror=alert(1)>',
+        '<svg/onload=alert(1)>',
+        '<script>alert(1)</script>'
+      ];
+
+      // Try payloads in the search field
+      payloads.forEach(payload => {
+        cy.get('#search').clear().type(payload, { delay: 0 });
+        // The search field should not accept or render the payload as HTML
+        cy.get('#search').should('have.value', payload);
+      });
+
+      // Check the glossary table for payloads
+      cy.get('table').invoke('html').should((html) => {
+        payloads.forEach(payload => {
+          expect(html).not.to.include(payload);
+        });
+      });
+
+      // Fail the test if any alert is triggered
+      Cypress.on('window:alert', (msg) => {
+        throw new Error('Unexpected alert triggered: ' + msg);
+      });
+    });
   });
-  
