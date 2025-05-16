@@ -122,11 +122,11 @@ function formatWithPrefix(value, unit) {
 
     for (let i = 0; i < prefixes.length; i++) {
         if (Math.abs(value) >= prefixes[i].factor) {
-            return (value / prefixes[i].factor).toFixed(2) + prefixes[i].prefix + unit;
+            return (value / prefixes[i].factor).toFixed(3) + prefixes[i].prefix + unit;
         }
     }
 
-    return value.toFixed(2) + unit;
+    return value.toFixed(3) + unit;
 }
 
 
