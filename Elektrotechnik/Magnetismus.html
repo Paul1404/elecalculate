@@ -200,102 +200,146 @@
     <script>
  
         function calculateParameters() 
-        {
-            let result = ``;
+            {
+                let result = ``;
 
-            const I = document.getElementById("I").value;
-            const F = document.getElementById("F").value;
-            const H = document.getElementById("H").value;
-            const Theta = document.getElementById("Theta").value;
-            const ur = document.getElementById("ur").value;
-            const N = document.getElementById("N").value;
-            const Rm = document.getElementById("Rm").value;
-            const A = document.getElementById("A").value;
-            const Phi = document.getElementById("Phi").value;
-            const U = document.getElementById("U").value;
-            const l = document.getElementById("l").value;
-            const B = document.getElementById("B").value;
-            const t = document.getElementById("t").value;
+                const I = document.getElementById("I").value;
+                const F = document.getElementById("F").value;
+                const H = document.getElementById("H").value;
+                const Theta = document.getElementById("Theta").value;
+                const ur = document.getElementById("ur").value;
+                const N = document.getElementById("N").value;
+                const Rm = document.getElementById("Rm").value;
+                const A = document.getElementById("A").value;
+                const Phi = document.getElementById("Phi").value;
+                const U = document.getElementById("U").value;
+                const l = document.getElementById("l").value;
+                const B = document.getElementById("B").value;
+                const t = document.getElementById("t").value;
 
-            if(!I) {
-                if(Theta && N) {
-                    result += `
-                        Strom I  =
-                        <div class ="fraction">
-                            <span class="fraction-numerator">&Theta;</span><br>
-                            <span>N</span>
-                        </div>
-                    =
-                        <div class ="fraction">
-                            <span class="fraction-numerator">${escapeHTML(Theta)}A</span><br>
-                            <span>${escapeHTML(N)}</span>
-                        </div>
-                    = ${formatWithPrefix(parseInput(Theta)/ parseInput(N), "A")}<br>`;
+                if(!I)   // Strom I
+                {
+                    if(Theta && N)
+                    {
+                        debugger;
+                        result += `
+                            Strom I  = 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">&Theta;</span><br>
+                                <span>N</span>
+                            </div> 
+                        =
+                            <div class ="fraction">
+                                <span class="fraction-numerator">${Theta}A</span><br>
+                                <span>${N}</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(Theta)/ parseInput(N), "A")}<br>`;
+                    }
+
+                    if(Rm && ur && A)
+                    {
+                        result += `
+                            Strom I =
+                            R<sub>m</sub> &lowast; &mu;<sub>r</sub> &lowast; &mu;<sub>0</sub> &lowast; A
+                        =
+                            ${Rm}A/VS &lowast; ${ur} 1.257&lowast;10<sup>-6</sup>Vs/Am  ${A}m<sup>2</sup>
+                        = ${formatWithPrefix(parseInput(Rm) * parseInput(ur) * 1.257e-6 *  parseInputsquare(A), "A")}<br>`;
+                    }
                 }
-                if(Rm && ur && A) {
-                    result += `
-                        Strom I =
-                        R<sub>m</sub> &lowast; &mu;<sub>r</sub> &lowast; &mu;<sub>0</sub> &lowast; A
-                    =
-                        ${escapeHTML(Rm)}A/VS &lowast; ${escapeHTML(ur)} 1.257&lowast;10<sup>-6</sup>Vs/Am  ${escapeHTML(A)}m<sup>2</sup>
-                    = ${formatWithPrefix(parseInput(Rm) * parseInput(ur) * 1.257e-6 *  parseInputsquare(A), "A")}<br>`;
+
+                if(!F)      // Kraft F
+                {
+                    if(B && A)
+                    {
+                        result += `
+                            Kraft F  = 
+                            - <div class ="fraction">
+                                <span class="fraction-numerator">B<sup>2</sup> &lowast; A</span><br>
+                                <span>2 &lowast; &mu;<sub>0</sub></span>
+                            </div> 
+                        =
+                            - <div class ="fraction">
+                                <span class="fraction-numerator">(${B}T)<sup>2</sup> &lowast; ${A}m<sup>2</sup></span><br>
+                                <span>2 &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am</span>
+                            </div> 
+                        = ${formatWithPrefix((Math.pow(parseInput(B), 2) * parseInputsquare(A))/ ( 2 * 1.257e-6), "N")}<br>`;
+                    }
                 }
+
+                /*if(!H)       //Feldstaerke H
+                {
+
+                }*/
+
+                if(!Theta && H && l)   // Durchflutung
+                {
+                    result += `
+                            Durchflutung &Theta; =
+                            H &lowast; l
+                        =
+                            ${H}A/m &lowast; ${l}m
+                        = ${formatWithPrefix(parseInput(H) * parseInput(l), "A")}<br>`;
+                }
+
+                /*if(!ur)  // Permeabilitaetszahl ur
+                {
+
+                }*/
+
+                if(!N)      // Windungszahl N
+                {
+                    if(Theta && I)
+                    {
+                        result += `
+                            Windungszahl N  = 
+                            -<div class ="fraction">
+                                <span class="fraction-numerator">&Theta;</span><br>
+                                <span>I</span>
+                            </div> 
+                        =
+                            -<div class ="fraction">
+                                <span class="fraction-numerator">${Theta}A</span><br>
+                                <span>${I}A</span>
+                            </div> 
+                        = ${formatWithPrefix(parseInput(Theta)/ parseInput(I), "")}<br>`;
+                    }
+
+                    if(U && t && Phi)
+                    {
+                        result += `
+                            Windungszahl N  = 
+                            -<div class ="fraction">
+                                <span class="fraction-numerator">u<sub>0</sub> &lowast; &Delta;t</span><br>
+                                <span>&Delta;&Phi;</span>
+                            </div> 
+                        =
+                            -<div class ="fraction">
+                                <span class="fraction-numerator"> ${U}V &lowast; ${t}s</span><br>
+                                <span>${Phi}Wb</span>
+                            </div> 
+                        = ${formatWithPrefix(-(parseInput(U) * parseInput(t))/ parseInput(Phi), "")}<br>`;
+                    }
+
+                    if(H && l && I)
+                    {
+                        result += `
+                            Windungszahl N  = 
+                            -<div class ="fraction">
+                                <span class="fraction-numerator">H &lowast; l</span><br>
+                                <span>I</span>
+                            </div> 
+                        =
+                            -<div class ="fraction">
+                                <span class="fraction-numerator"> ${H}A/m &lowast; ${l}m</span><br>
+                                <span>${I}A</span>
+                            </div> 
+                        = ${formatWithPrefix((parseInput(H) * parseInput(l))/ parseInput(I), "")}<br>`;
+                    }
+                }
+                
+
+                document.getElementById('result').innerHTML = result;
             }
-
-            if(!F) {
-                if(B && A) {
-                    result += `
-                        Kraft F  =
-                        - <div class ="fraction">
-                            <span class="fraction-numerator">(${escapeHTML(B)}T)<sup>2</sup> &lowast; ${escapeHTML(A)}m<sup>2</sup></span><br>
-                            <span>2 &lowast; 1.257&lowast;10<sup>-6</sup>Vs/Am</span>
-                        </div>
-                    = ${formatWithPrefix((Math.pow(parseInput(B), 2) * parseInputsquare(A))/ ( 2 * 1.257e-6), "N")}<br>`;
-                }
-            }
-
-            if(!Theta && H && l) {
-                result += `
-                    Durchflutung &Theta; =
-                    H &lowast; l
-                =
-                    ${escapeHTML(H)}A/m &lowast; ${escapeHTML(l)}m
-                = ${formatWithPrefix(parseInput(H) * parseInput(l), "A")}<br>`;
-            }
-
-            if(!N) {
-                if(Theta && I) {
-                    result += `
-                        Windungszahl N  =
-                        -<div class ="fraction">
-                            <span class="fraction-numerator">${escapeHTML(Theta)}A</span><br>
-                            <span>${escapeHTML(I)}A</span>
-                        </div>
-                    = ${formatWithPrefix(parseInput(Theta)/ parseInput(I), "")}<br>`;
-                }
-                if(U && t && Phi) {
-                    result += `
-                        Windungszahl N  =
-                        -<div class ="fraction">
-                            <span class="fraction-numerator">${escapeHTML(U)}V &lowast; ${escapeHTML(t)}s</span><br>
-                            <span>${escapeHTML(Phi)}Wb</span>
-                        </div>
-                    = ${formatWithPrefix(-(parseInput(U) * parseInput(t))/ parseInput(Phi), "")}<br>`;
-                }
-                if(H && l && I) {
-                    result += `
-                        Windungszahl N  =
-                        -<div class ="fraction">
-                            <span class="fraction-numerator">${escapeHTML(H)}A/m &lowast; ${escapeHTML(l)}m</span><br>
-                            <span>${escapeHTML(I)}A</span>
-                        </div>
-                    = ${formatWithPrefix((parseInput(H) * parseInput(l))/ parseInput(I), "")}<br>`;
-                }
-            }
-
-            document.getElementById('result').innerHTML = result;
-        }
-        
     </script>
 </body>
 </html>

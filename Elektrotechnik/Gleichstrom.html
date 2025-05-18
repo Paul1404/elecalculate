@@ -580,8 +580,8 @@
                 </div> 
             =
                 <div class ="fraction">
-                    <span class="fraction-numerator"> ${escapeHTML(U)}V </span><br>
-                    <span>${escapeHTML(R)}&Omega;</span>
+                    <span class="fraction-numerator"> ${U}V </span><br>
+                    <span>${R}&Omega;</span>
                 </div> 
             = ${formatWithPrefix(parseInput(U) / parseInput(R), "A")}<br>
 
@@ -592,8 +592,8 @@
                 </div> 
             =
                 <div class ="fraction">
-                    <span class="fraction-numerator"> (${escapeHTML(U)}V)<sup>2</sup> </span><br>
-                    <span>${escapeHTML(R)}&Omega;</span>
+                    <span class="fraction-numerator"> (${U}V)<sup>2</sup> </span><br>
+                    <span>${R}&Omega;</span>
                 </div> 
             = ${formatWithPrefix(Math.pow(parseInput(U), 2) / parseInput(R), "W")}<br>`;
         }
@@ -605,15 +605,25 @@
             result += `
                 Strom I = 
                 <div class ="fraction">
-                    <span class="fraction-numerator"> ${escapeHTML(P)}W </span><br>
-                    <span>${escapeHTML(U)}V</span>
+                    <span class="fraction-numerator"> P </span><br>
+                    <span>U</span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> ${P}W </span><br>
+                    <span>${U}V</span>
                 </div> 
             = ${formatWithPrefix(parseInput(P) / parseInput(U), "A")}<br>
 
             Widerstand R = 
                 <div class ="fraction">
-                    <span class="fraction-numerator"> (${escapeHTML(U)}V)<sup>2</sup> </span><br>
-                    <span>${escapeHTML(P)}W</span>
+                    <span class="fraction-numerator"> U<sup>2</sup> </span><br>
+                    <span>P</span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> (${U}V)<sup>2</sup> </span><br>
+                    <span>${P}W</span>
                 </div> 
             = ${formatWithPrefix(Math.pow(parseInput(U), 2) / parseInput(P), "&Omega;")}<br>`;
         }
@@ -625,13 +635,21 @@
             result += `
                 Strom I = 
                 &radic;	<div class ="fraction">
-                    <span class="fraction-numerator">${escapeHTML(P)}W </span><br>
-                    <span>${escapeHTML(R)}&Omega;</span>
+                    <span class="fraction-numerator"> P </span><br>
+                    <span>R</span>
+                </div> 
+            =
+                &radic;	 <div class ="fraction">
+                    <span class="fraction-numerator">${P}W </span><br>
+                    <span>${R}&Omega;</span>
                 </div> 
             = ${formatWithPrefix( Math.pow((parseInput(P))/parseInput(R), 0.5), "A")}<br>
 
+
             Spannung U =
-                    &radic; ${escapeHTML(P)}W &times; ${escapeHTML(R)}&Omega;
+                    &radic; P &times; R
+                =
+                    &radic; ${P}W &times; ${R}&Omega;
                 = ${formatWithPrefix( Math.pow((parseInput(P))*parseInput(R), 0.5), "V")}<br>`;
         }
 
@@ -641,11 +659,15 @@
             // P = I^2 *R
             result += `
                     Spannung U =
-                    ${escapeHTML(I)}A &times; ${escapeHTML(R)}&Omega;
+                    I &times; R
+                =
+                    ${I}A &times; ${R}&Omega;
                 = ${formatWithPrefix(parseInput(I) * parseInput(R), "V")}<br>
 
                 Leistung P =
-                    (${escapeHTML(I)}A)<sup>2</sup> &times; ${escapeHTML(R)}&Omega;
+                    I<sup>2</sup> &times; R
+                =
+                    (${I}A)<sup>2</sup> &times; ${R}&Omega;
                 = ${formatWithPrefix(Math.pow(parseInput(I), 2) * parseInput(R), "W")}<br>`;
         }
         
@@ -656,15 +678,25 @@
             result += `
                 Widerstand R = 
                 <div class ="fraction">
-                    <span class="fraction-numerator">${escapeHTML(P)}W</span><br>
-                    <span>(${escapeHTML(I)}A)<sup>2</sup></span>
+                    <span class="fraction-numerator">P</span><br>
+                    <span>I<sup>2</sup> </span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator">  ${P}W</span><br>
+                    <span>(${I}A)<sup>2</sup></span>
                 </div> 
             = ${formatWithPrefix( parseInput(P)/ Math.pow(parseInput(I), 2), "&Omega;")}<br>
 
             Spannung U = 
                 <div class ="fraction">
-                    <span class="fraction-numerator">${escapeHTML(P)}W</span><br>
-                    <span>${escapeHTML(I)}A</span>
+                    <span class="fraction-numerator">P</span><br>
+                    <span>I</span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator">  ${P}W</span><br>
+                    <span>${I}A</span>
                 </div> 
             = ${formatWithPrefix( parseInput(P)/parseInput(I), "V")}<br>`;
         }
@@ -675,13 +707,20 @@
             // R = U/I
             result += `
                     Leistung P =
-                    ${escapeHTML(U)}V &times; ${escapeHTML(I)}A;
+                    U &times; I
+                =
+                    ${U}V &times; ${I}A;
                 = ${formatWithPrefix(parseInput(U) * parseInput(I), "W")}<br>
 
                 Widerstand R = 
                 <div class ="fraction">
-                    <span class="fraction-numerator">${escapeHTML(U)}V</span><br>
-                    <span>${escapeHTML(I)}A</span>
+                    <span class="fraction-numerator">U</span><br>
+                    <span>I</span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator">${U}V</span><br>
+                    <span>${I}A</span>
                 </div> 
             = ${formatWithPrefix( parseInput(U)/parseInput(I), "&Omega;")}<br>`;
         }
@@ -689,7 +728,6 @@
 
         document.getElementById('result').innerHTML = result;
     }   
-
 
     
     function calculateParametersUnb_Spannungsteiler()   // unbelasteter Spannungsteiler
@@ -708,8 +746,13 @@
             result_unb += `
                 Spannung U<sub>out</sub> = 
                 <div class ="fraction">
-                    <span class="fraction-numerator"> ${escapeHTML(Uin)}V &lowast; ${escapeHTML(R2)}&Omega;</span><br>
-                    <span>${escapeHTML(R1)}&Omega; + ${escapeHTML(R2)}&Omega;</span>
+                    <span class="fraction-numerator"> U<sub>in</sub> &lowast; R<sub>2</sub></span><br>
+                    <span>R<sub>1</sub> + R<sub>2</sub></span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> ${Uin}V &lowast; ${R2}&Omega;</span><br>
+                    <span>${R1}&Omega; + ${R2}&Omega;</span>
                 </div> 
             = ${formatWithPrefix((parseInput(Uin) * parseInput(R2))/(parseInput(R1) + parseInput(R2)) , "V")}<br>`;
         }
@@ -719,8 +762,13 @@
             result_unb += `
                 Strom I = 
                 <div class ="fraction">
-                    <span> ${escapeHTML(Uin)}V </span><br>
-                    <span class="fraction-denumerator">${escapeHTML(R1)}&Omega; + ${escapeHTML(R2)}&Omega;</span>
+                    <span> U<sub>in</sub></span><br>
+                    <span class="fraction-denumerator">R<sub>1</sub> + R<sub>2</sub></span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span> ${Uin}V </span><br>
+                    <span class="fraction-denumerator">${R1}&Omega; + ${R2}&Omega;</span>
                 </div> 
             = ${formatWithPrefix(parseInput(Uin)/(parseInput(R1) + parseInput(R2)) , "A")}<br>`;
         }
@@ -734,15 +782,41 @@
             result_unb += `
                 Widerstand R<sub>2</sub> =
                 <div class ="fraction">
-                    <span class="fraction-numerator"> ${escapeHTML(Uout)}V &lowast; ${escapeHTML(R1)}&Omega;</span><br>
-                    <span>${escapeHTML(Uin)}V - ${escapeHTML(Uout)}V</span>
+                    <span class="fraction-numerator"> U<sub>out</sub> &lowast; R<sub>1</sub></span><br>
+                    <span>U<sub>in</sub> - U<sub>out</sub></span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> ${Uout}V &lowast; ${R1}&Omega;</span><br>
+                    <span>${Uin}V - ${Uout}V</span>
                 </div> 
             = ${formatWithPrefix((parseInput(Uout) * parseInput(R1))/(parseInput(Uin) - parseInput(Uout)) , "&Omega;")}<br>`;
         }
 
+        if(!Uin)
+        {
+            if(Uout && R1 && R2)
+            {
+                // (Uout * (R1 + R2))/R2
+                    result_unb += `
+                    Spannung U<sub>in</sub> =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> U<sub>out</sub> &lowast; (R<sub>1</sub> + R<sub>2</sub>)</span><br>
+                        <span>R<sub>2</sub></span>
+                    </div> 
+                =
+                    <div class ="fraction">
+                        <span class="fraction-numerator"> ${Uout}V &lowast; (${R1}&Omega; + ${R2}&Omega;)</span><br>
+                        <span>${R2}&Omega;</span>
+                    </div> 
+                = ${formatWithPrefix((parseInput(Uout) * (parseInput(R1) + parseInput(R2)))/parseInput(R2) , "V")}<br>`;
+
+            }
+        }
+
+
         document.getElementById('result_unb').innerHTML = result_unb;
     }
-
 
     function calculateParametersBel_Spannungsteiler()   // belasteter Spannungsteiler
     {
@@ -761,23 +835,35 @@
         if(!Uout && Uin && R1 && R2 && RL)
         {
             result_bel += `
+
                 Spannung U<sub>out</sub> = 
                 <div class ="fraction">
-                    <span class="fraction-numerator"> ${escapeHTML(Uin)}V &lowast; <div class ="fraction">
-                    <span class="fraction-numerator"> ${escapeHTML(R2)}&Omega; &lowast; ${escapeHTML(RL)}&Omega;</span><br>
-                    <span>${escapeHTML(R2)}&Omega; + ${escapeHTML(RL)}&Omega;</span>
+                    <span class="fraction-numerator"> U<sub>in</sub> &lowast; <div class ="fraction">
+                    <span class="fraction-numerator"> R<sub>2</sub> &lowast; R<sub>L</sub></span><br>
+                    <span>R<sub>2</sub> + R<sub>L</sub></span>
                 </div> </span><br>
-                    <span>${escapeHTML(R1)}&Omega; + <div class ="fraction">
-                    <span class="fraction-numerator"> ${escapeHTML(R2)}&Omega; &lowast; ${escapeHTML(RL)}&Omega;</span><br>
-                    <span>${escapeHTML(R2)}&Omega; + ${escapeHTML(RL)}&Omega;</span>
+                    <span>R<sub>1</sub> + <div class ="fraction">
+                    <span class="fraction-numerator"> R<sub>2</sub> &lowast; R<sub>L</sub></span><br>
+                    <span>R<sub>2</sub> + R<sub>L</sub></span>
+                </div> </span>
+                </div> 
+            =
+                <div class ="fraction">
+                    <span class="fraction-numerator"> ${Uin}V &lowast; <div class ="fraction">
+                    <span class="fraction-numerator"> ${R2}&Omega; &lowast; ${RL}&Omega;</span><br>
+                    <span>${R2}&Omega; + ${RL}&Omega;</span>
+                </div> </span><br>
+                    <span>${R1}&Omega; + <div class ="fraction">
+                    <span class="fraction-numerator"> ${R2}&Omega; &lowast; ${RL}&Omega;</span><br>
+                    <span>${R2}&Omega; + ${RL}&Omega;</span>
                 </div> </span>
                 </div> 
             = ${formatWithPrefix((parseInput(Uin) * ((parseInput(R2) * parseInput(RL))/(parseInput(R2) + parseInput(RL))))/(parseInput(R1) + ((parseInput(R2) * parseInput(RL))/(parseInput(R2) + parseInput(RL)))) , "V")}<br>`;
         }
 
+
         document.getElementById('result_bel').innerHTML = result_bel;
     }
-
 
     function toggleDropdown(element) 
     {
@@ -832,50 +918,69 @@
             }
         }
 
-    function calculate(opv)
-    {
-        let result_S_P  = ``;
-        const r1 = document.getElementById("r1").value;
-        const r2 = document.getElementById("r2").value;
-
-        if(opv === 'serie_schaltung')
+        function calculate(opv) 
         {
-            if(r1 && r2)
+            let result_S_P  = ``;
+            // const r1 = parseFloat(document.getElementById('r1').value);
+            // const r2 = parseFloat(document.getElementById('r2').value);
+            const r1 = document.getElementById("r1").value;
+            const r2 = document.getElementById("r2").value;
+
+            // debugger;
+            if(opv === 'serie_schaltung')
             {
-                result_S_P += `
-                    R<sub>ges</sub> =
-                    R<sub>1</sub> + R<sub>2</sub>
-                =
-                    ${escapeHTML(r1)}&Omega; + ${escapeHTML(r2)}&Omega;
-                = ${formatWithPrefix(parseInput(r1) + parseInput(r2), "&Omega;")}<br>`;
+                if(r1 && r2)
+                {
+                    debugger;
+                    result_S_P += `
+                        R<sub>ges</sub> = 
+                        R<sub>1</sub> + R<sub>2</sub>
+                    =
+                        ${r1}&Omega; + ${r2}&Omega;
+                    = ${formatWithPrefix(parseInput(r1) + parseInput(r2), "&Omega;")}<br>`;
+                }
             }
-        }
 
-        if(opv === 'parallel_schaltung')
-        {
-            if(r1 && r2)
+            if(opv === 'parallel_schaltung')
             {
-                result_S_P += `
-                Widerstand R<sub>ges</sub> =
-                    <div class ="fraction">
-                        <span >1</span><br>
-                        <span class="fraction-denumerator">
-                        <div style="border-top: 1px solid white;"><div class ="fraction">
-                            <span >1</span><br>
-                            <span class="fraction-denumerator">${escapeHTML(r1)}&Omega;</span>
-                        </div>
-                    +
+                if(r1 && r2)
+                {
+                    result_S_P += `
+                    Widerstand R<sub>ges</sub> = 
                         <div class ="fraction">
                             <span >1</span><br>
-                            <span class="fraction-denumerator">${escapeHTML(r2)}&Omega;</span>
+                            <span class="fraction-denumerator"><!--class="fraction-denumerator"-->
+                            <div style="border-top: 1px solid white;"><div class ="fraction">
+                                <span >1</span><br>
+                                <span class="fraction-denumerator">R<sub>1</sub></span>
+                            </div>  
+                        + 
+                            <div class ="fraction">
+                                <span >1</span><br>
+                                <span class="fraction-denumerator">R<sub>2</sub></span>
+                            </div></div> </span>
+                        </div> 
+                    =
+                    <div class ="fraction">
+                        <span >1</span><br>
+                        <span class="fraction-denumerator"><!--class="fraction-denumerator"-->
+                        <div style="border-top: 1px solid white;"><div class ="fraction">
+                            <span >1</span><br>
+                            <span class="fraction-denumerator">${r1}&Omega;</span>
+                        </div>  
+                    + 
+                        <div class ="fraction">
+                            <span >1</span><br>
+                            <span class="fraction-denumerator">${r2}&Omega;</span>
                         </div></div> </span>
                     </div>
-                = ${formatWithPrefix(1/((1/parseInput(r1)) + (1/parseInput(r2))), "&Omega;")}<br>`;
+                    = ${formatWithPrefix(1/((1/parseInput(r1)) + (1/parseInput(r2))), "&Omega;")}<br>`;
+                }
             }
-        }
 
-        document.getElementById('result_S_P').innerHTML = result_S_P;
-    }
+            document.getElementById('result_S_P').innerHTML = result_S_P;
+            debugger;
+        }
 
     </script>
     <script src="../scripts.js"></script>
