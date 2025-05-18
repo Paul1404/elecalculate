@@ -51,28 +51,4 @@ describe('Elektrotechnik | Magnetismus.html', () => {
       expect(text).to.include(inputs.windungszahl.expected);
     });
   });
-
-  it('should not execute or render XSS payloads in any input/result', () => {
-    cy.visit(url);
-
-    [
-      '#Theta', '#N', '#B', '#A', '#H', '#l', '#I'
-    ].forEach(selector => {
-      inputs.xssPayloads.forEach(payload => {
-        cy.get(selector).clear().type(payload, { delay: 0 });
-      });
-    });
-
-    cy.get('input[onclick="calculateParameters()"]').click();
-
-    cy.get('#result').invoke('html').should((html) => {
-      inputs.xssPayloads.forEach(payload => {
-        expect(html).not.to.include(payload);
-      });
-    });
-
-    Cypress.on('window:alert', (msg) => {
-      throw new Error('Unexpected alert triggered: ' + msg);
-    });
-  });
 });

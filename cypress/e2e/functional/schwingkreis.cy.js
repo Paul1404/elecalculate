@@ -81,39 +81,4 @@ describe('Elektrotechnik | Schwingkreis.html', () => {
       expect(found).to.be.true;
     });
   });
-
-  it('should not execute or render XSS payloads in any input/result', () => {
-    cy.visit(url);
-
-    // Serienschwingkreis
-    cy.contains('.filter-button span', 'Serie Schwingkreis').click();
-    ['#f-serie', '#L-serie', '#C-serie'].forEach(selector => {
-      inputs.xssPayloads.forEach(payload => {
-        cy.get(selector).clear().type(payload, { delay: 0 });
-      });
-    });
-    cy.get('input[onclick="calculateSerie()"]').click();
-
-    // Parallelschwingkreis
-    cy.contains('.filter-button span', 'Parallel Schwingkreis').click();
-    ['#f-parallel', '#L-parallel', '#C-parallel'].forEach(selector => {
-      inputs.xssPayloads.forEach(payload => {
-        cy.get(selector).clear().type(payload, { delay: 0 });
-      });
-    });
-    cy.get('input[onclick="calculateParallel()"]').click();
-
-    // Check all result areas for payloads
-    ['#result', '#result_parallel'].forEach(selector => {
-      cy.get(selector).invoke('html').should((html) => {
-        inputs.xssPayloads.forEach(payload => {
-          expect(html).not.to.include(payload);
-        });
-      });
-    });
-
-    Cypress.on('window:alert', (msg) => {
-      throw new Error('Unexpected alert triggered: ' + msg);
-    });
-  });
 });

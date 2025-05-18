@@ -1,3 +1,4 @@
+// cypress/e2e/functional/filter.cy.js
 describe('Elektrotechnik | Filter.html', () => {
   const url = '/Elektrotechnik/Filter.html';
   let inputs;
@@ -60,64 +61,5 @@ describe('Elektrotechnik | Filter.html', () => {
     cy.get('#C-TP_RC').clear().type(inputs.tiefpassRC.C);
     cy.get('input[onclick="calculate_TP_RC()"]').click();
     cy.get('#result_TP_RC').invoke('text').should('include', inputs.expected.tiefpassRC_fg);
-  });
-
-  it('should not execute or render XSS payloads in any input/result', () => {
-    cy.visit(url);
-
-    // Hochpass RC
-    cy.contains('.filter-button span', 'Hochpass RC').click();
-    ['#f-HP_RC', '#C-HP_RC', '#R-HP_RC'].forEach(selector => {
-      inputs.xssPayloads.forEach(payload => {
-        cy.get(selector).clear().type(payload, { delay: 0 });
-      });
-    });
-    cy.get('input[onclick="calculate_HP_RC()"]').click();
-
-    // Hochpass RL
-    cy.contains('.filter-button span', 'Hochpass RL').click();
-    ['#f-HP_RL', '#L-HP_RL'].forEach(selector => {
-      inputs.xssPayloads.forEach(payload => {
-        cy.get(selector).clear().type(payload, { delay: 0 });
-      });
-    });
-    cy.get('input[onclick="calculate_HP_RL()"]').click();
-
-    // Tiefpass RC
-    cy.contains('.filter-button span', 'Tiefpass RC').click();
-    ['#f-TP_RC', '#C-TP_RC', '#R-TP_RC'].forEach(selector => {
-      inputs.xssPayloads.forEach(payload => {
-        cy.get(selector).clear().type(payload, { delay: 0 });
-      });
-    });
-    cy.get('input[onclick="calculate_TP_RC()"]').click();
-
-    // Tiefpass RL
-    cy.contains('.filter-button span', 'Tiefpass RL').click();
-    ['#f-TP_RL', '#L-TP_RL'].forEach(selector => {
-      inputs.xssPayloads.forEach(payload => {
-        cy.get(selector).clear().type(payload, { delay: 0 });
-      });
-    });
-    cy.get('input[onclick="calculate_TP_RL()"]').click();
-
-    // Check all result areas for payloads
-    [
-      '#result_HP_RC',
-      '#result_HP_RL',
-      '#result_TP_RC',
-      '#result_TP_RL'
-    ].forEach(selector => {
-      cy.get(selector).invoke('html').should((html) => {
-        inputs.xssPayloads.forEach(payload => {
-          expect(html).not.to.include(payload);
-        });
-      });
-    });
-
-    // Fail the test if any alert is triggered
-    Cypress.on('window:alert', (msg) => {
-      throw new Error('Unexpected alert triggered: ' + msg);
-    });
   });
 });

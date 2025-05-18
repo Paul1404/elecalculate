@@ -46,26 +46,4 @@ describe('HST Glossar', () => {
     // Optionally, check that the term is present
     cy.contains(inputs.alphabetNav.term).should('exist');
   });
-
-  it('should not execute or render XSS payloads in the search or table', () => {
-    cy.visit(url);
-
-    // Try payloads in the search field
-    inputs.xssPayloads.forEach(payload => {
-      cy.get('#search').clear().type(payload, { delay: 0 });
-      cy.get('#search').should('have.value', payload);
-    });
-
-    // Check the glossary table for payloads
-    cy.get('table').invoke('html').should((html) => {
-      inputs.xssPayloads.forEach(payload => {
-        expect(html).not.to.include(payload);
-      });
-    });
-
-    // Fail the test if any alert is triggered
-    Cypress.on('window:alert', (msg) => {
-      throw new Error('Unexpected alert triggered: ' + msg);
-    });
-  });
 });

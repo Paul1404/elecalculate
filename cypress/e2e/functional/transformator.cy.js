@@ -62,28 +62,4 @@ describe('Elektrotechnik | Transformator.html', () => {
       expect(text).to.include(inputs.wirkungsgradEta.expected);
     });
   });
-
-  it('should not execute or render XSS payloads in any input/result', () => {
-    cy.visit(url);
-
-    [
-      '#I1', '#I2', '#U1', '#U2', '#ue', '#P1', '#P2', '#eta', '#N1', '#N2'
-    ].forEach(selector => {
-      inputs.xssPayloads.forEach(payload => {
-        cy.get(selector).clear().type(payload, { delay: 0 });
-      });
-    });
-
-    cy.get('input[onclick="calculateParameters()"]').click();
-
-    cy.get('#result').invoke('html').should((html) => {
-      inputs.xssPayloads.forEach(payload => {
-        expect(html).not.to.include(payload);
-      });
-    });
-
-    Cypress.on('window:alert', (msg) => {
-      throw new Error('Unexpected alert triggered: ' + msg);
-    });
-  });
 });

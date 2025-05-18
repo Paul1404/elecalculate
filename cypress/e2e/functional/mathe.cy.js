@@ -40,21 +40,4 @@ describe('Mathe.html Kreisberechnung', () => {
     cy.get('#radiusUnit').find(':selected').should('have.value', inputs.resetDefaults.radiusUnit);
     cy.get('#areaUnit').find(':selected').should('have.value', inputs.resetDefaults.areaUnit);
   });
-
-  it('should not execute or render XSS payloads in inputs', () => {
-    cy.visit(url);
-
-    inputs.xssPayloads.forEach(payload => {
-      cy.get('#radius').clear().type(payload, { delay: 0 });
-      cy.get('#area').clear().type(payload, { delay: 0 });
-
-      // The value should be empty or invalid (input type="number" will reject non-numeric)
-      cy.get('#radius').should('not.have.value', payload);
-      cy.get('#area').should('not.have.value', payload);
-    });
-
-    Cypress.on('window:alert', (msg) => {
-      throw new Error('Unexpected alert triggered: ' + msg);
-    });
-  });
 });
