@@ -1,0 +1,25 @@
+{
+    "spezifischerWiderstand": {
+        "l": "1",
+        "R": "10",
+        "A": "0.0001",
+        "expected": "1000.000Mm/(Ω ∗ mm"
+    },
+    "temperaturabhaengigkeit": {
+        "R20": "100",
+        "alpha": "0.004",
+        "T": "20",
+        "expected": "108.000Ω"
+    },
+    "stromdichte": {
+        "I_J": "0.01",
+        "J": "1",
+        "expected1": "112.838μm",
+        "expected2": "10000.00 μm2"
+    },
+    "xssPayloads": [
+        "<img src=x onerror=alert(1)>",
+        "<svg/onload=alert(1)>",
+        "<script>alert(1)</script>"
+    ]
+}

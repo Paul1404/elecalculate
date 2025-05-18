@@ -1,0 +1,22 @@
+{
+    "sinus": {
+        "up": "10",
+        "upp": "20",
+        "expected": "7.071V"
+    },
+    "dreieck": {
+        "up": "10",
+        "upp": "20",
+        "expected": "5.774V"
+    },
+    "pwm": {
+        "up": "10",
+        "g": "25",
+        "expected": "5.000V"
+    },
+    "xssPayloads": [
+        "<img src=x onerror=alert(1)>",
+        "<svg/onload=alert(1)>",
+        "<script>alert(1)</script>"
+    ]
+}

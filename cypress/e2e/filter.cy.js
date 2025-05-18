@@ -1,169 +1,123 @@
 describe('Elektrotechnik | Filter.html', () => {
-    const url = '/Elektrotechnik/Filter.html';
+  const url = '/Elektrotechnik/Filter.html';
+  let inputs;
 
-    it('should calculate Blindwiderstand XC for Hochpass RC', () => {
-      cy.visit(url);
-
-      // Open Hochpass RC section
-      cy.contains('.filter-button span', 'Hochpass RC').click();
-
-      // f = 1000, C = 0.000001 → XC = 1 / (2 * pi * f * C) = 159.15Ω
-      cy.get('#f-HP_RC').clear().type('1000');
-      cy.get('#C-HP_RC').clear().type('0.000001');
-      cy.get('input[onclick="calculate_HP_RC()"]').click();
-
-      cy.get('#result_HP_RC').invoke('text').then(text => {
-        cy.log('Hochpass RC XC output:', text);
-        expect(text).to.include('159.15Ω');
-      });
-    });
-
-    it('should calculate Blindwiderstand XL for Hochpass RL', () => {
-      cy.visit(url);
-
-      // Open Hochpass RL section
-      cy.contains('.filter-button span', 'Hochpass RL').click();
-
-      // f = 1000, L = 0.01 → XL = 2 * pi * f * L = 62.83Ω
-      cy.get('#f-HP_RL').clear().type('1000');
-      cy.get('#L-HP_RL').clear().type('0.01');
-      cy.get('input[onclick="calculate_HP_RL()"]').click();
-
-      cy.get('#result_HP_RL').invoke('text').then(text => {
-        cy.log('Hochpass RL XL output:', text);
-        expect(text).to.include('62.83Ω');
-      });
-    });
-
-    it('should calculate Blindwiderstand XC for Tiefpass RC', () => {
-      cy.visit(url);
-
-      // Open Tiefpass RC section
-      cy.contains('.filter-button span', 'Tiefpass RC').click();
-
-      // f = 1000, C = 0.000001 → XC = 1 / (2 * pi * f * C) = 159.15Ω
-      cy.get('#f-TP_RC').clear().type('1000');
-      cy.get('#C-TP_RC').clear().type('0.000001');
-      cy.get('input[onclick="calculate_TP_RC()"]').click();
-
-      cy.get('#result_TP_RC').invoke('text').then(text => {
-        cy.log('Tiefpass RC XC output:', text);
-        expect(text).to.include('159.15Ω');
-      });
-    });
-
-    it('should calculate Blindwiderstand XL for Tiefpass RL', () => {
-      cy.visit(url);
-
-      // Open Tiefpass RL section
-      cy.contains('.filter-button span', 'Tiefpass RL').click();
-
-      // f = 1000, L = 0.01 → XL = 2 * pi * f * L = 62.83Ω
-      cy.get('#f-TP_RL').clear().type('1000');
-      cy.get('#L-TP_RL').clear().type('0.01');
-      cy.get('input[onclick="calculate_TP_RL()"]').click();
-
-      cy.get('#result_TP_RL').invoke('text').then(text => {
-        cy.log('Tiefpass RL XL output:', text);
-        expect(text).to.include('62.83Ω');
-      });
-    });
-
-    it('should calculate Grenzfrequenz for Hochpass RC', () => {
-      cy.visit(url);
-
-      cy.contains('.filter-button span', 'Hochpass RC').click();
-
-      // R = 1000, C = 0.000001 → fg = 1 / (2 * pi * R * C) = 159.15Hz
-      cy.get('#R-HP_RC').clear().type('1000');
-      cy.get('#C-HP_RC').clear().type('0.000001');
-      cy.get('input[onclick="calculate_HP_RC()"]').click();
-
-      cy.get('#result_HP_RC').invoke('text').then(text => {
-        cy.log('Hochpass RC Grenzfrequenz output:', text);
-        expect(text).to.include('159.15Hz');
-      });
-    });
-
-    it('should calculate Grenzfrequenz for Tiefpass RC', () => {
-      cy.visit(url);
-
-      cy.contains('.filter-button span', 'Tiefpass RC').click();
-
-      // R = 1000, C = 0.000001 → fg = 1 / (2 * pi * R * C) = 159.15Hz
-      cy.get('#R-TP_RC').clear().type('1000');
-      cy.get('#C-TP_RC').clear().type('0.000001');
-      cy.get('input[onclick="calculate_TP_RC()"]').click();
-
-      cy.get('#result_TP_RC').invoke('text').then(text => {
-        cy.log('Tiefpass RC Grenzfrequenz output:', text);
-        expect(text).to.include('159.15Hz');
-      });
-    });
-
-    it('should not execute or render XSS payloads in any input/result', () => {
-      cy.visit(url);
-
-      // XSS payloads to test
-      const payloads = [
-        '<img src=x onerror=alert(1)>',
-        '<svg/onload=alert(1)>',
-        '<script>alert(1)</script>'
-      ];
-
-      // Hochpass RC
-      cy.contains('.filter-button span', 'Hochpass RC').click();
-      ['#f-HP_RC', '#C-HP_RC', '#R-HP_RC'].forEach(selector => {
-        payloads.forEach(payload => {
-          cy.get(selector).clear().type(payload, { delay: 0 });
-        });
-      });
-      cy.get('input[onclick="calculate_HP_RC()"]').click();
-
-      // Hochpass RL
-      cy.contains('.filter-button span', 'Hochpass RL').click();
-      ['#f-HP_RL', '#L-HP_RL'].forEach(selector => {
-        payloads.forEach(payload => {
-          cy.get(selector).clear().type(payload, { delay: 0 });
-        });
-      });
-      cy.get('input[onclick="calculate_HP_RL()"]').click();
-
-      // Tiefpass RC
-      cy.contains('.filter-button span', 'Tiefpass RC').click();
-      ['#f-TP_RC', '#C-TP_RC', '#R-TP_RC'].forEach(selector => {
-        payloads.forEach(payload => {
-          cy.get(selector).clear().type(payload, { delay: 0 });
-        });
-      });
-      cy.get('input[onclick="calculate_TP_RC()"]').click();
-
-      // Tiefpass RL
-      cy.contains('.filter-button span', 'Tiefpass RL').click();
-      ['#f-TP_RL', '#L-TP_RL'].forEach(selector => {
-        payloads.forEach(payload => {
-          cy.get(selector).clear().type(payload, { delay: 0 });
-        });
-      });
-      cy.get('input[onclick="calculate_TP_RL()"]').click();
-
-      // Check all result areas for payloads
-      [
-        '#result_HP_RC',
-        '#result_HP_RL',
-        '#result_TP_RC',
-        '#result_TP_RL'
-      ].forEach(selector => {
-        cy.get(selector).invoke('html').should((html) => {
-          payloads.forEach(payload => {
-            expect(html).not.to.include(payload);
-          });
-        });
-      });
-
-      // Fail the test if any alert is triggered
-      Cypress.on('window:alert', (msg) => {
-        throw new Error('Unexpected alert triggered: ' + msg);
-      });
+  before(() => {
+    cy.fixture('filterInputs').then((data) => {
+      inputs = data;
     });
   });
+
+  it('should calculate Blindwiderstand XC for Hochpass RC', () => {
+    cy.visit(url);
+    cy.contains('.filter-button span', 'Hochpass RC').click();
+    cy.get('#f-HP_RC').clear().type(inputs.hochpassRC.f);
+    cy.get('#C-HP_RC').clear().type(inputs.hochpassRC.C);
+    cy.get('input[onclick="calculate_HP_RC()"]').click();
+    cy.get('#result_HP_RC').invoke('text').should('include', inputs.expected.hochpassRC_XC);
+  });
+
+  it('should calculate Blindwiderstand XL for Hochpass RL', () => {
+    cy.visit(url);
+    cy.contains('.filter-button span', 'Hochpass RL').click();
+    cy.get('#f-HP_RL').clear().type(inputs.hochpassRL.f);
+    cy.get('#L-HP_RL').clear().type(inputs.hochpassRL.L);
+    cy.get('input[onclick="calculate_HP_RL()"]').click();
+    cy.get('#result_HP_RL').invoke('text').should('include', inputs.expected.hochpassRL_XL);
+  });
+
+  it('should calculate Blindwiderstand XC for Tiefpass RC', () => {
+    cy.visit(url);
+    cy.contains('.filter-button span', 'Tiefpass RC').click();
+    cy.get('#f-TP_RC').clear().type(inputs.tiefpassRC.f);
+    cy.get('#C-TP_RC').clear().type(inputs.tiefpassRC.C);
+    cy.get('input[onclick="calculate_TP_RC()"]').click();
+    cy.get('#result_TP_RC').invoke('text').should('include', inputs.expected.tiefpassRC_XC);
+  });
+
+  it('should calculate Blindwiderstand XL for Tiefpass RL', () => {
+    cy.visit(url);
+    cy.contains('.filter-button span', 'Tiefpass RL').click();
+    cy.get('#f-TP_RL').clear().type(inputs.tiefpassRL.f);
+    cy.get('#L-TP_RL').clear().type(inputs.tiefpassRL.L);
+    cy.get('input[onclick="calculate_TP_RL()"]').click();
+    cy.get('#result_TP_RL').invoke('text').should('include', inputs.expected.tiefpassRL_XL);
+  });
+
+  it('should calculate Grenzfrequenz for Hochpass RC', () => {
+    cy.visit(url);
+    cy.contains('.filter-button span', 'Hochpass RC').click();
+    cy.get('#R-HP_RC').clear().type(inputs.hochpassRC.R);
+    cy.get('#C-HP_RC').clear().type(inputs.hochpassRC.C);
+    cy.get('input[onclick="calculate_HP_RC()"]').click();
+    cy.get('#result_HP_RC').invoke('text').should('include', inputs.expected.hochpassRC_fg);
+  });
+
+  it('should calculate Grenzfrequenz for Tiefpass RC', () => {
+    cy.visit(url);
+    cy.contains('.filter-button span', 'Tiefpass RC').click();
+    cy.get('#R-TP_RC').clear().type(inputs.tiefpassRC.R);
+    cy.get('#C-TP_RC').clear().type(inputs.tiefpassRC.C);
+    cy.get('input[onclick="calculate_TP_RC()"]').click();
+    cy.get('#result_TP_RC').invoke('text').should('include', inputs.expected.tiefpassRC_fg);
+  });
+
+  it('should not execute or render XSS payloads in any input/result', () => {
+    cy.visit(url);
+
+    // Hochpass RC
+    cy.contains('.filter-button span', 'Hochpass RC').click();
+    ['#f-HP_RC', '#C-HP_RC', '#R-HP_RC'].forEach(selector => {
+      inputs.xssPayloads.forEach(payload => {
+        cy.get(selector).clear().type(payload, { delay: 0 });
+      });
+    });
+    cy.get('input[onclick="calculate_HP_RC()"]').click();
+
+    // Hochpass RL
+    cy.contains('.filter-button span', 'Hochpass RL').click();
+    ['#f-HP_RL', '#L-HP_RL'].forEach(selector => {
+      inputs.xssPayloads.forEach(payload => {
+        cy.get(selector).clear().type(payload, { delay: 0 });
+      });
+    });
+    cy.get('input[onclick="calculate_HP_RL()"]').click();
+
+    // Tiefpass RC
+    cy.contains('.filter-button span', 'Tiefpass RC').click();
+    ['#f-TP_RC', '#C-TP_RC', '#R-TP_RC'].forEach(selector => {
+      inputs.xssPayloads.forEach(payload => {
+        cy.get(selector).clear().type(payload, { delay: 0 });
+      });
+    });
+    cy.get('input[onclick="calculate_TP_RC()"]').click();
+
+    // Tiefpass RL
+    cy.contains('.filter-button span', 'Tiefpass RL').click();
+    ['#f-TP_RL', '#L-TP_RL'].forEach(selector => {
+      inputs.xssPayloads.forEach(payload => {
+        cy.get(selector).clear().type(payload, { delay: 0 });
+      });
+    });
+    cy.get('input[onclick="calculate_TP_RL()"]').click();
+
+    // Check all result areas for payloads
+    [
+      '#result_HP_RC',
+      '#result_HP_RL',
+      '#result_TP_RC',
+      '#result_TP_RL'
+    ].forEach(selector => {
+      cy.get(selector).invoke('html').should((html) => {
+        inputs.xssPayloads.forEach(payload => {
+          expect(html).not.to.include(payload);
+        });
+      });
+    });
+
+    // Fail the test if any alert is triggered
+    Cypress.on('window:alert', (msg) => {
+      throw new Error('Unexpected alert triggered: ' + msg);
+    });
+  });
+});

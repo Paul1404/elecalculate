@@ -1,0 +1,18 @@
+{
+    "knownTerms": ["ADC", "ALU", "EEPROM", "SRAM"],
+    "search": {
+        "query": "ram",
+        "shouldShow": ["RAM", "DRAM", "SRAM"],
+        "shouldNotShow": ["ADC"]
+    },
+    "alphabetNav": {
+        "letter": "S",
+        "sectionId": "letter-S",
+        "term": "SRAM"
+    },
+    "xssPayloads": [
+        "<img src=x onerror=alert(1)>",
+        "<svg/onload=alert(1)>",
+        "<script>alert(1)</script>"
+    ]
+}
