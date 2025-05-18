@@ -4,55 +4,55 @@
     <img src="https://elecalculate.com/Pictures/favicon.png" alt="Elecalculate.com" width="100" height="100">
 </a>
 
-**Elecalculate** ist eine Website zur Berechnung verschiedenster Parameter der Elektrotechnik.
+**Elecalculate** is a website designed to help you calculate various electronics parameters.
 
-## Funktionen
+## Features
 
-- Vollständig offline nutzbar
-- Entwickelt mit Unterstützung von ChatGPT
-- Von Menschen getestet
-- Zeigt jeden Rechenschritt an
-- Regelmäßige Updates
-
----
-
-## Über diesen Fork
-
-> **Hinweis:**
-> Dieser Fork dient ausschließlich zu Bildungszwecken, um Netzwerksicherheitsaspekte wie Cross-Site Scripting (XSS) praktisch zu untersuchen und zu beheben.
+- Fully functional offline
+- Developed with assistance from ChatGPT
+- Tested by humans
+- Generates each step to reach the solution
+- Updated regularly
 
 ---
 
-## Schnellstart
+## About this Fork
 
-1. [Node.js](https://nodejs.org/) installieren
-2. [Python 3.12](https://www.python.org/downloads/release/python-3120/) sollte installiert sein (Standard bei den meisten Distributionen)
-3. `npm install` ausführen
-4. Seite starten und Tests ausführen:
+> **Note:**
+> This fork is for educational purposes, focusing on network security (e.g., XSS) and robust automated testing.
+
+---
+
+## Quick Start
+
+1. Install [Node.js](https://nodejs.org/)
+2. Install [Python 3.12](https://www.python.org/downloads/release/python-3120/) (should be present on most systems)
+3. Run `npm install`
+4. Start the site and run tests:
    - Headless: `npm run cy:run`
-   - Interaktiv: `npm run cy:open`
+   - Interactive: `npm run cy:open`
 
-> **Hinweis:**
-> Die Test-Suite und Node.js-Tools sind für Entwickler und Maintainer gedacht.
-> Endnutzer benötigen **kein** Node.js, um die Seite zu verwenden.
-
----
-
-## Testen & Sicherheit
-
-Dieser Fork enthält eine **umfassende Cypress End-to-End-Test-Suite** für alle Rechner und Glossar-/Suchfunktionen.
-
-- **Funktionale Tests:** `cypress/e2e/functional/`
-- **Security-Tests:** `cypress/e2e/security/`
-
-Für fortgeschrittene Nutzung, Testorganisation und alle verfügbaren Skripte siehe [TESTING.md](./TESTING.md).
+> **Note:**
+> The test suite and Node.js tools are intended for developers and maintainers.
+> End users do **not** need Node.js to use the website.
 
 ---
 
-## Folge Elecalculate
+## Testing & Security
 
-Bleibe auf dem Laufenden und folge Elecalculate auf Social Media:
+This fork includes a **comprehensive Cypress end-to-end test suite** for all calculators and glossary/search features.
+
+- **Functional tests:** `cypress/e2e/functional/`
+- **Security tests:** `cypress/e2e/security/`
+
+For advanced usage, test organization, and custom scripts, see [TESTING.md](./TESTING.md).
+
+---
+
+## Follow Elecalculate
+
+Stay updated by following Elecalculate on Social Media:
 
 <a href="https://www.instagram.com/elecalculate">
-    <img src="https://elecalculate.com/Pictures/instagram-logo.jpg" alt="Folge uns auf Instagram" width="60" height="60">
+    <img src="https://elecalculate.com/Pictures/instagram-logo.jpg" alt="Follow us on Instagram" width="60" height="60">
 </a>
