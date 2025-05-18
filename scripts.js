@@ -1,37 +1,19 @@
 let slideIndex = 1;
-if (document.getElementsByClassName("slide").length > 0) {
-    showSlides(slideIndex);
-}
+showSlides(slideIndex);
 
 function changeSlide(n) {
     showSlides(slideIndex += n);
 }
 
-function escapeHTML(str) {
-    return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-}
-
 function showSlides(n) {
     let slides = document.getElementsByClassName("slide");
-    if (!slides || slides.length === 0) return; // No slides, do nothing
-
     if (n > slides.length) { slideIndex = 1 }
     if (n < 1) { slideIndex = slides.length }
     for (let i = 0; i < slides.length; i++) {
-        if (slides[i] && slides[i].style) {
-            slides[i].style.display = "none";
-        }
+        slides[i].style.display = "none";
     }
-    if (slides[slideIndex - 1] && slides[slideIndex - 1].style) {
-        slides[slideIndex - 1].style.display = "block";
-    }
+    slides[slideIndex - 1].style.display = "block";
 }
-
 
 function toggleMenu() {
     var menu = document.querySelector('.dropdown-menu');
