@@ -8,17 +8,6 @@ describe('Elektrotechnik | Spule.html', () => {
     });
   });
 
-  // Handle the JavaScript error in the page
-  beforeEach(() => {
-    cy.on('uncaught:exception', (err) => {
-      // Return false to prevent Cypress from failing the test when the praseInput error occurs
-      if (err.message.includes('praseInput is not defined')) {
-        return false;
-      }
-    });
-  });
-
-
   it('should calculate Strom I from Phi, N, and L', () => {
     cy.visit(url);
     cy.contains('.dropdown-header', 'Spulen berechnungen').click();
