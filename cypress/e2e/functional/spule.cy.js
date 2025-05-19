@@ -18,8 +18,8 @@ describe('Elektrotechnik | Spule.html', () => {
     });
   });
 
-  // Skip the failing tests for now
-  it.skip('should calculate Strom I from Phi, N, and L', () => {
+
+  it('should calculate Strom I from Phi, N, and L', () => {
     cy.visit(url);
     cy.contains('.dropdown-header', 'Spulen berechnungen').click();
     cy.get('#Phi').clear().type(inputs.strom.Phi);
@@ -46,8 +46,8 @@ describe('Elektrotechnik | Spule.html', () => {
     });
   });
 
-  // Skip the failing tests for now
-  it.skip('should calculate Magnetischer Fluss Phi from L, I, and N', () => {
+
+  it('should calculate Magnetischer Fluss Phi from L, I, and N', () => {
     cy.visit(url);
     cy.contains('.dropdown-header', 'Spulen berechnungen').click();
     cy.get('#L').clear().type(inputs.magnetischerFluss.L);
