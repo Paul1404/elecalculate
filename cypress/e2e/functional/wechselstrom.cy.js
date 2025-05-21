@@ -32,8 +32,28 @@ describe('Elektrotechnik | Wechselstrom.html', () => {
     });
   });
 
-  it.skip('should calculate Rechteck Effektivwert', () => {
-    // Skipped due to JS error in calculate_Rechteck()
+  it('should calculate Rechteck Effektivwert', () => {
+    cy.visit(url);
+
+    cy.contains('.img-button span', 'Rechteck').click();
+
+    // up = 10
+    cy.get('#up-Rechteck').clear().type(inputs.rechteck.up);
+    cy.get('input[onclick="calculate_Rechteck()"]').click();
+
+    cy.get('#result_Rechteck').invoke('text').then(text => {
+      cy.log('Rechteck output:', text);
+      expect(text).to.include(inputs.rechteck.expected);
+    });
+
+    // upp = 20, up left empty, should still get Ueff = 10V
+    cy.get('#up-Rechteck').clear();
+    cy.get('#upp-Rechteck').clear().type(inputs.rechteck.upp);
+    cy.get('input[onclick="calculate_Rechteck()"]').click();
+    cy.get('#result_Rechteck').invoke('text').then(text => {
+      cy.log('Rechteck output (upp):', text);
+      expect(text).to.include(inputs.rechteck.expected);
+    });
   });
 
   it('should calculate Dreieck Effektivwert', () => {
