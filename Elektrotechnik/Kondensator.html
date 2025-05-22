@@ -189,7 +189,7 @@
     </header>
     <div class="wrapper">
         <main>
-            <h1><br>Kondensatoren</h1>
+            <br><h1>Kondensatoren</h1>
             <div class="dropdown-container">
                 <div class="dropdown">      <!--Kondensator-->
                     <div class="dropdown-header" onclick="toggleDropdown(this)">
@@ -377,7 +377,7 @@
 
                             <!-- Zeit t -->
                             <div class="form-row">
-                                <label>Zeit</label>
+                                <label>Zeit t</label>
                                 <input type="text" id="t_RC" style="border-color: var(--Zeit);">
                                 <label>s [sekunden]</label>
                             </div>
@@ -842,18 +842,18 @@
                 = ${formatWithPrefix(parseInput(R) * parseInput(C), "s")}<br>`;
             }            
 
-           if(!isDischarging)       // Laden
-           {
+            if(!isDischarging)       // Laden
+            {
                 if(!I)              // Speisestrom I
                 {
                     if(tau && t && It)
                     {
-                        // I = i(t)/(1-e^(-t/tau))
+                        // I = i(t) / (e ^(-t/tau))
                         result_RC += `
                             Strom I = 
                             <div class ="fraction">
                                 <span>i(t)</span><br>
-                                <div style="border-top: 1px solid white"><span >1 - e<sup>
+                                <div style="border-top: 1px solid white"><span>e<sup>
                                     
                                 -<div class ="fraction">
                                     <span >t </span><br>
@@ -865,7 +865,7 @@
                         = 
                             <div class ="fraction">
                                 <span>${It}A</span><br>
-                                <div style="border-top: 1px solid white"><span >1 - e<sup>
+                                <div style="border-top: 1px solid white"><span >e<sup>
                                     
                                 -<div class ="fraction">
                                     <span >${t}s</span><br>
@@ -875,17 +875,17 @@
                                 </sup></span></div>
                             </div>
 
-                        = ${formatWithPrefix(parseInput(It)/(1 - Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "A")}<br>`;
+                        = ${formatWithPrefix(parseInput(It)/(Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "A")}<br>`;
                     }
 
                     if(R && C && t && It)
                     {
-                        // I = i(t)/(1-e^(-t/tau))
+                        // I = i(t)/(e^(-t/RC))
                         result_RC += `
                             Strom I = 
                             <div class ="fraction">
                                 <span>i(t)</span><br>
-                                <div style="border-top: 1px solid white"><span >1 - e<sup>
+                                <div style="border-top: 1px solid white"><span >e<sup>
                                     
                                 -<div class ="fraction">
                                     <span >t </span><br>
@@ -897,7 +897,7 @@
                         = 
                             <div class ="fraction">
                                 <span>${It}A</span><br>
-                                <div style="border-top: 1px solid white"><span >1 - e<sup>
+                                <div style="border-top: 1px solid white"><span >e<sup>
                                     
                                 -<div class ="fraction">
                                     <span >${t}s</span><br>
@@ -907,7 +907,7 @@
                                 </sup></span></div>
                             </div>
 
-                        = ${formatWithPrefix(parseInput(It)/(1 - Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "A")}<br>`;
+                        = ${formatWithPrefix(parseInput(It)/(Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "A")}<br>`;
                     }
                 }
 
@@ -915,36 +915,36 @@
                 {
                     if(I && t && tau)
                     {
-                        // I * (1- e ^(-t / tau))
+                        // I * (e ^(-t / tau))
                         result_RC += `
-                            Strom i(t) = I &lowast; (1 - e<sup> 
+                            Strom i(t) = I &lowast; (e<sup> 
                             -<div class ="fraction">
                                 <span>t</span><br>
                                 <span class="fraction-denumerator"> &#120649;</span>
                             </div></sup>)
-                        = ${I}A &lowast; (1 - e<sup>
+                        = ${I}A &lowast; (e<sup>
                             -<div class ="fraction">
                                 <span>${t}s</span><br>
                                 <span class="fraction-denumerator">${tau}s</span>
                             </div></sup>)
-                        = ${formatWithPrefix(parseInput(I) * (1 - Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "A")}<br>`;
+                        = ${formatWithPrefix(parseInput(I) * (Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "A")}<br>`;
                     }
 
                     if(I && t && R && C)
                     {
-                        // I * (1- e ^(-t / RC))
+                        // I * (e ^(-t / RC))
                         result_RC += `
-                            Strom i(t) = I &lowast; (1 - e<sup> 
+                            Strom i(t) = I &lowast; (e<sup> 
                             -<div class ="fraction">
                                 <span>t</span><br>
                                 <span class="fraction-denumerator">R &lowast; C</span>
                             </div></sup>)
-                        = ${I}A &lowast; (1 - e<sup>
-                            -<div class ="fraction">
-                                <span>${t}s</span><br>
+                        = ${I}A &lowast; (e<sup>
+                            <div class ="fraction">
+                                <span>- ${t}s</span><br>
                                 <span class="fraction-denumerator">${R} &lowast; ${C}F</span>
                             </div></sup>)
-                        = ${formatWithPrefix(parseInput(I) * (1 - Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "A")}<br>`;
+                        = ${formatWithPrefix(parseInput(I) * (Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "A")}<br>`;
                     }
                 }
 
@@ -952,13 +952,13 @@
                 {
                     if(I && It && t)
                     {
-                        // tau = t/(ln(1 - (i(t)/I))
+                        // tau = -t/(ln((i(t)/I))
 
                         result_RC += `
                             Zeitkonstante &#120649; = 
                             -<div class ="fraction">
                                 <span>t</span><br>
-                                <div style="border-top: 1px solid white"><span >ln(1 -
+                                <div style="border-top: 1px solid white"><span >ln(
                                     
                                 <div class ="fraction">
                                     <span class="fraction-numerator">i(t)</span><br>
@@ -970,7 +970,7 @@
                         = 
                             -<div class ="fraction">
                                 <span>t</span><br>
-                                <div style="border-top: 1px solid white"><span >ln(1 -
+                                <div style="border-top: 1px solid white"><span >ln(
                                     
                                 <div class ="fraction">
                                     <span class="fraction-numerator">${It}A</span><br>
@@ -980,34 +980,34 @@
                                 </span></div>
                             </div>
 
-                        = ${formatWithPrefix(-parseInput(t) / (Math.log(1 - (parseInput(It)/parseInput(I)))), "s")}<br>`;
+                        = ${formatWithPrefix(-parseInput(t) / (Math.log(parseInput(It)/parseInput(I))), "s")}<br>`;
                     }
 
                     if(U && Ut && t)
                     {
-                        // tau = t/(ln(1 - (i(t)/I))
+                        // tau = -t/(ln(1 - (u(t)/U)))
 
                         result_RC += `
                             Zeitkonstante &#120649; = 
-                            -<div class ="fraction">
-                                <span>t</span><br>
-                                <div style="border-top: 1px solid white"><span >ln(1 -
+                            <div class ="fraction">
+                                <span>- t</span><br>
+                                <div style="border-top: 1px solid white"><span >ln(1 - 
                                     
                                 <div class ="fraction">
-                                    <span class="fraction-numerator">u(t)</span><br>
-                                    <span>U</span>
+                                    <span>u(t)</span><br>
+                                    <span class="fraction-denumerator">U</span>
                                 </div>)
                                     
                                 </span></div>
                             </div>
                         = 
-                            -<div class ="fraction">
-                                <span>t</span><br>
+                            <div class ="fraction">
+                                <span>- ${t}s</span><br>
                                 <div style="border-top: 1px solid white"><span >ln(1 -
                                     
                                 <div class ="fraction">
-                                    <span class="fraction-numerator">${Ut}V</span><br>
-                                    <span>${U}V</span>
+                                    <span>${Ut}V</span><br>
+                                    <span class="fraction-denumerator">${U}V</span>
                                 </div>)
                                     
                                 </span></div>
@@ -1016,8 +1016,6 @@
                         = ${formatWithPrefix(-parseInput(t) / (Math.log(1 - (parseInput(Ut)/parseInput(U)))), "s")}<br>`;
                     }
                 }
-
-                //ToDo R & C
 
                 if(!U)              // Speisespannung U
                 {
@@ -1030,9 +1028,9 @@
                                 <span>u(t)</span><br>
                                 <div style="border-top: 1px solid white"><span >1 - e<sup>
                                     
-                                -<div class ="fraction">
-                                    <span >t </span><br>
-                                    <span class="fraction-denumerator"> &#120649;</span>
+                                <div class ="fraction">
+                                    <span class="fraction-numerator">- t</span><br>
+                                    <span> &#120649;</span>
                                 </div>
                                     
                                 </sup></span></div>
@@ -1042,9 +1040,9 @@
                                 <span>${Ut}V</span><br>
                                 <div style="border-top: 1px solid white"><span >1 - e<sup>
                                     
-                                -<div class ="fraction">
-                                    <span >${t}s</span><br>
-                                    <span class="fraction-denumerator">${tau}s</span>
+                                <div class ="fraction">
+                                    <span class="fraction-numerator">- ${t}s</span><br>
+                                    <span>${tau}s</span>
                                 </div>
                                     
                                 </sup></span></div>
@@ -1055,15 +1053,15 @@
 
                     if(R && C && t && Ut)
                     {
-                        // U = u(t)/(1-e^(-t/tau))
+                        // U = u(t)/(1-e^(-t/RC))
                         result_RC += `
                             Spannung U = 
                             <div class ="fraction">
                                 <span>u(t)</span><br>
                                 <div style="border-top: 1px solid white"><span >1 - e<sup>
                                     
-                                -<div class ="fraction">
-                                    <span >t </span><br>
+                                <div class ="fraction">
+                                    <span>- t</span><br>
                                     <span class="fraction-denumerator">R &lowast; C</span>
                                 </div>
                                     
@@ -1074,8 +1072,8 @@
                                 <span>${Ut}V</span><br>
                                 <div style="border-top: 1px solid white"><span >1 - e<sup>
                                     
-                                -<div class ="fraction">
-                                    <span >${t}s</span><br>
+                                <div class ="fraction">
+                                    <span>- ${t}s</span><br>
                                     <span class="fraction-denumerator">${R}&Omega; &lowast; ${C}F</span>
                                 </div>
                                     
@@ -1093,14 +1091,14 @@
                         // u(t) = U * (1- e ^(-t / tau))
                         result_RC += `
                             Spannung u(t) = U &lowast; (1 - e<sup> 
-                            -<div class ="fraction">
-                                <span>t</span><br>
-                                <span class="fraction-denumerator"> &#120649;</span>
+                            <div class ="fraction">
+                                <span class="fraction-numerator">- t</span><br>
+                                <span> &#120649;</span>
                             </div></sup>)
                         = ${U}V &lowast; (1 - e<sup>
-                            -<div class ="fraction">
-                                <span>${t}s</span><br>
-                                <span class="fraction-denumerator">${tau}s</span>
+                            <div class ="fraction">
+                                <span class="fraction-numerator">- ${t}s</span><br>
+                                <span>${tau}s</span>
                             </div></sup>)
                         = ${formatWithPrefix(parseInput(U) * (1 - Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "V")}<br>`;
                     }
@@ -1113,13 +1111,13 @@
                         // u(t) = U * (1- e ^(-t / RC))
                         result_RC += `
                             Spannung u(t) = U &lowast; (1 - e<sup> 
-                            -<div class ="fraction">
-                                <span>t</span><br>
+                            <div class ="fraction">
+                                <span>- t</span><br>
                                 <span class="fraction-denumerator">R &lowast; C</span>
                             </div></sup>)
                         = ${U}V &lowast; (1 - e<sup>
-                            -<div class ="fraction">
-                                <span>${t}s</span><br>
+                            <div class ="fraction">
+                                <span>- ${t}s</span><br>
                                 <span class="fraction-denumerator">${R} &lowast; ${C}F</span>
                             </div></sup>)
                         = ${formatWithPrefix(parseInput(U) * (1 - Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "V")}<br>`;
@@ -1129,78 +1127,431 @@
 
                 if(!t)              // Zeit t
                 {
-                    if(R && C && U && Ut)
-                    {
-                        result_RC += `
-                            Zeit t = - R &lowast; C &lowast; ln(1 - 
-                            <div class ="fraction">
-                                <span class="fraction-numerator">u(t) </span><br>
-                                <span>U</span>
-                            </div>)
-                        = - ${R}&Omega; &lowast; ${C}F &lowast; ln(1 -
-                            <div class ="fraction">
-                                <span class="fraction-numerator">${Ut}V</span><br>
-                                <span>${U}V</span>
-                            </div>)
-                        = ${formatWithPrefix( - parseInput(R) * parseInput(C) * Math.log(1 - (parseInput(Ut)/parseInput(U))), "s")}<br>`;
-                    }
-
                     if(tau && U && Ut)
                     {
+                        // t = - tau * ln(1 - u(t)/U)
                         result_RC += `
-                            Zeit t = - &#120649; &lowast; ln(1 - 
+                            Zeit t = - &#120649; &lowast; ln(1 -
                             <div class ="fraction">
-                                <span class="fraction-numerator">u(t) </span><br>
-                                <span>U</span>
+                                <span>u(t) </span><br>
+                                <span class="fraction-denumerator">U</span>
                             </div>)
                         = - ${tau}s &lowast; ln(1 -
                             <div class ="fraction">
-                                <span class="fraction-numerator">${Ut}V</span><br>
-                                <span>${U}V</span>
+                                <span>${Ut}V</span><br>
+                                <span class="fraction-denumerator">${U}V</span>
                             </div>)
-                        = ${formatWithPrefix( - parseInput(tau) * Math.log(1 - (parseInput(Ut)/parseInput(U))), "s")}<br>`;
+                        = ${formatWithPrefix(- parseInput(tau) * Math.log(1 - (parseInput(Ut)/parseInput(U))), "s")}<br>`;
                     }
 
-
-                    if(R && C && I && It)
+                    if(R && C && U && Ut)
                     {
+                        // t = - RC * ln(1 - u(t)/U)
                         result_RC += `
-                            Zeit t = - R &lowast; C &lowast; ln(1 - 
+                            Zeit t = - R &lowast; C &lowast; ln(1 -
                             <div class ="fraction">
-                                <span class="fraction-numerator">i(t) </span><br>
-                                <span>I</span>
+                                <span>u(t) </span><br>
+                                <span class="fraction-denumerator">U</span>
                             </div>)
                         = - ${R}&Omega; &lowast; ${C}F &lowast; ln(1 -
                             <div class ="fraction">
-                                <span class="fraction-numerator">${It}A</span><br>
-                                <span>${I}A</span>
+                                <span>${Ut}V</span><br>
+                                <span class="fraction-denumerator">${U}V</span>
                             </div>)
-                        = ${formatWithPrefix( - parseInput(R) * parseInput(C) * Math.log(1 - (parseInput(It)/parseInput(I))), "s")}<br>`;
+                        = ${formatWithPrefix(- parseInput(R) * parseInput(C) * Math.log(1 - (parseInput(Ut)/parseInput(U))), "s")}<br>`;
                     }
 
                     if(tau && I && It)
                     {
+                        // t = - tau * ln(i(t)/I)
                         result_RC += `
-                            Zeit t = - &#120649; &lowast; ln(1 - 
+                            Zeit t = - &#120649; &lowast; ln( 
                             <div class ="fraction">
-                                <span class="fraction-numerator">u(t) </span><br>
-                                <span>U</span>
+                                <span class="fraction-numerator">i(t) </span><br>
+                                <span>I</span>
                             </div>)
-                        = - ${tau}s &lowast; ln(1 -
+                        = - ${tau}s &lowast; ln(
                             <div class ="fraction">
-                                <span class="fraction-numerator">${Ut}V</span><br>
-                                <span>${U}V</span>
+                                <span class="fraction-numerator">${It}A</span><br>
+                                <span>${I}A</span>
                             </div>)
-                        = ${formatWithPrefix( - parseInput(tau) * Math.log(1 - (parseInput(It)/parseInput(I))), "s")}<br>`;
+                        = ${formatWithPrefix( - parseInput(tau) * Math.log(parseInput(It)/parseInput(I)), "s")}<br>`;
+                    }
+
+                    if(R && C && I && It)
+                    {
+                        // t = - R * C * ln(i(t)/I)
+                        result_RC += `
+                            Zeit t = - R &lowast; C &lowast; ln( 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">i(t) </span><br>
+                                <span>I</span>
+                            </div>)
+                        = - ${R}&Omega; &lowast; ${C}F &lowast; ln(
+                            <div class ="fraction">
+                                <span class="fraction-numerator">${It}A</span><br>
+                                <span>${I}A</span>
+                            </div>)
+                        = ${formatWithPrefix(-parseInput(R) * parseInput(C) * Math.log(parseInput(It)/parseInput(I)), "s")}<br>`;
+                    }
+                }
+
+            }else                    // entladen
+            {
+                if(!I)              // Speisestrom I
+                {
+                    if(tau && t && It)
+                    {
+                        // I = - i(t) / (e ^(-t/tau))
+                        result_RC += `
+                            Strom I = -
+                            <div class ="fraction">
+                                <span>i(t)</span><br>
+                                <div style="border-top: 1px solid white"><span>e<sup>
+                                    
+                                <div class ="fraction">
+                                    <span class="fraction-numerator">- t </span><br>
+                                    <span> &#120649;</span>
+                                </div>
+                                    
+                                </sup></span></div>
+                            </div>
+                        = -
+                            <div class ="fraction">
+                                <span>${It}A</span><br>
+                                <div style="border-top: 1px solid white"><span >e<sup>
+                                    
+                                -<div class ="fraction">
+                                    <span class="fraction-numerator">- ${t}s</span><br>
+                                    <span>${tau}s</span>
+                                </div>
+                                    
+                                </sup></span></div>
+                            </div>
+
+                        = ${formatWithPrefix(-parseInput(It)/(Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "A")}<br>`;
+                    }
+
+                    if(R && C && t && It)
+                    {
+                        // I = - i(t)/(e^(-t/RC))
+                        result_RC += `
+                            Strom I = -
+                            <div class ="fraction">
+                                <span>i(t)</span><br>
+                                <div style="border-top: 1px solid white"><span >e<sup>
+                                    
+                                <div class ="fraction">
+                                    <span >- t</span><br>
+                                    <span class="fraction-denumerator">R &lowast; C</span>
+                                </div>
+                                    
+                                </sup></span></div>
+                            </div>
+                        = -
+                            <div class ="fraction">
+                                <span>${It}A</span><br>
+                                <div style="border-top: 1px solid white"><span >e<sup>
+                                    
+                                <div class ="fraction">
+                                    <span >- ${t}s</span><br>
+                                    <span class="fraction-denumerator">${R}&Omega; &lowast; ${C}F</span>
+                                </div>
+                                    
+                                </sup></span></div>
+                            </div>
+
+                        = ${formatWithPrefix(-parseInput(It)/(Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "A")}<br>`;
+                    }
+                }
+
+                if(!It)             // Momentanstrom i(t)
+                {
+                    if(I && t && tau)
+                    {
+                        // i(t) = - I * (e ^(-t / tau))
+                        result_RC += `
+                            Strom i(t) = - I &lowast; (e<sup> 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">- t</span><br>
+                                <span> &#120649;</span>
+                            </div></sup>)
+                        = - ${I}A &lowast; (e<sup>
+                            <div class ="fraction">
+                                <span class="fraction-numerator">- ${t}s</span><br>
+                                <span>${tau}s</span>
+                            </div></sup>)
+                        = ${formatWithPrefix(-parseInput(I) * (Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "A")}<br>`;
+                    }
+
+                    if(I && t && R && C)
+                    {
+                        // i(t) = - I * (e ^(-t / RC))
+                        result_RC += `
+                            Strom i(t) = I &lowast; (e<sup> 
+                            <div class ="fraction">
+                                <span>- t</span><br>
+                                <span class="fraction-denumerator">R &lowast; C</span>
+                            </div></sup>)
+                        = ${I}A &lowast; (e<sup>
+                            <div class ="fraction">
+                                <span>- ${t}s</span><br>
+                                <span class="fraction-denumerator">${R} &lowast; ${C}F</span>
+                            </div></sup>)
+                        = ${formatWithPrefix(parseInput(I) * (Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "A")}<br>`;
+                    }
+                }
+
+                if(!tau)
+                {
+                    if(I && It && t)
+                    {
+                        // tau = t/(ln((i(t)/I))
+
+                        result_RC += `
+                            Zeitkonstante &#120649; = 
+                            <div class ="fraction">
+                                <span>t</span><br>
+                                <div style="border-top: 1px solid white"><span >ln(
+                                    
+                                <div class ="fraction">
+                                    <span class="fraction-numerator">i(t)</span><br>
+                                    <span>I</span>
+                                </div>)
+                                    
+                                </span></div>
+                            </div>
+                        = 
+                            <div class ="fraction">
+                                <span>t</span><br>
+                                <div style="border-top: 1px solid white"><span >ln(
+                                    
+                                <div class ="fraction">
+                                    <span class="fraction-numerator">${It}A</span><br>
+                                    <span>${I}A</span>
+                                </div>)
+                                    
+                                </span></div>
+                            </div>
+
+                        = ${formatWithPrefix(parseInput(t) / (Math.log(parseInput(It)/parseInput(I))), "s")}<br>`;
+                    }
+
+                    if(U && Ut && t)
+                    {
+                        // tau = -t/(ln(u(t)/U))
+                        
+
+                        result_RC += `
+                            Zeitkonstante &#120649; = 
+                            <div class ="fraction">
+                                <span>- t</span><br>
+                                <div style="border-top: 1px solid white"><span >ln(
+                                    
+                                <div class ="fraction">
+                                    <span class="fraction-numerator">u(t)</span><br>
+                                    <span>U</span>
+                                </div>)
+                                    
+                                </span></div>
+                            </div>
+                        = 
+                            <div class ="fraction">
+                                <span>- t</span><br>
+                                <div style="border-top: 1px solid white"><span >ln(
+                                    
+                                <div class ="fraction">
+                                    <span class="fraction-numerator">${Ut}V</span><br>
+                                    <span>${U}V</span>
+                                </div>)
+                                    
+                                </span></div>
+                            </div>
+
+                        = ${formatWithPrefix(-parseInput(t) / (Math.log(parseInput(Ut)/parseInput(U))), "s")}<br>`;
+                    }
+                }
+
+                if(!U)              // Speisespannung U
+                {
+                    if(tau && t && Ut)
+                    {
+                        // U = u(t)/(e^(-t/tau))
+                        result_RC += `
+                            Spannung U = 
+                            <div class ="fraction">
+                                <span>u(t)</span><br>
+                                <div style="border-top: 1px solid white"><span >e<sup>
+                                    
+                                <div class ="fraction">
+                                    <span class="fraction-numerator">- t</span><br>
+                                    <span> &#120649;</span>
+                                </div>
+                                    
+                                </sup></span></div>
+                            </div>
+                        = 
+                            <div class ="fraction">
+                                <span>${Ut}V</span><br>
+                                <div style="border-top: 1px solid white"><span >e<sup>
+                                    
+                                <div class ="fraction">
+                                    <span class="fraction-numerator">- ${t}s</span><br>
+                                    <span>${tau}s</span>
+                                </div>
+                                    
+                                </sup></span></div>
+                            </div>
+
+                        = ${formatWithPrefix(parseInput(Ut)/(Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "V")}<br>`;
+                    }
+
+                    if(R && C && t && Ut)
+                    {
+                        // U = u(t)/(e^(-t/RC))
+                        result_RC += `
+                            Spannung U = 
+                            <div class ="fraction">
+                                <span>u(t)</span><br>
+                                <div style="border-top: 1px solid white"><span >e<sup>
+                                    
+                                <div class ="fraction">
+                                    <span >- t</span><br>
+                                    <span class="fraction-denumerator">R &lowast; C</span>
+                                </div>
+                                    
+                                </sup></span></div>
+                            </div>
+                        = 
+                            <div class ="fraction">
+                                <span>${Ut}V</span><br>
+                                <div style="border-top: 1px solid white"><span >e<sup>
+                                    
+                                <div class ="fraction">
+                                    <span>- ${t}s</span><br>
+                                    <span class="fraction-denumerator">${R}&Omega; &lowast; ${C}F</span>
+                                </div>
+                                    
+                                </sup></span></div>
+                            </div>
+
+                        = ${formatWithPrefix(parseInput(Ut)/(Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "V")}<br>`;
+                    }
+                }
+
+                if(!Ut)             // Momentanspannung u(t)
+                {
+                    if(U && t && tau)
+                    {
+                        // u(t) = U * e ^(-t / tau)
+                        result_RC += `
+                            Spannung u(t) = U &lowast; e<sup> 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">- t</span><br>
+                                <span>&#120649;</span>
+                            </div></sup>
+                        = ${U}V &lowast; e<sup>
+                            <div class ="fraction">
+                                <span class="fraction-numerator">- ${t}s</span><br>
+                                <span>${tau}s</span>
+                            </div></sup>
+                        = ${formatWithPrefix(parseInput(U) * (Math.pow(Math.E, -(parseInput(t)/parseInput(tau)))), "V")}<br>`;
+                    }
+
+
+
+
+                    if(U && t && R && C)
+                    {
+                        // u(t) = U * e ^(-t / RC)
+                        result_RC += `
+                            Spannung u(t) = U &lowast; e<sup> 
+                            <div class ="fraction">
+                                <span>- t</span><br>
+                                <span class="fraction-denumerator">R &lowast; C</span>
+                            </div></sup>
+                        = ${U}V &lowast; e<sup>
+                            <div class ="fraction">
+                                <span>- ${t}s</span><br>
+                                <span class="fraction-denumerator">${R} &lowast; ${C}F</span>
+                            </div></sup>
+                        = ${formatWithPrefix(parseInput(U) * (Math.pow(Math.E, -(parseInput(t)/(parseInput(R) * parseInput(C))))), "V")}<br>`;
                     }
                 }
 
 
-           }else                    // entladen
-           {
-            result_RC += `
-                    entladen<br>`;
-           }
+                if(!t)              // Zeit t
+                {
+                    
+                    if(tau && I && It)
+                    {
+                        // t = tau * ln(i(t)/I)
+                        result_RC += `
+                            Zeit t = &#120649; &lowast; ln( 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">i(t) </span><br>
+                                <span>I</span>
+                            </div>)
+                        = ${tau}s &lowast; ln(
+                            <div class ="fraction">
+                                <span class="fraction-numerator">${It}A</span><br>
+                                <span>${I}A</span>
+                            </div>)
+                        = ${formatWithPrefix(parseInput(tau) * Math.log(parseInput(It)/parseInput(I)), "s")}<br>`;
+                    }
+
+                    if(R && C && I && It)
+                    {
+                        // t = R * C * ln(i(t)/I)
+                        result_RC += `
+                            Zeit t = R &lowast; C &lowast; ln( 
+                            <div class ="fraction">
+                                <span class="fraction-numerator">i(t) </span><br>
+                                <span>I</span>
+                            </div>)
+                        = ${R}&Omega; &lowast; ${C}F &lowast; ln(
+                            <div class ="fraction">
+                                <span class="fraction-numerator">${It}A</span><br>
+                                <span>${I}A</span>
+                            </div>)
+                        = ${formatWithPrefix(parseInput(R) * parseInput(C) * Math.log(parseInput(It)/parseInput(I)), "s")}<br>`;
+                    }
+                    
+                    if(tau && U && Ut)
+                    {
+                        // t = tau * ln(u(t)/U)
+                        result_RC += `
+                            Zeit t = - &#120649; &lowast; ln(
+                            <div class ="fraction">
+                                <span class="fraction-numerator">u(t) </span><br>
+                                <span>U</span>
+                            </div>)
+                        = - ${tau}s &lowast; ln(
+                            <div class ="fraction">
+                                <span class="fraction-numerator">${Ut}V</span><br>
+                                <span>${U}V</span>
+                            </div>)
+                        = ${formatWithPrefix(- parseInput(tau) * Math.log((parseInput(Ut)/parseInput(U))), "s")}<br>`;
+                    }
+
+                    if(R && C && U && Ut)
+                    {
+                        // t = R * C * ln(u(t)/U)
+                        result_RC += `
+                            Zeit t = - R &lowast; C &lowast; ln(
+                            <div class ="fraction">
+                                <span class="fraction-numerator">u(t) </span><br>
+                                <span>U</span>
+                            </div>)
+                        = - ${R}&Omega; &lowast; ${C}F &lowast; ln(
+                            <div class ="fraction">
+                                <span class="fraction-numerator">${Ut}V</span><br>
+                                <span>${U}V</span>
+                            </div>)
+                        = ${formatWithPrefix(- parseInput(R) * parseInput(C) * Math.log((parseInput(Ut)/parseInput(U))), "s")}<br>`;
+                    }
+                }
+            }
 
 
             
