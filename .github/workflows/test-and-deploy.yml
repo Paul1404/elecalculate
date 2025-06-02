@@ -23,7 +23,7 @@ jobs:
         run: npm ci
 
       - name: Run tests and generate report
-        run: npm test:functional
+        run: npm run test:functional
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
