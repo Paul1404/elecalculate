@@ -1,6 +1,19 @@
+# Test and Deploy Report Workflow
+#
+# This workflow runs Cypress tests, generates a Mochawesome HTML report,
+# publishes screenshots for every test, and deploys both the report and a
+# browsable screenshot gallery to GitHub Pages.
+#
+# Key Features:
+# - Cleans up old artifacts before each run
+# - Caches npm modules and Cypress binary for faster builds
+# - Publishes screenshots as both downloadable artifacts and a web gallery
+# - Posts summary links to the report and gallery in the Actions UI
+
 name: Test and Deploy Report
 
 on:
+  # Trigger workflow on pushes to the Cypress branch
   push:
     branches:
       - EL-1-cypress
@@ -8,18 +21,23 @@ on:
 jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
+
+    # Set permissions for GitHub Pages deployment
     permissions:
       contents: read
       pages: write
       id-token: write
 
     steps:
+      # Clean up previous test artifacts to ensure a fresh run
       - name: Clean previous artifacts
         run: rm -rf ./cypress/reports/html ./cypress/screenshots ./public
 
+      # Check out the repository code
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Cache npm modules and Cypress binary to speed up builds
       - name: Cache node modules and Cypress binary
         uses: actions/cache@v4
         with:
@@ -28,24 +46,42 @@ jobs:
             ~/.cache/Cypress
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
+      # Set up Node.js (version 22 for compatibility with all dependencies)
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
+      # Install npm dependencies
       - name: Install dependencies
         run: npm ci
 
+      # Run Cypress tests and generate the Mochawesome report
       - name: Run tests and generate report
         run: npm run test:functional
 
+      # Prepare the HTML report and screenshots for deployment
       - name: Prepare report and screenshots for Pages
         run: |
           mkdir -p ./public
           cp -r ./cypress/reports/html/* ./public/
+          # Rename report.html to index.html for default landing page
           if [ -f ./public/report.html ]; then mv ./public/report.html ./public/index.html; fi
+          # Copy screenshots if they exist
           if [ -d ./cypress/screenshots ]; then cp -r ./cypress/screenshots ./public/; fi
 
+      # Generate a simple HTML gallery for all screenshots
+      - name: Generate screenshot gallery
+        run: |
+          if [ -d ./public/screenshots ]; then
+            echo "<h1>Cypress Screenshot Gallery</h1>" > ./public/screenshots/index.html
+            find ./public/screenshots -type f -name '*.png' | sort | while read img; do
+              relpath=${img#./public/}
+              echo "<div><img src=\"/${relpath}\" style=\"max-width:600px;\"><br>${relpath}</div><hr>" >> ./public/screenshots/index.html
+            done
+          fi
+
+      # Upload screenshots as a downloadable artifact in the Actions UI
       - name: Upload Cypress screenshots as artifact
         uses: actions/upload-artifact@v4
         with:
@@ -53,14 +89,31 @@ jobs:
           path: cypress/screenshots
           if-no-files-found: ignore
 
+      # Set up GitHub Pages for deployment
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      # Upload the prepared public directory as a Pages artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './public'
 
+      # Deploy the artifact to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      # Post a summary in the Actions UI with direct links to the report and gallery
+      - name: Post summary with report and gallery links
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = `https://paul1404.github.io/elecalculate/`;
+            const gallery = `https://paul1404.github.io/elecalculate/screenshots/index.html`;
+            core.summary
+              .addHeading('Test Report')
+              .addLink('View HTML Report', url)
+              .addLink('Screenshot Gallery', gallery)
+              .write();
