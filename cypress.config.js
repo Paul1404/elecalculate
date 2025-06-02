@@ -9,7 +9,7 @@ module.exports = defineConfig({
     supportFile: 'cypress/support/e2e.js',
 
     // Base URL for the application under test
-    baseUrl: 'http://localhost:80',
+    baseUrl: 'http://localhost:8080',
 
     // Use Mochawesome reporter to generate JSON results
     reporter: 'mochawesome',

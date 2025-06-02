@@ -7,12 +7,12 @@
     "start-server-and-test": "^2.0.12"
   },
     "scripts": {
-      "serve": "python3 -m http.server 80",
+      "serve": "python3 -m http.server 8080",
       "cy:clean": "rm -rf cypress/results/* cypress/screenshots/* || true",
-      "cy:run": "start-server-and-test serve http://localhost:80 'cypress run --reporter mochawesome'",
-      "cy:run:functional": "start-server-and-test serve http://localhost:80 'cypress run --reporter mochawesome --spec \"cypress/e2e/functional/*.cy.js\"'",
-      "cy:run:security": "start-server-and-test serve http://localhost:80 'cypress run --reporter mochawesome --spec \"cypress/e2e/security/*.cy.js\"'",
-      "cy:open": "start-server-and-test serve http://localhost:80 'cypress open --e2e --browser=chromium'",
+      "cy:run": "start-server-and-test serve http://localhost:8080 'cypress run --reporter mochawesome'",
+      "cy:run:functional": "start-server-and-test serve http://localhost:8080 'cypress run --reporter mochawesome --spec \"cypress/e2e/functional/*.cy.js\"'",
+      "cy:run:security": "start-server-and-test serve http://localhost:8080 'cypress run --reporter mochawesome --spec \"cypress/e2e/security/*.cy.js\"'",
+      "cy:open": "start-server-and-test serve http://localhost:8080 'cypress open --e2e --browser=chromium'",
       "cy:merge": "find cypress/results -name \"mochawesome_*.json\" | xargs mochawesome-merge > cypress/results/mochawesome.json",
       "cy:report": "marge cypress/results/mochawesome.json -f report -o cypress/reports/html",
       "test": "npm run cy:clean && npm run cy:run && npm run cy:merge && npm run cy:report",
