@@ -14,8 +14,19 @@ jobs:
       id-token: write
 
     steps:
+      - name: Clean previous artifacts
+        run: rm -rf ./cypress/reports/html ./cypress/screenshots ./public
+
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Cache node modules and Cypress binary
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            ~/.cache/Cypress
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -28,12 +39,19 @@ jobs:
       - name: Run tests and generate report
         run: npm run test:functional
 
-      - name: Prepare report for Pages
+      - name: Prepare report and screenshots for Pages
         run: |
           mkdir -p ./public
           cp -r ./cypress/reports/html/* ./public/
-          # Rename report.html to index.html for default landing page
           if [ -f ./public/report.html ]; then mv ./public/report.html ./public/index.html; fi
+          if [ -d ./cypress/screenshots ]; then cp -r ./cypress/screenshots ./public/; fi
+
+      - name: Upload Cypress screenshots as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
