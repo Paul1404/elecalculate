@@ -5,7 +5,10 @@ afterEach(function () {
 });
 
 Cypress.on('test:after:run', (test, runnable) => {
-  // Attach screenshot for every test
-  const screenshot = `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/${test.title}.png`;
-  addContext({ test }, screenshot);
-});
+    // The screenshot name must match what you use in cy.screenshot()
+    const screenshotFileName = `${test.title}.png`;
+    const specFileName = Cypress.spec.name;
+    // This is the path relative to the HTML report in /public
+    const relativePath = `screenshots/${specFileName}/${screenshotFileName}`;
+    addContext({ test }, relativePath);
+  });
