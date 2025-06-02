@@ -3,7 +3,7 @@ name: Test and Deploy Report
 on:
   push:
     branches:
-      - cypress
+      - EL-1-cypress
 
 jobs:
   test-and-deploy:
