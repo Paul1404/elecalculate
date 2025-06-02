@@ -77,7 +77,7 @@ jobs:
             echo "<h1>Cypress Screenshot Gallery</h1>" > ./public/screenshots/index.html
             find ./public/screenshots -type f -name '*.png' | sort | while read img; do
               relpath=${img#./public/}
-              echo "<div><img src=\"/${relpath}\" style=\"max-width:600px;\"><br>${relpath}</div><hr>" >> ./public/screenshots/index.html
+              echo "<div><img src=\"/${relpath}\" style=\"max-width:600px;\"><br>/${relpath}</div><hr>" >> ./public/screenshots/index.html
             done
           fi
 
