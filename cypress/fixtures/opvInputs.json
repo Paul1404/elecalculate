@@ -1,0 +1,16 @@
+{
+    "invertierender": {
+        "R1": "10k",
+        "R2": "100k",
+        "Uin": "1",
+        "Uout": "-10",
+        "V": "10"
+    },
+    "nicht_invertierender": {
+        "R1": "10k",
+        "R2": "100k",
+        "Uin": "2",
+        "Uout": "22",
+        "V": "11"
+    }
+}
