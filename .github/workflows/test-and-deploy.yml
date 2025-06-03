@@ -8,7 +8,8 @@
 # - Cleans up old artifacts before each run
 # - Caches npm modules and Cypress binary for faster builds
 # - Publishes screenshots as both downloadable artifacts and a web gallery
-# - Posts summary links to the report and gallery in the Actions UI
+# - Uploads Cypress run log for easier debugging
+# - Fails fast and checks for report existence to catch silent errors
 
 name: Test and Deploy Report
 
@@ -57,18 +58,40 @@ jobs:
         run: npm ci
 
       # Run Cypress tests and generate the Mochawesome report
+      # Save the output to a log file for easier debugging if something fails
       - name: Run tests and generate report
-        run: npm run test:functional
+        run: npm run test:functional | tee cypress-run.log
+
+      # Upload Cypress run log as an artifact for post-mortem debugging
+      - name: Upload Cypress run log
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-run-log
+          path: cypress-run.log
+          if-no-files-found: ignore
 
       # Prepare the HTML report and screenshots for deployment
+      # Defensive scripting: check for existence before copying/moving
       - name: Prepare report and screenshots for Pages
         run: |
+          set -euo pipefail
           mkdir -p ./public
-          cp -r ./cypress/reports/html/* ./public/
+          # Copy HTML report if it exists
+          if [ -d ./cypress/reports/html ]; then
+            cp -r ./cypress/reports/html/* ./public/
+          fi
           # Rename report.html to index.html for default landing page
           if [ -f ./public/report.html ]; then mv ./public/report.html ./public/index.html; fi
           # Copy screenshots if they exist
           if [ -d ./cypress/screenshots ]; then cp -r ./cypress/screenshots ./public/; fi
+
+      # Check for report existence and fail early if missing
+      - name: Check for report
+        run: |
+          if [ ! -f ./public/index.html ]; then
+            echo "❌ Report not found! Test run may have failed."
+            exit 1
+          fi
 
       # Generate a simple HTML gallery for all screenshots
       - name: Generate improved screenshot gallery with search
