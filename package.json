@@ -14,7 +14,7 @@
     "cy:run:functional": "start-server-and-test serve http://localhost:8080 'cypress run --spec \"cypress/e2e/functional/*.cy.js\"'",
     "cy:run:security": "start-server-and-test serve http://localhost:8080 'cypress run --spec \"cypress/e2e/security/*.cy.js\"'",
     "cy:open": "start-server-and-test serve http://localhost:8080 'cypress open --e2e --browser=chromium'",
-    "cy:merge": "find cypress/results -name \"mochawesome_*.json\" | xargs mochawesome-merge > cypress/results/mochawesome.json",
+    "cy:merge": "find cypress/results/.jsons -name \"mochawesome_*.json\" | xargs mochawesome-merge > cypress/results/mochawesome.json",
     "cy:report": "marge cypress/results/mochawesome.json -f index -o cypress/results",
     "test": "npm run cy:clean && npm run cy:run && npm run cy:merge && npm run cy:report",
     "test:functional": "npm run cy:clean && npm run cy:run:functional && npm run cy:merge && npm run cy:report",

@@ -62,6 +62,9 @@ jobs:
       - name: Run tests and generate report
         run: npm run test:functional | tee cypress-run.log
 
+      - name: List mochawesome JSONs
+        run: ls -l cypress/results/.jsons/
+
       # Upload Cypress run log as an artifact for post-mortem debugging
       - name: Upload Cypress run log
         uses: actions/upload-artifact@v4
