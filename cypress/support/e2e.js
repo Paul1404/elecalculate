@@ -1,10 +1,14 @@
+// cypress/support/e2e.js
+
+import 'cypress-mochawesome-reporter/register';
+
 /**
  * Universal afterEach hook for Cypress E2E tests.
  * - Takes a screenshot after every test (named after the test title)
  * - Collects all input values and result fields from the page
  * - Formats the log for readability and attaches it to the Mochawesome report
  * - Includes the test title and page URL for full context
- * - Uses cy.then() to ensure addContext runs with the correct test context
+ * - Uses cy.then() to ensure cy.addContext runs with the correct test context
  */
 afterEach(function () {
   const testContext = this; // Capture the correct test context
@@ -40,34 +44,10 @@ afterEach(function () {
     // Only log if there is something to log
     if (logText.trim()) {
       cy.log(logText); // Log to Cypress output
-      // Use cy.then to ensure addContext runs after Cypress commands and with the correct test context
+      // Use cy.then to ensure cy.addContext runs after Cypress commands and with the correct test context
       cy.then(() => {
-        addContext({ test: testContext }, logText);
+        cy.addContext(logText); // Provided by cypress-mochawesome-reporter
       });
     }
   });
-});
-
-// Attach screenshot to Mochawesome report for every test
-Cypress.on('test:after:run', (test, runnable) => {
-  const screenshotFileName = `${test.title}.png`;
-  const specFileName = Cypress.spec.name;
-  const relativePath = `screenshots/${specFileName}/${screenshotFileName}`;
-  addContext({ test }, relativePath);
-
-  // If the test failed, also attach the error message
-  if (test.state === 'failed' && test.err && test.err.message) {
-    addContext({ test }, `Error: ${test.err.message}`);
-  }
-});
-
-// Log uncaught exceptions and failed commands for easier debugging
-Cypress.on('uncaught:exception', (err, runnable) => {
-  addContext({ test: runnable }, `Uncaught Exception: ${err.message}`);
-  return false; // Prevent Cypress from failing the test on known errors
-});
-
-Cypress.on('fail', (error, runnable) => {
-  addContext({ test: runnable }, `Cypress Command Failed: ${error.message}`);
-  throw error; // Let the test fail as usual
 });
