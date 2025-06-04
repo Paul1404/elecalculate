@@ -1,8 +1,9 @@
+// cypress.config.js
 const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
   e2e: {
-    // Pattern to find test files - updated to include subdirectories
+    // Pattern to find test files, including subdirectories
     specPattern: 'cypress/e2e/**/*.cy.{js,ts}',
 
     // Path to support file with custom commands and global behavior
@@ -11,8 +12,8 @@ module.exports = defineConfig({
     // Base URL for the application under test
     baseUrl: 'http://localhost:8080',
 
-    // Use Mochawesome reporter for HTML/JSON reports
-    reporter: 'mochawesome',
+    // Use cypress-mochawesome-reporter for advanced context/logging
+    reporter: 'cypress-mochawesome-reporter',
     reporterOptions: {
       reportDir: 'cypress/results',  // Directory to save individual JSON reports
       overwrite: false,              // Don't overwrite previous reports
@@ -30,9 +31,9 @@ module.exports = defineConfig({
     viewportWidth: 1280,
     viewportHeight: 720,
 
-    // Register plugins (including addContext for Mochawesome)
+    // Register the cypress-mochawesome-reporter plugin
     setupNodeEvents(on, config) {
-      require('./cypress/plugins/index.js')(on, config);
+      require('cypress-mochawesome-reporter/plugin')(on);
     }
   },
 });
