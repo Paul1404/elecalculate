@@ -1,8 +1,47 @@
 import addContext from 'mochawesome/addContext';
 
-// Take a screenshot after every test
+/**
+ * Universal afterEach hook for Cypress E2E tests.
+ * - Takes a screenshot after every test (named after the test title)
+ * - Collects all input values and result fields from the page
+ * - Formats the log for readability and attaches it to the Mochawesome report
+ * - Includes the test title and page URL for full context
+ */
 afterEach(function () {
+  // Always take a screenshot after each test for visual reporting
   cy.screenshot(this.currentTest.title, { capture: 'runner' });
+
+  // Collect and log all relevant input and result data for the test
+  cy.document().then((doc) => {
+    // Get the current test title and page URL for context
+    const testTitle = this.currentTest.title;
+    const pageUrl = doc.location.pathname;
+
+    // Gather all text and number input values on the page
+    const inputs = Array.from(doc.querySelectorAll('input[type="text"], input[type="number"]'))
+      .map(input => `  - ${input.id || input.name}: ${input.value}`)
+      .join('\n');
+
+    // Gather all result fields (elements with IDs starting with 'result_')
+    const results = Array.from(doc.querySelectorAll('[id^="result_"]'))
+      .map(result => `  - ${result.id}: ${result.innerText}`)
+      .join('\n');
+
+    // Build a readable, Markdown-formatted log for the report
+    let logText = `#### Test: ${testTitle}\n#### Page: ${pageUrl}\n`;
+    if (inputs) {
+      logText += `**Inputs:**\n${inputs}\n`;
+    }
+    if (results) {
+      logText += `**Results:**\n${results}`;
+    }
+
+    // Only log if there is something to log
+    if (logText.trim()) {
+      cy.log(logText); // Log to Cypress output
+      addContext({ test: this }, logText); // Attach to Mochawesome report
+    }
+  });
 });
 
 // Attach screenshot to Mochawesome report for every test
@@ -20,16 +59,11 @@ Cypress.on('test:after:run', (test, runnable) => {
 
 // Log uncaught exceptions and failed commands for easier debugging
 Cypress.on('uncaught:exception', (err, runnable) => {
-  // This will show up in the Cypress terminal output and in the report logs
-  // Add Context here to attach it to the report
   addContext({ test: runnable }, `Uncaught Exception: ${err.message}`);
-  // Returning false here prevents Cypress from failing the test on known errors
-  return false;
+  return false; // Prevent Cypress from failing the test on known errors
 });
 
 Cypress.on('fail', (error, runnable) => {
-  // This will show up in the Cypress terminal output
-  // Also add Context here to attach it to the report
   addContext({ test: runnable }, `Cypress Command Failed: ${error.message}`);
   throw error; // Let the test fail as usual
 });
