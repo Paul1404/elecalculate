@@ -1,14 +1,10 @@
-// cypress/support/e2e.js
-
-import 'cypress-mochawesome-reporter/register';
-
 /**
  * Universal afterEach hook for Cypress E2E tests.
  * - Takes a screenshot after every test (named after the test title)
  * - Collects all input values and result fields from the page
  * - Formats the log for readability and attaches it to the Mochawesome report
  * - Includes the test title and page URL for full context
- * - Uses cy.then() to ensure cy.addContext runs with the correct test context
+ * - Stores the log on the test context for the plugin to pick up
  */
 afterEach(function () {
   const testContext = this; // Capture the correct test context
@@ -44,9 +40,9 @@ afterEach(function () {
     // Only log if there is something to log
     if (logText.trim()) {
       cy.log(logText); // Log to Cypress output
-      // Use cy.then to ensure cy.addContext runs after Cypress commands and with the correct test context
-      cy.then(() => {
-        cy.addContext(logText); // Provided by cypress-mochawesome-reporter
+      // Store the log on the test context for the plugin to pick up
+      cy.then(function () {
+        this.currentTest.ctx._mochawesomeContext = logText;
       });
     }
   });

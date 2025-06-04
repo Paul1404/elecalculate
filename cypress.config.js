@@ -11,8 +11,8 @@ module.exports = defineConfig({
     // Base URL for the application under test
     baseUrl: 'http://localhost:8080',
 
-    // Use cypress-mochawesome-reporter for advanced context/logging
-    reporter: 'cypress-mochawesome-reporter',
+    // Use Mochawesome reporter for HTML/JSON reports
+    reporter: 'mochawesome',
     reporterOptions: {
       reportDir: 'cypress/results',  // Directory to save individual JSON reports
       overwrite: false,              // Don't overwrite previous reports
@@ -30,9 +30,9 @@ module.exports = defineConfig({
     viewportWidth: 1280,
     viewportHeight: 720,
 
-    // Add the plugin for cypress-mochawesome-reporter
+    // Register plugins (including addContext for Mochawesome)
     setupNodeEvents(on, config) {
-      require('cypress-mochawesome-reporter/plugin')(on);
+      require('./cypress/plugins/index.js')(on, config);
     }
   },
 });
