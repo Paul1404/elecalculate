@@ -12,20 +12,20 @@ module.exports = defineConfig({
     // Base URL for the application under test
     baseUrl: 'http://localhost:8080',
 
+    // Turn on Videos + Compress them
+    video: true,
+    videoCompression: true,
+
     // Use cypress-mochawesome-reporter for advanced context/logging
     reporter: 'cypress-mochawesome-reporter',
     reporterOptions: {
       reportDir: 'cypress/results',  // Directory to save individual JSON reports
+      charts: true,
+      saveAllAttempts: false,
       overwrite: false,              // Don't overwrite previous reports
       html: false,                   // Don't generate HTML for individual specs
       json: true                     // Generate JSON for each spec file
     },
-
-    // Take screenshots when tests fail
-    screenshotOnRunFailure: true,
-
-    // Don't record videos to save space and speed up tests
-    video: false,
 
     // Set viewport size for consistent test environment
     viewportWidth: 1280,
