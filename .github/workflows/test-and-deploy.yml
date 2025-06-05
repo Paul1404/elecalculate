@@ -62,12 +62,6 @@ jobs:
       - name: Run tests and generate report
         run: npm run test:functional | tee cypress-run.log
 
-      - name: Find mochawesome JSONs
-        run: find cypress/results -name "mochawesome_*.json"
-
-      - name: List mochawesome JSONs
-        run: ls -l cypress/results/
-
       # Upload Cypress run log as an artifact for post-mortem debugging
       - name: Upload Cypress run log
         uses: actions/upload-artifact@v4
@@ -76,22 +70,15 @@ jobs:
           path: cypress-run.log
           if-no-files-found: ignore
 
-      # Prepare the HTML report and screenshots for deployment
-      # Defensive scripting: check for existence before copying/moving
+
       - name: Prepare report and screenshots for Pages
         run: |
           set -euo pipefail
           mkdir -p ./public
-          # Copy HTML report if it exists
-          if [ -d ./cypress/reports/html ]; then
-            cp -r ./cypress/reports/html/* ./public/
-          fi
-          # Rename report.html to index.html for default landing page
-          if [ -f ./public/report.html ]; then mv ./public/report.html ./public/index.html; fi
-          # Copy screenshots if they exist
-          if [ -d ./cypress/screenshots ]; then cp -r ./cypress/screenshots ./public/; fi
+          cp -r ./cypress/results/* ./public/
 
-      # Check for report existence and fail early if missing
+
+      # Defensive scripting: check for existence before copying/moving
       - name: Check for report
         run: |
           if [ ! -f ./public/index.html ]; then
