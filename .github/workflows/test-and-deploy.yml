@@ -63,7 +63,7 @@ jobs:
         run: npm run test:functional | tee cypress-run.log
 
       - name: List mochawesome JSONs
-        run: ls -l cypress/results/.jsons/
+        run: find cypress/results -name "mochawesome_*.json"
 
       # Upload Cypress run log as an artifact for post-mortem debugging
       - name: Upload Cypress run log
