@@ -16,10 +16,5 @@
         "J": "1",
         "expected1": "112.838μm",
         "expected2": "10000.00 μm2"
-    },
-    "xssPayloads": [
-        "<img src=x onerror=alert(1)>",
-        "<svg/onload=alert(1)>",
-        "<script>alert(1)</script>"
-    ]
+    }
 }

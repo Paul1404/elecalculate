@@ -14,10 +14,5 @@
     "resetDefaults": {
         "radiusUnit": "0.01",
         "areaUnit": "0.0001"
-    },
-    "xssPayloads": [
-        "<img src=x onerror=alert(1)>",
-        "<svg/onload=alert(1)>",
-        "<script>alert(1)</script>"
-    ]
+    }
 }

@@ -18,10 +18,5 @@
         "R_RC": "1000",
         "C_RC": "0.001",
         "expected": "1.000s"
-    },
-    "xssPayloads": [
-        "<img src=x onerror=alert(1)>",
-        "<svg/onload=alert(1)>",
-        "<script>alert(1)</script>"
-    ]
+    }
 }

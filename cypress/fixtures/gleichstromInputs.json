@@ -37,10 +37,5 @@
       "expected": {
           "Rges": "66.667Ω"
       }
-  },
-  "xssPayloads": [
-      "<img src=x onerror=alert(1)>",
-      "<svg/onload=alert(1)>",
-      "<script>alert(1)</script>"
-  ]
+  }
 }
