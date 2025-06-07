@@ -6,49 +6,130 @@ import 'cypress-mochawesome-reporter/register';
 /**
  * Universal afterEach hook for Cypress E2E tests.
  * - Takes a screenshot after every test (named after the test title)
- * - Collects all input values and result fields from the page
- * - Formats the log for readability and attaches it to the Mochawesome report
- * - Includes the test title and page URL for full context
- * - Uses cy.then() to ensure cy.addTestContext runs with the correct test context
+ * - Loads fixture based on test file name + 'Inputs.json'
+ * - Collects input/output values based on fixture data
+ * - Logs everything in plain text format
  */
 afterEach(function () {
-  const testContext = this; // Capture the correct test context
+  const testContext = this;
 
   // Always take a screenshot after each test for visual reporting
   cy.screenshot(testContext.currentTest.title, { capture: 'runner' });
 
-  // Collect and log all relevant input and result data for the test
-  cy.document().then((doc) => {
-    // Get the current test title and page URL for context
-    const testTitle = testContext.currentTest.title;
-    const pageUrl = doc.location.pathname;
+  // Safely get the test file name with null checks
+  const testFile = testContext.currentTest?.file || testContext.currentTest?.parent?.file;
 
-    // Gather all text and number input values on the page
-    const inputs = Array.from(doc.querySelectorAll('input[type="text"], input[type="number"]'))
-      .map(input => `  - ${input.id || input.name}: ${input.value}`)
-      .join('\n');
+  // Debug logging to see what's available
+  console.log('Test context:', {
+    file: testContext.currentTest?.file,
+    title: testContext.currentTest?.title,
+    parent: testContext.currentTest?.parent?.title,
+    fullTitle: testContext.currentTest?.fullTitle?.(),
+    ctx: Object.keys(testContext.currentTest || {})
+  });
 
-    // Gather all result fields (elements with IDs starting with 'result_')
-    const results = Array.from(doc.querySelectorAll('[id^="result_"]'))
-      .map(result => `  - ${result.id}: ${result.innerText}`)
-      .join('\n');
+  if (!testFile) {
+    cy.log('No test file information available, skipping fixture-based logging');
+    return;
+  }
 
-    // Build a readable, Markdown-formatted log for the report
-    let logText = `#### Test: ${testTitle}\n#### Page: ${pageUrl}\n`;
-    if (inputs) {
-      logText += `**Inputs:**\n${inputs}\n`;
-    }
-    if (results) {
-      logText += `**Results:**\n${results}`;
-    }
+  // Get the test file name (without .cy.js extension)
+  const testFileName = testFile
+    .split('/')
+    .pop()
+    .replace('.cy.js', '');
 
-    // Only log if there is something to log
-    if (logText.trim()) {
-      cy.log(logText); // Log to Cypress output
-      // Use cy.then to ensure cy.addTestContext runs after Cypress commands and with the correct test context
-      cy.then(() => {
-        cy.addTestContext(logText); // Provided by cypress-mochawesome-reporter
-      });
-    }
+  const fixtureFileName = `${testFileName}Inputs`;
+
+  // Load the corresponding fixture file
+  cy.fixture(fixtureFileName).then((testData) => {
+    cy.document().then((doc) => {
+      const testTitle = testContext.currentTest.title;
+      const pageUrl = doc.location.pathname;
+
+      // Find matching test data in the fixture
+      const relevantTestData = findTestDataForCurrentTest(testData, testTitle);
+
+      if (relevantTestData) {
+        const { inputs, expected } = relevantTestData;
+
+        // Collect actual input values
+        const actualInputs = Object.keys(inputs).map(key => {
+          const element = doc.getElementById(key) || doc.querySelector(`[name="${key}"]`);
+          const value = element ? element.value : '[not found]';
+          return `${key}: ${value}`;
+        });
+
+        // Collect actual result values
+        const actualResults = Object.keys(expected).map(key => {
+          const element = doc.getElementById(`result_${key}`) ||
+                         doc.getElementById(key) ||
+                         doc.querySelector(`[data-result="${key}"]`);
+          const value = element ? element.innerText : '[not found]';
+          return `${key}: ${value}`;
+        });
+
+        // Build plain text log
+        let logText = `Test: ${testTitle}\n`;
+        logText += `Page: ${pageUrl}\n`;
+        logText += `Fixture: ${fixtureFileName}.json\n\n`;
+
+        if (actualInputs.length > 0) {
+          logText += `Inputs:\n${actualInputs.map(line => `  ${line}`).join('\n')}\n\n`;
+        }
+
+        if (actualResults.length > 0) {
+          logText += `Results:\n${actualResults.map(line => `  ${line}`).join('\n')}\n\n`;
+        }
+
+        logText += `Expected:\n${Object.entries(expected)
+          .map(([key, value]) => `  ${key}: ${value}`)
+          .join('\n')}`;
+
+        cy.log(logText);
+        cy.then(() => {
+          cy.addTestContext(logText);
+        });
+      }
+    });
+  }).catch((error) => {
+    // Fixture file doesn't exist or other error, skip logging
+    cy.log(`Could not load fixture: ${fixtureFileName}.json - ${error.message}`);
   });
 });
+
+/**
+ * Find test data that matches the current test
+ * @param {Object} testData - The fixture data
+ * @param {string} testTitle - Current test title
+ * @returns {Object|null} - Matching test data or null
+ */
+function findTestDataForCurrentTest(testData, testTitle) {
+  // Try exact match first
+  if (testData[testTitle]) {
+    return separateInputsAndExpected(testData[testTitle]);
+  }
+
+  // Try to find by partial match (case insensitive)
+  const normalizedTitle = testTitle.toLowerCase().replace(/\s+/g, '');
+
+  for (const [key, data] of Object.entries(testData)) {
+    const normalizedKey = key.toLowerCase().replace(/\s+/g, '');
+    if (normalizedKey.includes(normalizedTitle) ||
+        normalizedTitle.includes(normalizedKey)) {
+      return separateInputsAndExpected(data);
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Separate inputs from expected results
+ * @param {Object} data - Test data object
+ * @returns {Object} - Object with inputs and expected properties
+ */
+function separateInputsAndExpected(data) {
+  const { expected, ...inputs } = data;
+  return { inputs, expected: expected || {} };
+}
