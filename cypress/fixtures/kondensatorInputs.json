@@ -1,22 +1,33 @@
 {
-    "kapazitaet": {
-        "Q": "0.001",
-        "U": "5",
-        "expected": "200.000μF"
-    },
-    "spannung": {
-        "E": "1000",
-        "s": "0.01",
-        "expected": "10.000V"
-    },
-    "energie": {
-        "C": "0.001",
-        "U": "10",
-        "expected": "50.000mJ"
-    },
-    "zeitkonstante": {
-        "R_RC": "1000",
-        "C_RC": "0.001",
-        "expected": "1.000s"
-    }
+  "kapazitaet": {
+    "Q": "0.001",
+    "U": "5",
+    "expected": "200.000μF"
+  },
+  "spannung": {
+    "E": "1000",
+    "s": "0.01",
+    "expected": "10.000V"
+  },
+  "energie": {
+    "C": "0.001",
+    "U": "10",
+    "expected": "50.000mJ"
+  },
+  "zeitkonstante": {
+    "R_RC": "1000",
+    "C_RC": "0.001",
+    "expected": "1.000s"
+  },
+  "ac_serie": {
+    "R_AC": "100",
+    "Xc_AC": "200",
+    "C_AC": "10u",
+    "expected": "223.607Ω"
+  },
+  "ac_parallel": {
+    "G_ACp": "0.01",
+    "C_ACp": "10u",
+    "expected": "Wirkleitwert G"
+  }
 }

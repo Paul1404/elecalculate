@@ -55,4 +55,22 @@ describe('Elektrotechnik | Kondensator.html', () => {
       expect(text).to.include(inputs.zeitkonstante.expected);
     });
   });
+
+  it('should calculate Serie AC values', () => {
+    cy.visit(url);
+    cy.contains('.dropdown-header', 'Kondensator an Wechselstrom').click();
+    cy.get('button.img-button span').contains('Serie').click();
+    cy.get('#R_AC').clear().type(inputs.ac_serie.R_AC);
+    cy.get('#Xc_AC').clear().type(inputs.ac_serie.Xc_AC);
+    cy.get('#C_AC').clear().type(inputs.ac_serie.C_AC);
+    cy.get('input[onclick="calculateSerieAC()"]').click();
+    cy.get('#result_Serie_AC').invoke('text').then(text => {
+      cy.log('Serie AC output:', text);
+      expect(text).to.include(inputs.ac_serie.expected);
+    });
+  });
+
+  it('should calculate Parallel AC values (not yet implemented)', function () {
+    this.skip();
+  });
 });
