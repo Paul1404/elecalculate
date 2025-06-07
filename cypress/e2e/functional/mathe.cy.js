@@ -3,7 +3,7 @@ describe('Mathe.html Kreisberechnung', () => {
   let inputs;
 
   before(() => {
-    cy.fixture('kreisberechnungInputs').then((data) => {
+    cy.fixture('matheInputs').then((data) => {
       inputs = data;
     });
   });
