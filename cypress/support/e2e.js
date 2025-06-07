@@ -16,8 +16,25 @@ afterEach(function () {
   // Always take a screenshot after each test for visual reporting
   cy.screenshot(testContext.currentTest.title, { capture: 'runner' });
 
+  // Safely get the test file name with null checks
+  const testFile = testContext.currentTest?.file || testContext.currentTest?.parent?.file;
+
+  // Debug logging to see what's available
+  console.log('Test context:', {
+    file: testContext.currentTest?.file,
+    title: testContext.currentTest?.title,
+    parent: testContext.currentTest?.parent?.title,
+    fullTitle: testContext.currentTest?.fullTitle?.(),
+    ctx: Object.keys(testContext.currentTest || {})
+  });
+
+  if (!testFile) {
+    cy.log('No test file information available, skipping fixture-based logging');
+    return;
+  }
+
   // Get the test file name (without .cy.js extension)
-  const testFileName = testContext.currentTest.file
+  const testFileName = testFile
     .split('/')
     .pop()
     .replace('.cy.js', '');
@@ -75,9 +92,9 @@ afterEach(function () {
         });
       }
     });
-  }).catch(() => {
-    // Fixture file doesn't exist, skip logging
-    cy.log(`No fixture found: ${fixtureFileName}.json`);
+  }).catch((error) => {
+    // Fixture file doesn't exist or other error, skip logging
+    cy.log(`Could not load fixture: ${fixtureFileName}.json - ${error.message}`);
   });
 });
 
