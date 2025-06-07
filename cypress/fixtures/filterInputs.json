@@ -24,10 +24,5 @@
     "tiefpassRL_XL": "62.832Ω",
     "hochpassRC_fg": "159.155Hz",
     "tiefpassRC_fg": "159.155Hz"
-  },
-  "xssPayloads": [
-    "<img src=x onerror=alert(1)>",
-    "<svg/onload=alert(1)>",
-    "<script>alert(1)</script>"
-  ]
+  }
 }

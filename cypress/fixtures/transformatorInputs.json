@@ -23,10 +23,5 @@
         "P1": "100",
         "P2": "80",
         "expected": "800.000m"
-    },
-    "xssPayloads": [
-        "<img src=x onerror=alert(1)>",
-        "<svg/onload=alert(1)>",
-        "<script>alert(1)</script>"
-    ]
+    }
 }

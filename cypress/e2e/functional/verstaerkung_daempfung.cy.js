@@ -3,7 +3,7 @@ describe('Elektrotechnik | Verstaerkung_Daempfung.html', () => {
   let inputs;
 
   before(() => {
-    cy.fixture('verstaerkungDaempfungInputs').then((data) => {
+    cy.fixture('verstaerkung_daempfungInputs').then((data) => {
       inputs = data;
     });
   });

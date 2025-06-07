@@ -23,10 +23,5 @@
         "t": "2",
         "N": "100",
         "expected": ["-0.500V", "-500.000mV"]
-    },
-    "xssPayloads": [
-        "<img src=x onerror=alert(1)>",
-        "<svg/onload=alert(1)>",
-        "<script>alert(1)</script>"
-    ]
+    }
 }

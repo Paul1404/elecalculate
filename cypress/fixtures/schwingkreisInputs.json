@@ -32,10 +32,5 @@
             "C": "0.000001",
             "expected": ["1591.549Hz", "1.592kHz"]
         }
-    },
-    "xssPayloads": [
-        "<img src=x onerror=alert(1)>",
-        "<svg/onload=alert(1)>",
-        "<script>alert(1)</script>"
-    ]
+    }
 }

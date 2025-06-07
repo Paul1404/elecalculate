@@ -1,0 +1,36 @@
+{
+  "daily": {
+    "recurrence": "Täglich",
+    "hour": "08",
+    "minute": "00",
+    "cronText": "0 8 * * *",
+    "systemdText": "08:00",
+    "desc": "Jeden Tag um 08:00 Uhr."
+  },
+  "weekly": {
+    "recurrence": "Wöchentlich (Mo)",
+    "hour": "02",
+    "minute": "15",
+    "cronText": "15 2 * * 1",
+    "systemdText": "Mon 02:15",
+    "desc": "Jeden Montag um 02:15 Uhr."
+  },
+  "monthly": {
+    "recurrence": "Monatlich",
+    "hour": "03",
+    "minute": "30",
+    "monthdays": ["1", "L"],
+    "cronText": "30 3 1,L * *",
+    "systemdText": "1..1 03:30, Last 03:30",
+    "desc": "Am 1., letzten Tag jedes Monats um 03:30 Uhr."
+  },
+  "customWeekdays": {
+    "recurrence": "Benutzerdefiniert (Wochentage)",
+    "hour": "18",
+    "minute": "45",
+    "weekdays": ["1", "3", "5"],
+    "cronText": "45 18 * * 1,3,5",
+    "systemdText": "Mon,Wed,Fri 18:45",
+    "desc": "Jeden Mo, Mi, Fr um 18:45 Uhr."
+  }
+}

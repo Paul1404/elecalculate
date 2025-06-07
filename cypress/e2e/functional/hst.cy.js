@@ -3,7 +3,7 @@ describe('HST Glossar', () => {
   let inputs;
 
   before(() => {
-    cy.fixture('hstGlossarInputs').then((data) => {
+    cy.fixture('hstInputs').then((data) => {
       inputs = data;
     });
   });
