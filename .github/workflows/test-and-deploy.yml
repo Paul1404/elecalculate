@@ -56,11 +56,16 @@ jobs:
       - name: Print working directory
         run: pwd
 
+      - name: Rename mochawesome.json to unique name
+        run: |
+          SPEC_BASENAME=$(basename "${{ matrix.spec }}" .cy.js)
+          mv cypress/results/.jsons/mochawesome.json cypress/results/.jsons/mochawesome-${SPEC_BASENAME}.json
+
       - name: Upload Mochawesome JSON
         uses: actions/upload-artifact@v4
         with:
           name: mochawesome-json-${{ steps.artifact.outputs.spec_basename }}
-          path: cypress/results/.jsons/*.json
+          path: cypress/results/.jsons/mochawesome-*.json
 
       - name: Upload Cypress screenshots as artifact
         uses: actions/upload-artifact@v4
