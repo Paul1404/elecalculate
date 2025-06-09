@@ -1,162 +1,182 @@
-# Elecalculate Testing
+# TESTING.md
 
-This document explains the testing setup for the Elecalculate project, including functional and security (XSS) tests.
+## 🚦 Overview
+
+This project uses **Cypress** for end-to-end (E2E) testing, with **Mochawesome** for rich HTML/JSON reports and a custom screenshot gallery.
+All tests are **fixture-driven** and run in CI/CD via GitHub Actions, with results published to GitHub Pages.
 
 ---
 
-## Dependencies
+## 🛠️ Local Setup
 
-- **cypress**: End-to-end testing framework
-- **mochawesome**: Reporter that generates JSON test results
-- **mochawesome-merge**: Tool to merge multiple Mochawesome JSON files
-- **mochawesome-report-generator**: Generates HTML reports from Mochawesome JSON
-- **start-server-and-test**: Utility to start server before tests and stop after
-
-Install all dependencies with:
+### 1. **Install dependencies**
 
 ```bash
-npm install
+npm ci
 ```
 
----
+### 2. **Start the local server**
 
-## Test Organization
-
-Tests are organized into two main categories:
-
-- **Functional Tests**:
-  Located in `cypress/e2e/functional/`
-  These tests verify that calculations, UI features, and workflows function as intended.
-
-- **Security Tests**:
-  Located in `cypress/e2e/security/`
-  These tests verify that the application is protected against security vulnerabilities, especially XSS.
-
-- **Fixtures**:
-  Test data and payloads are stored in `cypress/fixtures/` (e.g., `securityPayloads.json`).
-
-- **Test Utilities**:
-  Reusable helpers (e.g., for XSS testing) are in `cypress/support/`.
-
----
-
-## Available Scripts
-
-| Script                  | Description                                                                 |
-|-------------------------|------------------------------------------------------------------------------|
-| `npm run serve`         | Start a local Python HTTP server on port 80                                  |
-| `npm run cy:clean`      | Remove all previous test results and screenshots                             |
-| `npm run cy:run`        | Start server, run all Cypress tests (functional & security), then stop server|
-| `npm run cy:run:functional` | Run only functional tests with Mochawesome reporter                   |
-| `npm run cy:run:security`  | Run only security tests (e.g., XSS) with Mochawesome reporter          |
-| `npm run cy:open`       | Start server and open Cypress interactive UI (Chromium)                      |
-| `npm run cy:merge`      | Merge all individual Mochawesome JSON reports into one                       |
-| `npm run cy:report`     | Generate an HTML report from the merged JSON                                 |
-| `npm test`              | Full workflow: clean, run all tests, merge, and generate HTML report         |
-| `npm run test:functional` | Full workflow for functional tests only                                  |
-| `npm run test:security` | Full workflow for security tests only                                        |
-
-**Tip:**
-- All reports are saved in `cypress/reports/html`.
-- You can run scripts individually or as a full workflow.
-
----
-
-## Cypress Configuration
-
-The Cypress configuration (`cypress.config.js`) is set up to:
-
-- Find test files matching `cypress/e2e/**/*.cy.{js,ts}`
-- Use the support file at `cypress/support/e2e.js` for custom commands and global error handling
-- Set the base URL to `http://localhost:80`
-- Use Mochawesome reporter to generate JSON results
-- Save individual JSON reports to `cypress/results`
-- Take screenshots on test failure
-- Disable video recording (to save space and speed up tests)
-- Set a consistent viewport size (1280x720)
-
----
-
-## Running Tests
-
-**All tests (functional + security):**
 ```bash
-npm test
+npm run serve
+# or, in another terminal, run tests (this will auto-start the server)
+npm run test
 ```
 
-**Only functional tests:**
+### 3. **Run all tests**
+
+```bash
+npm run test
+```
+
+### 4. **Run only functional or security tests**
+
 ```bash
 npm run test:functional
-```
-
-**Only security tests:**
-```bash
 npm run test:security
 ```
 
-**Interactive mode (Cypress UI):**
+### 5. **Open Cypress interactive runner**
+
 ```bash
 npm run cy:open
 ```
 
 ---
 
-## Test Workflow
+## 🧪 Test Structure
 
-The complete test workflow (triggered by `npm test` or similar):
-
-1. Clean previous results (`cy:clean`)
-2. Start the server and run Cypress tests with Mochawesome reporter
-3. Generate individual JSON files for each spec
-4. Merge all JSON files into a single report (`cy:merge`)
-5. Generate a comprehensive HTML report in `cypress/reports/html` (`cy:report`)
-
----
-
-## Handling JavaScript Errors
-
-The Cypress support file (`cypress/support/e2e.js`) contains exception handling for known issues (e.g., slideshow errors), preventing these from failing tests while still catching unexpected errors.
+- **E2E tests:** `cypress/e2e/functional/*.cy.js`
+- **Fixtures:** `cypress/fixtures/*.json`
+- **Support file:** `cypress/support/e2e.js`
+- **Config:** `cypress.config.js`
+- **Custom tasks:** in `cypress.config.js` (or `cypress/plugins/index.js` for legacy)
+- **Screenshot gallery script:** `cypress/support/generate-screenshot-gallery.sh`
 
 ---
 
-## Security Testing
+## 🧩 How Tests Work
 
-Security tests focus on ensuring the application is protected against common vulnerabilities:
-
-- **XSS (Cross-Site Scripting):**
-  Tests inject malicious payloads into inputs and verify that they are properly sanitized and not executed.
-- **Input Validation:**
-  Tests ensure that all user inputs are validated and sanitized.
-
-**Reusable XSS Utility:**
-- Located in `cypress/support/security.js`
-- Loads payloads from `cypress/fixtures/securityPayloads.json`
-- For each input:
-  1. Injects malicious payloads
-  2. Triggers calculation or form submission
-  3. Verifies that payloads are not reflected in the output
-  4. Ensures no JavaScript execution occurs (e.g., no alerts)
+- **Each test file** uses a fixture file named after the spec (e.g., `filter.cy.js` → `filterInputs.json`).
+- **Fixtures** provide all test data and expected results.
+- **After each test:**
+  - A screenshot is taken.
+  - The fixture is attached to the Mochawesome report for context.
+- **All logs and errors are available in the CI artifacts.**
 
 ---
 
-## Continuous Integration (CI)
+## 📝 Example: Writing a Test
 
-- The provided scripts and reporting are CI-ready.
-- You can integrate them into GitHub Actions, GitLab CI, or other CI/CD systems.
-- Reports can be archived or published as build artifacts.
+**Fixture: `cypress/fixtures/filterInputs.json`**
+```json
+{
+  "hochpassRC": { "f": "1000", "C": "0.000001", "R": "1000" },
+  "expected": { "hochpassRC_XC": "159.155Ω" }
+}
+```
+
+**Test: `cypress/e2e/functional/filter.cy.js`**
+```js
+describe('Elektrotechnik | Filter.html', () => {
+  let inputs;
+  before(() => {
+    cy.fixture('filterInputs').then(data => { inputs = data; });
+  });
+
+  it('should calculate Blindwiderstand XC for Hochpass RC', () => {
+    cy.visit('/Elektrotechnik/Filter.html');
+    cy.contains('.filter-button span', 'Hochpass RC').click();
+    cy.get('#f-HP_RC').clear().type(inputs.hochpassRC.f);
+    cy.get('#C-HP_RC').clear().type(inputs.hochpassRC.C);
+    cy.get('input[onclick="calculate_HP_RC()"]').click();
+    cy.get('#result_HP_RC').invoke('text').should('include', inputs.expected.hochpassRC_XC);
+  });
+});
+```
 
 ---
 
-## Contributing
+## 📦 Scripts in `package.json`
 
-- Add new functional tests to `cypress/e2e/functional/`
-- Add new security tests to `cypress/e2e/security/`
-- Add new payloads to `cypress/fixtures/securityPayloads.json` as needed
-- For advanced test utilities, use or extend `cypress/support/`
+- `npm run serve` — Start a local server (Python HTTP server on port 8080)
+- `npm run cy:clean` — Clean Cypress results and screenshots
+- `npm run cy:run` — Start server and run all Cypress tests
+- `npm run cy:run:functional` — Run only functional tests
+- `npm run cy:run:security` — Run only security tests
+- `npm run cy:open` — Open Cypress interactive runner
+- `npm run test` — Clean, then run all tests
+- `npm run test:functional` — Clean, then run functional tests
+- `npm run test:security` — Clean, then run security tests
 
 ---
 
-## Troubleshooting
+## 🏗️ CI/CD Pipeline
 
-- If you encounter issues with the server or ports, ensure no other process is using port 80.
-- For Windows users, you may need to adjust the `serve` script or run as administrator.
+- **Runs on every push to `EL-1-cypress` branch**
+- **Cleans up old artifacts**
+- **Caches dependencies and Cypress binary**
+- **Runs all tests and generates Mochawesome reports**
+- **Uploads logs and screenshots as artifacts**
+- **Publishes HTML report and screenshot gallery to GitHub Pages**
+- **Posts summary with direct links to the report and gallery**
+
+---
+
+## 📊 Reports & Gallery
+
+- **Mochawesome HTML/JSON report:**
+  Published to GitHub Pages at:
+  `https://paul1404.github.io/elecalculate/`
+- **Screenshot gallery:**
+  `https://paul1404.github.io/elecalculate/screenshots/index.html`
+
+---
+
+## 🧩 Custom Tasks & Support
+
+- **`cy.task('log', ...)`** — Log messages to the terminal (for debugging)
+- **`cy.task('readFixturePretty', 'fixtureFileName')`** — Reads and pretty-prints a fixture for the report
+- **After each test:**
+  - Screenshot is taken
+  - Fixture is attached to the report for context
+
+---
+
+## 🖼️ Screenshot Gallery
+
+- **Generated by:** `cypress/support/generate-screenshot-gallery.sh`
+- **Features:**
+  - Search/filter by test name or spec file
+  - Click to enlarge (lightbox)
+  - Back-to-top button
+
+---
+
+## 🧑‍💻 Adding New Tests
+
+1. **Create a fixture file** in `cypress/fixtures/` (e.g., `myFeatureInputs.json`)
+2. **Write a test file** in `cypress/e2e/functional/` (e.g., `myFeature.cy.js`)
+3. **Use only value-based assertions** (e.g., `.should('include', expectedValue)`)
+4. **Run tests locally with `npm run test` or in CI**
+
+---
+
+## 🛠️ Troubleshooting
+
+- **Test fails but no report?**
+  Check the run log artifact in GitHub Actions.
+- **Screenshots missing?**
+  Check the `cypress/screenshots/` directory or the gallery.
+- **Fixture not found?**
+  Ensure the fixture file is named correctly (`specFileNameInputs.json`).
+- **Need to debug interactively?**
+  Use `npm run cy:open`.
+
+---
+
+## 🏁 Summary
+
+- **All E2E tests are value-based and fixture-driven.**
+- **Reports and screenshots are published automatically.**
+- **Easy to maintain, extend, and debug.**
