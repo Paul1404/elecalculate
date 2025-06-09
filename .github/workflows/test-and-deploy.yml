@@ -85,57 +85,100 @@ jobs:
   merge-and-deploy:
     needs: cypress-run
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Print working directory
+        run: pwd
+
       - name: Install dependencies for report generation
         run: npm ci
 
+      # Download all Mochawesome JSON artifacts from all parallel jobs
       - name: Download all Mochawesome JSON
         uses: actions/download-artifact@v4
         with:
           path: mochawesome-json
 
+      - name: List all downloaded Mochawesome JSONs
+        run: |
+          echo "Listing all mochawesome JSON files:"
+          find mochawesome-json -type f -name "*.json" | tee /tmp/mochawesome-json-list.txt
+
+      # Download all screenshots from all parallel jobs
       - name: Download all screenshots
         uses: actions/download-artifact@v4
         with:
           path: cypress/screenshots
 
+      - name: List all downloaded screenshots
+        run: |
+          echo "Listing all screenshots:"
+          find cypress/screenshots -type f -name "*.png" | tee /tmp/screenshots-list.txt
+
+      # Download all videos from all parallel jobs
       - name: Download all videos
         uses: actions/download-artifact@v4
         with:
           path: cypress/videos
 
+      - name: List all downloaded videos
+        run: |
+          echo "Listing all videos:"
+          find cypress/videos -type f -name "*.mp4" | tee /tmp/videos-list.txt
+
+      # Merge all JSON reports and generate the final HTML report
       - name: Merge Mochawesome JSON reports
-        run: npx mochawesome-merge mochawesome-json/**/*.json > merged.json
+        run: |
+          echo "Merging JSON reports..."
+          npx mochawesome-merge mochawesome-json/**/*.json > merged.json
+          echo "Merged JSON report created at $(pwd)/merged.json"
+          ls -lh merged.json
 
       - name: Generate final Mochawesome HTML report
-        run: npx marge merged.json --reportDir=public --reportFilename=index.html
+        run: |
+          echo "Generating HTML report..."
+          npx marge merged.json --reportDir=public --reportFilename=index.html
+          echo "HTML report generated at $(pwd)/public/index.html"
+          ls -lh public/index.html
 
+      # Copy all screenshots and videos to the public directory, preserving structure
       - name: Flatten screenshots into public/screenshots
         run: |
           mkdir -p public/screenshots
           find cypress/screenshots -type f -name "*.png" | while read img; do
-            # Find the spec folder (e.g., werkstoffe.cy.js) in the path
             specdir=$(echo "$img" | grep -oE '[^/]+\.cy\.js' | head -n1)
             if [ -n "$specdir" ]; then
               mkdir -p "public/screenshots/$specdir"
               cp "$img" "public/screenshots/$specdir/"
+              echo "Copied $img to public/screenshots/$specdir/"
+            else
+              echo "WARNING: Could not determine specdir for $img"
             fi
           done
+          echo "Final screenshot structure:"
+          find public/screenshots
 
-      - name: Flatten screenshots into public/screenshots
+      - name: Flatten videos into public/videos
         run: |
-          mkdir -p public/screenshots
-          find cypress/screenshots -type f -name "*.png" | while read img; do
-            # Find the spec folder (e.g., werkstoffe.cy.js) in the path
-            specdir=$(echo "$img" | grep -oE '[^/]+\.cy\.js' | head -n1)
+          mkdir -p public/videos
+          find cypress/videos -type f -name "*.mp4" | while read vid; do
+            specdir=$(echo "$vid" | grep -oE '[^/]+\.cy\.js' | head -n1)
             if [ -n "$specdir" ]; then
-              mkdir -p "public/screenshots/$specdir"
-              cp "$img" "public/screenshots/$specdir/"
+              mkdir -p "public/videos/$specdir"
+              cp "$vid" "public/videos/$specdir/"
+              echo "Copied $vid to public/videos/$specdir/"
+            else
+              echo "WARNING: Could not determine specdir for $vid"
             fi
           done
+          echo "Final video structure:"
+          find public/videos
 
       # Defensive scripting: check for report existence
       - name: Check for report
@@ -144,6 +187,12 @@ jobs:
             echo "❌ Report not found! Test run may have failed."
             exit 1
           fi
+          echo "Report found at ./public/index.html"
+
+      - name: List final public directory
+        run: |
+          echo "Listing all files in ./public:"
+          find ./public
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
