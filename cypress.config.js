@@ -90,9 +90,6 @@ module.exports = defineConfig({
         }
       });
 
-      // Register the cypress-mochawesome-reporter plugin
-      require('cypress-mochawesome-reporter/plugin')(on);
-
       return config;
     }
   },

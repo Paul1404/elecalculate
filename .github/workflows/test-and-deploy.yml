@@ -42,8 +42,6 @@ jobs:
           start: python3 -m http.server 8080
           spec: ${{ matrix.spec }}
           browser: chrome
-          reporter: cypress-mochawesome-reporter
-          reporter-options: cypressParallel=true
 
       # Sanitize artifact name by using the spec file's basename
       - name: Set artifact name
