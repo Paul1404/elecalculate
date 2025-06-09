@@ -47,35 +47,19 @@ jobs:
       - name: Set artifact name
         id: artifact
         run: |
-          SPEC_BASENAME=$(basename "${{ matrix.spec }}")
+          SPEC_BASENAME=$(basename "${{ matrix.spec }}" .cy.js)
           echo "spec_basename=$SPEC_BASENAME" >> $GITHUB_OUTPUT
 
-      - name: Find all mochawesome JSON files
-        run: find /home/runner/work -name "*.json" -print
-
-      - name: Print working directory
-        run: pwd
-
-      - name: Wait for and rename mochawesome.json
+      - name: Rename mochawesome.json to unique name
         run: |
-          for i in {1..10}; do
-            if [ -f cypress/results/.jsons/mochawesome.json ]; then
-              break
-            fi
-            echo "Waiting for mochawesome.json to be written..."
-            sleep 1
-          done
-          SPEC_BASENAME=$(basename "${{ matrix.spec }}" .cy.js)
-          mv cypress/results/.jsons/mochawesome.json cypress/results/.jsons/mochawesome-${SPEC_BASENAME}.json
-
-      - name: List mochawesome JSONs
-        run: ls -l cypress/results/.jsons
+          mv cypress/results/.jsons/mochawesome.json cypress/results/.jsons/mochawesome-${{ steps.artifact.outputs.spec_basename }}.json
 
       - name: Upload Mochawesome JSON
         uses: actions/upload-artifact@v4
         with:
           name: mochawesome-json-${{ steps.artifact.outputs.spec_basename }}
-          path: cypress/results/.jsons/*.json
+          path: cypress/results/.jsons/mochawesome-${{ steps.artifact.outputs.spec_basename }}.json
+          if-no-files-found: error
 
       - name: Upload Cypress screenshots as artifact
         uses: actions/upload-artifact@v4
