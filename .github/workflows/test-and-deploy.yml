@@ -1,5 +1,3 @@
-# .github/workflows/test-and-deploy.yml
-
 name: Test and Deploy Report
 
 on:
@@ -7,8 +5,12 @@ on:
     branches:
       - EL-1-cypress
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
-  # 1. Run each Cypress spec in parallel using the official Cypress Action
   cypress-run:
     runs-on: ubuntu-latest
     strategy:
@@ -35,7 +37,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # The Cypress action will handle install, cache, and run
       - name: Run Cypress for ${{ matrix.spec }}
         uses: cypress-io/github-action@v6
         with:
@@ -43,7 +44,6 @@ jobs:
           spec: ${{ matrix.spec }}
           browser: chrome
 
-      # Sanitize artifact name by using the spec file's basename
       - name: Set artifact name
         id: artifact
         run: |
@@ -68,6 +68,13 @@ jobs:
           path: cypress/screenshots
           if-no-files-found: ignore
 
+      - name: Upload Cypress videos as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos-${{ steps.artifact.outputs.spec_basename }}
+          path: cypress/videos
+          if-no-files-found: ignore
+
       - name: Upload Cypress run log
         uses: actions/upload-artifact@v4
         with:
@@ -75,14 +82,9 @@ jobs:
           path: cypress-run.log
           if-no-files-found: ignore
 
-  # 2. Merge reports, generate gallery, and deploy
   merge-and-deploy:
     needs: cypress-run
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -90,34 +92,34 @@ jobs:
       - name: Install dependencies for report generation
         run: npm ci
 
-      # Download all Mochawesome JSON artifacts from all parallel jobs
       - name: Download all Mochawesome JSON
         uses: actions/download-artifact@v4
         with:
           path: mochawesome-json
 
-      # Download all screenshots from all parallel jobs
       - name: Download all screenshots
         uses: actions/download-artifact@v4
         with:
           path: cypress/screenshots
 
-      # Merge all JSON reports and generate the final HTML report
+      - name: Download all videos
+        uses: actions/download-artifact@v4
+        with:
+          path: cypress/videos
+
       - name: Merge Mochawesome JSON reports
         run: npx mochawesome-merge mochawesome-json/**/*.json > merged.json
 
       - name: Generate final Mochawesome HTML report
         run: npx marge merged.json --reportDir=public --reportFilename=index.html
 
-      # Prepare screenshots for GitHub Pages
-      - name: Prepare screenshots for Pages
+      # Copy all screenshots and videos to the public directory, preserving structure
+      - name: Prepare screenshots and videos for Pages
         run: |
           mkdir -p ./public/screenshots
-          cp -r cypress/screenshots/* ./public/screenshots/ || true
-
-      # Generate a custom screenshot gallery (your script)
-      - name: Generate improved screenshot gallery with search
-        run: cypress/support/generate-screenshot-gallery.sh
+          mkdir -p ./public/videos
+          cp -r cypress/screenshots/. ./public/screenshots/ || true
+          cp -r cypress/videos/. ./public/videos/ || true
 
       # Defensive scripting: check for report existence
       - name: Check for report
@@ -127,22 +129,18 @@ jobs:
             exit 1
           fi
 
-      # Set up GitHub Pages for deployment
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # Upload the prepared public directory as a Pages artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './public'
 
-      # Deploy the artifact to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
 
-      # Post a summary in the Actions UI with direct links to the report and gallery
       - name: Post summary with report and gallery links
         if: always()
         uses: actions/github-script@v7
