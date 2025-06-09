@@ -93,9 +93,11 @@ jobs:
           path: cypress/screenshots
 
       # Merge all JSON reports and generate the final HTML report
+      - name: Merge Mochawesome JSON reports
+        run: npx mochawesome-merge mochawesome-json/**/*.json > merged.json
+
       - name: Generate final Mochawesome HTML report
-        run: |
-          npx generate-mochawesome-report --reportDir=public --reportFilename=index.html --jsonDir=mochawesome-json
+        run: npx marge merged.json --reportDir=public --reportFilename=index.html
 
       # Prepare screenshots for GitHub Pages
       - name: Prepare screenshots for Pages
