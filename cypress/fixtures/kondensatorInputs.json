@@ -25,10 +25,20 @@
     "C_AC": "10u",
     "expected": "223.607Ω"
   },
-  "ac_parallel": {
+  "ac_parallel_Bc": {
     "U_ACp": "10",
     "f_ACp": "50",
     "C_ACp": "0.0001",
-    "expected_Bc": "31.416mS"
+    "expected": "31.416mS"
+  },
+  "ac_parallel_Ir_phi": {
+    "Ir_ACp": "1.5",
+    "phi_ACp": "45",
+    "expected": "1.500A"
+  },
+  "ac_parallel_I_Ic": {
+    "I_ACp": "2",
+    "Ic_ACp": "1.5",
+    "expected": "1.323A"
   }
 }
