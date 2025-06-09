@@ -1,44 +1,20 @@
-# Test and Deploy Report Workflow
-#
-# This workflow runs Cypress tests, generates a Mochawesome HTML report,
-# publishes screenshots for every test, and deploys both the report and a
-# browsable screenshot gallery to GitHub Pages.
-#
-# Key Features:
-# - Cleans up old artifacts before each run
-# - Caches npm modules and Cypress binary for faster builds
-# - Publishes screenshots as both downloadable artifacts and a web gallery
-# - Uploads Cypress run log for easier debugging
-# - Fails fast and checks for report existence to catch silent errors
+# .github/workflows/test-and-deploy.yml
 
 name: Test and Deploy Report
 
 on:
-  # Trigger workflow on pushes to the Cypress branch
   push:
     branches:
       - EL-1-cypress
 
 jobs:
-  test-and-deploy:
+  # 1. Install dependencies once and cache them
+  install:
     runs-on: ubuntu-latest
-
-    # Set permissions for GitHub Pages deployment
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-
     steps:
-      # Clean up previous test artifacts to ensure a fresh run
-      - name: Clean previous artifacts
-        run: rm -rf ./cypress/reports/html ./cypress/screenshots ./public
-
-      # Check out the repository code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Cache npm modules and Cypress binary to speed up builds
       - name: Cache node modules and Cypress binary
         uses: actions/cache@v4
         with:
@@ -47,38 +23,111 @@ jobs:
             ~/.cache/Cypress
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
-      # Set up Node.js (version 22 for compatibility with all dependencies)
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      # Install npm dependencies
       - name: Install dependencies
         run: npm ci
 
-      # Run Cypress tests and generate the Mochawesome report
-      # Save the output to a log file for easier debugging if something fails
-      - name: Run tests and generate report
-        run: npm run test:functional | tee cypress-run.log
+      - name: Upload node_modules for parallel jobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: node_modules
+          path: node_modules
 
-      # Upload Cypress run log as an artifact for post-mortem debugging
+  # 2. Run each spec file in parallel
+  cypress-run:
+    needs: install
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        spec:
+          - cypress/e2e/functional/cron_systemd_helper.cy.js
+          - cypress/e2e/functional/dioden.cy.js
+          - cypress/e2e/functional/filter.cy.js
+          - cypress/e2e/functional/gleichstrom.cy.js
+          - cypress/e2e/functional/hst.cy.js
+          - cypress/e2e/functional/kondensator.cy.js
+          - cypress/e2e/functional/magnetismus.cy.js
+          - cypress/e2e/functional/mathe.cy.js
+          - cypress/e2e/functional/opv.cy.js
+          - cypress/e2e/functional/schwingkreis.cy.js
+          - cypress/e2e/functional/spule.cy.js
+          - cypress/e2e/functional/transformator.cy.js
+          - cypress/e2e/functional/verstaerkung_daempfung.cy.js
+          - cypress/e2e/functional/wechselstrom.cy.js
+          - cypress/e2e/functional/werkstoffe.cy.js
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download node_modules
+        uses: actions/download-artifact@v4
+        with:
+          name: node_modules
+          path: node_modules
+
+      - name: Start local server (background)
+        run: python3 -m http.server 8080 &
+
+      - name: Run Cypress for ${{ matrix.spec }}
+        run: npx cypress run --spec ${{ matrix.spec }}
+
+      - name: Upload Mochawesome JSON
+        uses: actions/upload-artifact@v4
+        with:
+          name: mochawesome-json-${{ matrix.spec }}
+          path: cypress/results/*.json
+
+      - name: Upload Cypress screenshots as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots-${{ matrix.spec }}
+          path: cypress/screenshots
+          if-no-files-found: ignore
+
       - name: Upload Cypress run log
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-run-log
+          name: cypress-run-log-${{ matrix.spec }}
           path: cypress-run.log
           if-no-files-found: ignore
 
+  # 3. Merge reports, generate gallery, and deploy
+  merge-and-deploy:
+    needs: cypress-run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Prepare report and screenshots for Pages
+      - name: Download all Mochawesome JSON
+        uses: actions/download-artifact@v4
+        with:
+          path: mochawesome-json
+
+      - name: Download all screenshots
+        uses: actions/download-artifact@v4
+        with:
+          path: cypress/screenshots
+
+      - name: Merge and generate HTML report
         run: |
-          set -euo pipefail
-          mkdir -p ./public
-          cp -r ./cypress/results/* ./public/
+          npx mochawesome-merge mochawesome-json/**/*.json > merged.json
+          npx marge merged.json --reportDir=public
 
+      - name: Prepare screenshots for Pages
+        run: |
+          mkdir -p ./public/screenshots
+          cp -r cypress/screenshots/* ./public/screenshots/ || true
 
-      # Defensive scripting: check for existence before copying/moving
+      - name: Generate improved screenshot gallery with search
+        run: cypress/support/generate-screenshot-gallery.sh
+
       - name: Check for report
         run: |
           if [ ! -f ./public/index.html ]; then
@@ -86,34 +135,18 @@ jobs:
             exit 1
           fi
 
-      # Generate a simple HTML gallery for all screenshots
-      - name: Generate improved screenshot gallery with search
-        run: cypress/support/generate-screenshot-gallery.sh
-
-      # Upload screenshots as a downloadable artifact in the Actions UI
-      - name: Upload Cypress screenshots as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots
-          if-no-files-found: ignore
-
-      # Set up GitHub Pages for deployment
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # Upload the prepared public directory as a Pages artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './public'
 
-      # Deploy the artifact to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
 
-      # Post a summary in the Actions UI with direct links to the report and gallery
       - name: Post summary with report and gallery links
         if: always()
         uses: actions/github-script@v7
