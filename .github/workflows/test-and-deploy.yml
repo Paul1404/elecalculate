@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mochawesome-json-${{ steps.artifact.outputs.spec_basename }}
-          path: cypress/results/*.json
+          path: cypress/results/**/*.json
 
       - name: Upload Cypress screenshots as artifact
         uses: actions/upload-artifact@v4
