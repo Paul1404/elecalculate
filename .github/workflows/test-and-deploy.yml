@@ -143,7 +143,17 @@ jobs:
       - name: Generate final Mochawesome HTML report
         run: |
           echo "Generating HTML report..."
-          npx marge merged.json --reportDir=public --reportFilename=index.html
+          npx marge merged.json \
+            --reportDir=public \
+            --reportFilename=index.html \
+            --assetsDir=screenshots \
+            --inline false \
+            --charts true \
+            --enableCode true \
+            --showPassed true \
+            --showFailed true \
+            --showPending true \
+            --showSkipped true
           echo "HTML report generated at $(pwd)/public/index.html"
           ls -lh public/index.html
 
