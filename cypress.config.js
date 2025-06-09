@@ -1,8 +1,7 @@
-// cypress.config.js
-
 const { defineConfig } = require('cypress');
 const fs = require('fs');
 const path = require('path');
+const { beforeRunHook } = require('cypress-mochawesome-reporter/lib');
 
 /**
  * Cypress Configuration File
@@ -41,7 +40,8 @@ module.exports = defineConfig({
       saveAllAttempts: false,
       overwrite: false,              // Don't overwrite previous reports
       html: false,                   // Don't generate HTML for individual specs
-      json: true                     // Generate JSON for each spec file
+      json: true,                    // Generate JSON for each spec file
+      cypressParallel: true          // Let the reporter know we're running in parallel
     },
 
     // Set viewport size for consistent test environment
@@ -53,8 +53,14 @@ module.exports = defineConfig({
      * - Adds 'log' task for terminal logging.
      * - Adds 'readFixturePretty' task for pretty-printing fixture JSON files.
      * - Registers the cypress-mochawesome-reporter plugin.
+     * - Adds before:run hook to clean report output folder for parallel runs.
      */
     setupNodeEvents(on, config) {
+      // Clean the report output folder before each run (important for parallel)
+      on('before:run', async (details) => {
+        await beforeRunHook(details);
+      });
+
       // Task for logging to the terminal (for debugging)
       on('task', {
         log(message) {

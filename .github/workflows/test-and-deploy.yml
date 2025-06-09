@@ -42,6 +42,8 @@ jobs:
           start: python3 -m http.server 8080
           spec: ${{ matrix.spec }}
           browser: chrome
+          reporter: cypress-mochawesome-reporter
+          reporter-options: cypressParallel=true
 
       # Sanitize artifact name by using the spec file's basename
       - name: Set artifact name
@@ -91,10 +93,9 @@ jobs:
           path: cypress/screenshots
 
       # Merge all JSON reports and generate the final HTML report
-      - name: Merge and generate HTML report
+      - name: Generate final Mochawesome HTML report
         run: |
-          npx mochawesome-merge mochawesome-json/**/*.json > merged.json
-          npx marge merged.json --reportDir=public
+          npx generate-mochawesome-report --reportDir=public --reportFilename=index.html --jsonDir=mochawesome-json
 
       # Prepare screenshots for GitHub Pages
       - name: Prepare screenshots for Pages
