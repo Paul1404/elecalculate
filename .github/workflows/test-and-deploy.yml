@@ -113,13 +113,27 @@ jobs:
       - name: Generate final Mochawesome HTML report
         run: npx marge merged.json --reportDir=public --reportFilename=index.html
 
-      # Copy all screenshots and videos to the public directory, preserving structure
-      - name: Prepare screenshots and videos for Pages
+      - name: Flatten screenshots into public/screenshots
         run: |
-          mkdir -p ./public/screenshots
-          mkdir -p ./public/videos
-          cp -r cypress/screenshots/. ./public/screenshots/ || true
-          cp -r cypress/videos/. ./public/videos/ || true
+          mkdir -p public/screenshots
+          find cypress/screenshots -type f -name "*.png" -exec bash -c '
+            for img; do
+              specdir=$(basename $(dirname "$img"))
+              mkdir -p "public/screenshots/$specdir"
+              cp "$img" "public/screenshots/$specdir/"
+            done
+          ' bash {} +
+
+      - name: Flatten videos into public/videos
+        run: |
+          mkdir -p public/videos
+          find cypress/videos -type f -name "*.mp4" -exec bash -c '
+            for vid; do
+              specdir=$(basename $(dirname "$vid"))
+              mkdir -p "public/videos/$specdir"
+              cp "$vid" "public/videos/$specdir/"
+            done
+          ' bash {} +
 
       # Defensive scripting: check for report existence
       - name: Check for report
