@@ -83,6 +83,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install dependencies for report generation
+        run: npm ci
+
       # Download all Mochawesome JSON artifacts from all parallel jobs
       - name: Download all Mochawesome JSON
         uses: actions/download-artifact@v4
