@@ -116,24 +116,26 @@ jobs:
       - name: Flatten screenshots into public/screenshots
         run: |
           mkdir -p public/screenshots
-          find cypress/screenshots -type f -name "*.png" -exec bash -c '
-            for img; do
-              specdir=$(basename $(dirname "$img"))
+          find cypress/screenshots -type f -name "*.png" | while read img; do
+            # Find the spec folder (e.g., werkstoffe.cy.js) in the path
+            specdir=$(echo "$img" | grep -oE '[^/]+\.cy\.js' | head -n1)
+            if [ -n "$specdir" ]; then
               mkdir -p "public/screenshots/$specdir"
               cp "$img" "public/screenshots/$specdir/"
-            done
-          ' bash {} +
+            fi
+          done
 
-      - name: Flatten videos into public/videos
+      - name: Flatten screenshots into public/screenshots
         run: |
-          mkdir -p public/videos
-          find cypress/videos -type f -name "*.mp4" -exec bash -c '
-            for vid; do
-              specdir=$(basename $(dirname "$vid"))
-              mkdir -p "public/videos/$specdir"
-              cp "$vid" "public/videos/$specdir/"
-            done
-          ' bash {} +
+          mkdir -p public/screenshots
+          find cypress/screenshots -type f -name "*.png" | while read img; do
+            # Find the spec folder (e.g., werkstoffe.cy.js) in the path
+            specdir=$(echo "$img" | grep -oE '[^/]+\.cy\.js' | head -n1)
+            if [ -n "$specdir" ]; then
+              mkdir -p "public/screenshots/$specdir"
+              cp "$img" "public/screenshots/$specdir/"
+            fi
+          done
 
       # Defensive scripting: check for report existence
       - name: Check for report
