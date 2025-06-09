@@ -50,8 +50,11 @@ jobs:
           SPEC_BASENAME=$(basename "${{ matrix.spec }}")
           echo "spec_basename=$SPEC_BASENAME" >> $GITHUB_OUTPUT
 
-      - name: List results directory
-        run: ls -lR cypress/results
+      - name: Find all mochawesome JSON files
+        run: find /home/runner/work -name "*.json" -print
+
+      - name: Print working directory
+        run: pwd
 
       - name: Upload Mochawesome JSON
         uses: actions/upload-artifact@v4
