@@ -70,7 +70,20 @@ describe('Elektrotechnik | Kondensator.html', () => {
     });
   });
 
-  it('should calculate Parallel AC values (not yet implemented)', function () {
-    this.skip();
+  it('should calculate Parallel AC values', () => {
+    cy.visit(url);
+    cy.contains('.dropdown-header', 'Kondensator an Wechselstrom').click();
+    cy.get('button.img-button span').contains('Parallel').click();
+
+    cy.get('#U_ACp').clear().type(inputs.ac_parallel.U_ACp);
+    cy.get('#f_ACp').clear().type(inputs.ac_parallel.f_ACp);
+    cy.get('#C_ACp').clear().type(inputs.ac_parallel.C_ACp);
+
+    cy.get('input[onclick="calculateParallelAC()"]').click();
+
+    cy.get('#result_Parallel_AC').invoke('text').then(text => {
+      cy.log('Parallel AC output:', text);
+      expect(text).to.include(inputs.ac_parallel.expected_Bc);
+    });
   });
 });

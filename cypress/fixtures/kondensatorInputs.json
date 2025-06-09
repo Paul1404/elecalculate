@@ -26,8 +26,9 @@
     "expected": "223.607Ω"
   },
   "ac_parallel": {
-    "G_ACp": "0.01",
-    "C_ACp": "10u",
-    "expected": "Wirkleitwert G"
+    "U_ACp": "10",
+    "f_ACp": "50",
+    "C_ACp": "0.0001",
+    "expected_Bc": "31.416mS"
   }
 }
