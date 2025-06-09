@@ -43,26 +43,30 @@ jobs:
           spec: ${{ matrix.spec }}
           browser: chrome
 
-      # Upload Mochawesome JSON for this spec
+      # Sanitize artifact name by using the spec file's basename
+      - name: Set artifact name
+        id: artifact
+        run: |
+          SPEC_BASENAME=$(basename "${{ matrix.spec }}")
+          echo "spec_basename=$SPEC_BASENAME" >> $GITHUB_OUTPUT
+
       - name: Upload Mochawesome JSON
         uses: actions/upload-artifact@v4
         with:
-          name: mochawesome-json-${{ matrix.spec }}
+          name: mochawesome-json-${{ steps.artifact.outputs.spec_basename }}
           path: cypress/results/*.json
 
-      # Upload Cypress screenshots for this spec
       - name: Upload Cypress screenshots as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-screenshots-${{ matrix.spec }}
+          name: cypress-screenshots-${{ steps.artifact.outputs.spec_basename }}
           path: cypress/screenshots
           if-no-files-found: ignore
 
-      # Upload Cypress run log for this spec
       - name: Upload Cypress run log
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-run-log-${{ matrix.spec }}
+          name: cypress-run-log-${{ steps.artifact.outputs.spec_basename }}
           path: cypress-run.log
           if-no-files-found: ignore
 
