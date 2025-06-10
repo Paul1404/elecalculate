@@ -19,7 +19,7 @@ jobs:
         shardIndex: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
         shardTotal: [20]
     steps:
-      
+
       - name: ⬇️ Checkout repository
         uses: actions/checkout@v4
 
@@ -60,6 +60,12 @@ jobs:
 
       - name: 📦 Install dependencies
         run: npm ci
+
+      - name: ☕ Set up Java for Allure CLI
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
 
       - name: 🗃️ Merge Allure results from all shards
         run: |
