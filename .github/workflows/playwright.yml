@@ -1,83 +1,94 @@
-name: Playwright + Allure Report
+name: Playwright + Allure CI
 
 on:
   push:
-    branches: [ EL-27-Playwright ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ EL-27-Playwright ]
+    branches: [ main, master ]
 
 jobs:
+  # 1. Run Playwright tests in 20 shards
   playwright:
     name: Playwright Shard ${{ matrix.shardIndex }} of ${{ matrix.shardTotal }}
     runs-on: ubuntu-latest
-    container:
-      image:  mcr.microsoft.com/playwright:v1.53.0-jammy
-      options: --user 1001
     strategy:
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8] # 8 shards, for now
-        shardTotal: [8]
+        shardIndex: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+        shardTotal: [20]
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Playwright tests (sharded) with Allure
-        run: |
-          npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=allure-playwright,line
-
-      - name: Upload Allure results for this shard
-        uses: actions/upload-artifact@v4
+      - run: npm ci
+      - run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=allure-playwright,line
+      - uses: actions/upload-artifact@v4
         with:
           name: allure-results-shard-${{ matrix.shardIndex }}
           path: allure-results/
           retention-days: 7
 
-  merge-allure:
-    name: Merge Allure Results & Publish Report
+  # 2. Merge Allure results and build HTML report
+  build-allure:
+    name: Merge Allure Results & Build Report
     needs: playwright
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      # Download all allure-results from all shards
-      - name: Download Allure results from all shards
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           path: merged-allure-results
-
-      # Install dependencies
-      - name: Install dependencies
-        run: npm ci
-
-      # Merge all allure-results into one directory
-      - name: Merge Allure results
-        run: |
+      - run: npm ci
+      - run: |
           mkdir -p allure-results
           find merged-allure-results -type f -name '*.json' -exec cp {} allure-results/ \;
+      - run: npx allure generate allure-results --clean -o public
+      - name: List final public directory
+        run: find ./public
 
-      # Build Allure HTML report
-      - name: Generate Allure HTML report
-        run: |
-          npx allure generate allure-results --clean -o allure-report
-
-      # Upload Allure HTML report as artifact
-      - name: Upload Allure HTML report
-        uses: actions/upload-artifact@v4
+      # Upload as artifact (optional, for download)
+      - uses: actions/upload-artifact@v4
         with:
           name: allure-report
-          path: allure-report/
+          path: public/
           retention-days: 30
 
-      # Deploy Allure report to GitHub Pages
-      - name: Deploy Allure report to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+  # 3. Deploy to GitHub Pages (modern way)
+  deploy-pages:
+    name: Deploy Allure Report to GitHub Pages
+    needs: build-allure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Download the built Allure report from previous job
+      - uses: actions/download-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: allure-report
+          name: allure-report
+          path: public
+
+      - name: List final public directory
+        run: find ./public
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact for Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './public'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Post summary with report link
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = `https://paul1404.github.io/elecalculate/`;
+            core.summary
+              .addHeading('Test Report')
+              .addLink('View Allure HTML Report', url)
+              .write();
