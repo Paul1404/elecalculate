@@ -2,9 +2,9 @@ name: Playwright + Allure CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ EL-27-Playwright ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ EL-27-Playwright ]
 
 jobs:
   # 1. Run Playwright tests in 20 shards
