@@ -142,8 +142,15 @@ jobs:
 
       - name: Replace all "/<spec>.cy.js/<test>.png" with "screenshots/<spec>.cy.js/<test>.png" in merged.json
         run: |
-          sed -i 's|"/\([a-zA-Z0-9_./% -]*\.cy\.js/[a-zA-Z0-9_./% ()-]*\.png\)"|"screenshots/\1"|g' merged.json
-          sed -i 's|"/\([a-zA-Z0-9_./% -]*\.cy\.js/[a-zA-Z0-9_./% ()-]*\.mp4\)"|"videos/\1"|g' merged.json
+          # Patch screenshot paths
+          sed -i 's|"/\([^"]*\.cy\.js/[^"]*\.png\)"|"screenshots/\1"|g' merged.json
+
+          # Patch video paths
+          sed -i 's|"/\([^"]*\.cy\.js/[^"]*\.mp4\)"|"videos/\1"|g' merged.json
+
+      - name: Show diff after sed
+        run: |
+          git diff public/index.html || true
 
       - name: Generate final Mochawesome HTML report
         run: |
@@ -151,10 +158,6 @@ jobs:
           npx marge merged.json --reportDir=public --reportFilename=index.html --enableCharts --reportPageTitle "Elecalculate Testing Framework"
           echo "HTML report generated at $(pwd)/public/index.html"
           ls -lh public/index.html
-
-      - name: Show diff after sed
-        run: |
-          git diff public/index.html || true
 
       # Copy all screenshots and videos to the public directory, preserving structure
       - name: Flatten screenshots into public/screenshots
