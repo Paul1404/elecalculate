@@ -143,10 +143,12 @@ jobs:
       - name: Patch screenshot and video paths in merged.json
         run: |
           cp merged.json merged.json.bak
-          # Patch screenshot paths
-          sed -i 's|"/\([^"]*\.cy\.js/[^"]*\.png\)"|"screenshots/\1"|g' merged.json
-          # Patch video paths
-          sed -i 's|"/\([^"]*\.cy\.js/[^"]*\.mp4\)"|"videos/\1"|g' merged.json
+          sed -i 's|/\([a-zA-Z0-9_./% -]*\.cy\.js/[a-zA-Z0-9_./% ()-]*\.png\)|screenshots/\1|g' merged.json
+          sed -i 's|/\([a-zA-Z0-9_./% -]*\.cy\.js/[a-zA-Z0-9_./% ()-]*\.mp4\)|videos/\1|g' merged.json
+
+          echo "Screenshot/video paths AFTER sed:"
+          grep -oE 'screenshots/[^"]*\.cy\.js/[^"]*\.png' merged.json | sort | uniq | head -20
+          grep -oE 'videos/[^"]*\.cy\.js/[^"]*\.mp4' merged.json | sort | uniq | head -20
 
       - name: Show screenshot/video paths before and after sed
         run: |
