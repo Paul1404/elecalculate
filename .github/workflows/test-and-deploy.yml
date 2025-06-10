@@ -143,19 +143,14 @@ jobs:
       - name: Generate final Mochawesome HTML report
         run: |
           echo "Generating HTML report..."
-          npx marge merged.json \
-            --reportDir=public \
-            --reportFilename=index.html \
-            --assetsDir=screenshots \
-            --inline false \
-            --charts true \
-            --enableCode true \
-            --showPassed true \
-            --showFailed true \
-            --showPending true \
-            --showSkipped true
+          npx marge merged.json --reportDir=public --reportFilename=index.html --enableCharts --reportPageTitle "Elecalculate Testing Framework"
           echo "HTML report generated at $(pwd)/public/index.html"
           ls -lh public/index.html
+
+      - name: Fix screenshot and video paths in report
+        run: |
+          sed -i 's|/screenshots/|screenshots/|g' public/index.html
+          sed -i 's|/videos/|videos/|g' public/index.html
 
       # Copy all screenshots and videos to the public directory, preserving structure
       - name: Flatten screenshots into public/screenshots
