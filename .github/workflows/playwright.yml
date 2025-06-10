@@ -2,13 +2,21 @@ name: Playwright + Allure Report
 
 on:
   push:
-    branches: [ EL-27-Playwright ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ EL-27-Playwright ]
+    branches: [ main, master ]
 
 jobs:
-  test:
+  playwright:
+    name: Playwright Shard ${{ matrix.shardIndex }} of ${{ matrix.shardTotal }}
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.52.0-noble
+      options: --user 1001
+    strategy:
+      matrix:
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8] # 8 shards, for now
+        shardTotal: [8]
     steps:
       - uses: actions/checkout@v4
 
@@ -19,32 +27,53 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Playwright tests with Allure
-        run: npx playwright test --reporter=allure-playwright
+      - name: Run Playwright tests (sharded) with Allure
+        run: |
+          npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=allure-playwright,line
 
-      # Download previous Allure history from gh-pages
-      - name: Load Allure report history
-        uses: actions/checkout@v4
-        if: always()
-        continue-on-error: true
+      - name: Upload Allure results for this shard
+        uses: actions/upload-artifact@v4
         with:
-          ref: gh-pages
-          path: gh-pages
+          name: allure-results-shard-${{ matrix.shardIndex }}
+          path: allure-results/
+          retention-days: 7
 
-      # Build Allure HTML report with history
-      - name: Build Allure HTML report
-        uses: simple-elf/allure-report-action@v1.7
-        if: always()
+  merge-allure:
+    name: Merge Allure Results & Publish Report
+    needs: playwright
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Download all allure-results from all shards
+      - name: Download Allure results from all shards
+        uses: actions/download-artifact@v4
         with:
-          gh_pages: gh-pages
-          allure_results: allure-results
-          allure_history: allure-history
+          path: merged-allure-results
 
-      # Publish Allure report to GitHub Pages
-      - name: Publish Allure report to GitHub Pages
+      # Merge all allure-results into one directory
+      - name: Merge Allure results
+        run: |
+          mkdir -p allure-results
+          find merged-allure-results -type f -name '*.json' -exec cp {} allure-results/ \;
+
+      # Build Allure HTML report
+      - name: Generate Allure HTML report
+        run: |
+          npx allure generate allure-results --clean -o allure-report
+
+      # Upload Allure HTML report as artifact
+      - name: Upload Allure HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report/
+          retention-days: 30
+
+      # Deploy Allure report to GitHub Pages
+      - name: Deploy Allure report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
-        if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-history
+          publish_dir: allure-report
