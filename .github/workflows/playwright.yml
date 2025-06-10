@@ -60,6 +60,10 @@ jobs:
   deploy-pages:
     name: Deploy Allure Report to GitHub Pages
     needs: build-allure
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
