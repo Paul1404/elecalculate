@@ -140,35 +140,17 @@ jobs:
           echo "Merged JSON report created at $(pwd)/merged.json"
           ls -lh merged.json
 
+      - name: Replace all "/<spec>.cy.js/<test>.png" with "screenshots/<spec>.cy.js/<test>.png" in merged.json
+        run: |
+          sed -i 's|"/\([a-zA-Z0-9_./% -]*\.cy\.js/[a-zA-Z0-9_./% ()-]*\.png\)"|"screenshots/\1"|g' merged.json
+          sed -i 's|"/\([a-zA-Z0-9_./% -]*\.cy\.js/[a-zA-Z0-9_./% ()-]*\.mp4\)"|"videos/\1"|g' merged.json
+
       - name: Generate final Mochawesome HTML report
         run: |
           echo "Generating HTML report..."
           npx marge merged.json --reportDir=public --reportFilename=index.html --enableCharts --reportPageTitle "Elecalculate Testing Framework"
           echo "HTML report generated at $(pwd)/public/index.html"
           ls -lh public/index.html
-
-      - name: Fix screenshot and video paths in report (bulletproof)
-        run: |
-          echo "Before sed (first 20 src/href lines):"
-          grep -E 'src="|href="' public/index.html | head -20
-
-          # Remove leading slash for screenshots (.png)
-          sed -i -E 's|src="\/([a-zA-Z0-9_./% -]+\.cy\.js\/[a-zA-Z0-9_./% ()-]+\.png)"|src="screenshots/\1"|g' public/index.html
-          sed -i -E 's|href="\/([a-zA-Z0-9_./% -]+\.cy\.js\/[a-zA-Z0-9_./% ()-]+\.png)"|href="screenshots/\1"|g' public/index.html
-
-          # Remove leading slash for videos (.mp4)
-          sed -i -E 's|src="\/([a-zA-Z0-9_./% -]+\.cy\.js\/[a-zA-Z0-9_./% ()-]+\.mp4)"|src="videos/\1"|g' public/index.html
-          sed -i -E 's|href="\/([a-zA-Z0-9_./% -]+\.cy\.js\/[a-zA-Z0-9_./% ()-]+\.mp4)"|href="videos/\1"|g' public/index.html
-
-          echo "After sed (first 20 src/href lines):"
-          grep -E 'src="|href="' public/index.html | head -20
-
-          # Print all unique screenshot/video links for verification
-          echo "All screenshot links in report:"
-          grep -oE 'screenshots/[^"]+' public/index.html | sort | uniq
-
-          echo "All video links in report:"
-          grep -oE 'videos/[^"]+' public/index.html | sort | uniq
 
       - name: Show diff after sed
         run: |
