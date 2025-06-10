@@ -2,9 +2,9 @@ name: Playwright + Allure Report
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ EL-27-Playwright ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ EL-27-Playwright ]
 
 jobs:
   playwright:
