@@ -11,6 +11,7 @@ permissions:
   id-token: write
 
 jobs:
+  # 1. Run each Cypress spec in parallel using the official Cypress Action
   cypress-run:
     runs-on: ubuntu-latest
     strategy:
@@ -68,20 +69,7 @@ jobs:
           path: cypress/screenshots
           if-no-files-found: ignore
 
-      - name: Upload Cypress videos as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-videos-${{ steps.artifact.outputs.spec_basename }}
-          path: cypress/videos
-          if-no-files-found: ignore
-
-      - name: Upload Cypress run log
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-run-log-${{ steps.artifact.outputs.spec_basename }}
-          path: cypress-run.log
-          if-no-files-found: ignore
-
+  # 2. Merge reports, patch screenshot paths, and deploy
   merge-and-deploy:
     needs: cypress-run
     runs-on: ubuntu-latest
@@ -93,9 +81,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Print working directory
-        run: pwd
-
       - name: Install dependencies for report generation
         run: npm ci
 
@@ -105,78 +90,42 @@ jobs:
         with:
           path: mochawesome-json
 
-      - name: List all downloaded Mochawesome JSONs
-        run: |
-          echo "Listing all mochawesome JSON files:"
-          find mochawesome-json -type f -name "*.json" | tee /tmp/mochawesome-json-list.txt
-
       # Download all screenshots from all parallel jobs
       - name: Download all screenshots
         uses: actions/download-artifact@v4
         with:
           path: cypress/screenshots
 
-      - name: List all downloaded screenshots
-        run: |
-          echo "Listing all screenshots:"
-          find cypress/screenshots -type f -name "*.png" | tee /tmp/screenshots-list.txt
-
-      # Download all videos from all parallel jobs
-      - name: Download all videos
-        uses: actions/download-artifact@v4
-        with:
-          path: cypress/videos
-
-      - name: List all downloaded videos
-        run: |
-          echo "Listing all videos:"
-          find cypress/videos -type f -name "*.mp4" | tee /tmp/videos-list.txt
-
-      # Merge all JSON reports and generate the final HTML report
+      # Merge all JSON reports
       - name: Merge Mochawesome JSON reports
         run: |
-          echo "Merging JSON reports..."
           npx mochawesome-merge mochawesome-json/**/*.json > merged.json
           echo "Merged JSON report created at $(pwd)/merged.json"
           ls -lh merged.json
 
-      - name: Patch screenshot and video paths in merged.json
+      # Patch screenshot paths in merged.json for GitHub Pages
+      - name: Patch screenshot paths in merged.json
         run: |
           cp merged.json merged.json.bak
+          # Replace all "/<spec>.cy.js/<test>.png" with "screenshots/<spec>.cy.js/<test>.png"
           sed -i 's|/\([a-zA-Z0-9_./% -]*\.cy\.js/[a-zA-Z0-9_./% ()-]*\.png\)|screenshots/\1|g' merged.json
-          sed -i 's|/\([a-zA-Z0-9_./% -]*\.cy\.js/[a-zA-Z0-9_./% ()-]*\.mp4\)|videos/\1|g' merged.json
+          echo "Patched screenshot paths in merged.json"
 
-          echo "Screenshot/video paths AFTER sed:"
-          grep -oE 'screenshots/[^"]*\.cy\.js/[^"]*\.png' merged.json | sort | uniq | head -20
-          grep -oE 'videos/[^"]*\.cy\.js/[^"]*\.mp4' merged.json | sort | uniq | head -20
-
-      - name: Show screenshot/video paths before and after sed
-        run: |
-          echo "Screenshot/video paths BEFORE sed:"
-          grep -oE '"/[^"]*\.cy\.js/[^"]*\.(png|mp4)"' merged.json.bak | sort | uniq | head -20
-
-          echo "Screenshot/video paths AFTER sed:"
-          grep -oE '"screenshots/[^"]*\.cy\.js/[^"]*\.png"' merged.json | sort | uniq | head -20
-          grep -oE '"videos/[^"]*\.cy\.js/[^"]*\.mp4"' merged.json | sort | uniq | head -20
-
-          echo "DEBUG: Print all lines with png and mp4"
-          grep -oE '\/[^"]*\.cy\.js\/[^"]*\.png' merged.json | sort | uniq | head -20
-          grep -oE '\/[^"]*\.cy\.js\/[^"]*\.mp4' merged.json | sort | uniq | head -20
-
+      # Upload merged.json as artifact for debugging
       - name: Upload merged.json as artifact
         uses: actions/upload-artifact@v4
         with:
           name: merged-mochawesome-json
           path: merged.json
 
+      # Generate the final Mochawesome HTML report
       - name: Generate final Mochawesome HTML report
         run: |
-          echo "Generating HTML report..."
           npx marge merged.json --reportDir=public --reportFilename=index.html --enableCharts --reportPageTitle "Elecalculate Testing Framework"
           echo "HTML report generated at $(pwd)/public/index.html"
           ls -lh public/index.html
 
-      # Copy all screenshots and videos to the public directory, preserving structure
+      # Copy all screenshots to the public directory, preserving structure
       - name: Flatten screenshots into public/screenshots
         run: |
           mkdir -p public/screenshots
@@ -192,22 +141,6 @@ jobs:
           done
           echo "Final screenshot structure:"
           find public/screenshots
-
-      - name: Flatten videos into public/videos
-        run: |
-          mkdir -p public/videos
-          find cypress/videos -type f -name "*.mp4" | while read vid; do
-            specdir=$(echo "$vid" | grep -oE '[^/]+\.cy\.js' | head -n1)
-            if [ -n "$specdir" ]; then
-              mkdir -p "public/videos/$specdir"
-              cp "$vid" "public/videos/$specdir/"
-              echo "Copied $vid to public/videos/$specdir/"
-            else
-              echo "WARNING: Could not determine specdir for $vid"
-            fi
-          done
-          echo "Final video structure:"
-          find public/videos
 
       # Defensive scripting: check for report existence
       - name: Check for report
