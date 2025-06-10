@@ -147,10 +147,12 @@ jobs:
           echo "HTML report generated at $(pwd)/public/index.html"
           ls -lh public/index.html
 
-      - name: Fix screenshot and video paths in report
+      - name: Fix all screenshot and video paths in report
         run: |
-          sed -i 's|/screenshots/|screenshots/|g' public/index.html
-          sed -i 's|/videos/|videos/|g' public/index.html
+          sed -i 's|src="/\([^"]*\.cy\.js/[^"]*\.png\)"|src="screenshots/\1"|g' public/index.html
+          sed -i 's|href="/\([^"]*\.cy\.js/[^"]*\.png\)"|href="screenshots/\1"|g' public/index.html
+          sed -i 's|src="/\([^"]*\.cy\.js/[^"]*\.mp4\)"|src="videos/\1"|g' public/index.html
+          sed -i 's|href="/\([^"]*\.cy\.js/[^"]*\.mp4\)"|href="videos/\1"|g' public/index.html
 
       # Copy all screenshots and videos to the public directory, preserving structure
       - name: Flatten screenshots into public/screenshots
