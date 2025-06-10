@@ -148,12 +148,14 @@ jobs:
           # Patch video paths
           sed -i 's|"/\([^"]*\.cy\.js/[^"]*\.mp4\)"|"videos/\1"|g' merged.json
 
-      - name: Show diff after sed
+      - name: Show screenshot/video paths before and after sed
         run: |
-          echo "Diff between merged.json.bak and merged.json:"
-          diff -u merged.json.bak merged.json || true
-          echo "First 20 lines of merged.json after sed:"
-          head -20 merged.json
+          echo "Screenshot/video paths BEFORE sed:"
+          grep -oE '"/[^"]*\.cy\.js/[^"]*\.(png|mp4)"' merged.json.bak | sort | uniq | head -20
+
+          echo "Screenshot/video paths AFTER sed:"
+          grep -oE '"screenshots/[^"]*\.cy\.js/[^"]*\.png"' merged.json | sort | uniq | head -20
+          grep -oE '"videos/[^"]*\.cy\.js/[^"]*\.mp4"' merged.json | sort | uniq | head -20
 
       - name: Upload merged.json as artifact
         uses: actions/upload-artifact@v4
