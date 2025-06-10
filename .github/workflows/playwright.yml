@@ -7,10 +7,13 @@ on:
     branches: [ EL-27-Playwright ]
 
 jobs:
-  # 1. Run Playwright tests in 20 shards
+  # 1. Run Playwright tests in 20 Docker shards
   playwright:
     name: Playwright Shard ${{ matrix.shardIndex }} of ${{ matrix.shardTotal }}
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.53.0-noble
+      options: --user 1001
     strategy:
       matrix:
         shardIndex: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
