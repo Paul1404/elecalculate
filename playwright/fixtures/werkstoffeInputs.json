@@ -1,0 +1,155 @@
+{
+    "spezifischerWiderstand": [
+      {
+        "desc": "Leitfähigkeit from spezifischer Widerstand",
+        "fields": { "p": "0.0178" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "56.180 m/(Ω ∗ mm"
+      },
+      {
+        "desc": "Leitfähigkeit from l, R, A",
+        "fields": { "l": "1", "R": "10", "A": "0.0001" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "1.000m m/(Ω ∗ mm2)"
+      },
+      {
+        "desc": "Leitfähigkeit from d, l, R",
+        "fields": { "d": "0.01", "l": "1", "R": "10" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "1.273m m/(Ω ∗ mm2)"
+      },
+      {
+        "desc": "Widerstand from l, x, A",
+        "fields": { "l": "2", "x": "58", "A": "0.0002" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "172.414μΩ"
+      },
+      {
+        "desc": "Widerstand from l, x, d",
+        "fields": { "l": "2", "x": "58", "d": "0.01" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "439.048μΩ"
+      },
+      {
+        "desc": "Widerstand from l, p, A",
+        "fields": { "l": "2", "p": "0.0178", "A": "0.0002" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "178.000μΩ"
+      },
+      {
+        "desc": "Widerstand from l, p, d",
+        "fields": { "l": "2", "p": "0.0178", "d": "0.01" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "453.273μΩ"
+      },
+      {
+        "desc": "Spezifischer Widerstand from x",
+        "fields": { "x": "58" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "17.241m (Ω ∗ mm2)/m"
+      },
+      {
+        "desc": "Spezifischer Widerstand from R, A, l",
+        "fields": { "R": "10", "A": "0.0001", "l": "1" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "1.000k (Ω ∗ mm2)/m"
+      },
+      {
+        "desc": "Spezifischer Widerstand from R, d, l",
+        "fields": { "R": "10", "d": "0.01", "l": "1" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "785.398 (Ω ∗ mm2)/m"
+      },
+      {
+        "desc": "Fläche from d",
+        "fields": { "d": "0.01" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "78.54 mm2"
+      },
+      {
+        "desc": "Fläche from x, l, R",
+        "fields": { "x": "58", "l": "1", "R": "10" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "1724.14 μm2"
+      },
+      {
+        "desc": "Fläche from p, l, R",
+        "fields": { "p": "0.0178", "l": "1", "R": "10" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "1780.00 μm2"
+      },
+      {
+        "desc": "Leiterlänge from A, R, p",
+        "fields": { "A": "0.0001", "R": "10", "p": "0.0178" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "56.180km"
+      },
+      {
+        "desc": "Leiterlänge from d, R, p",
+        "fields": { "d": "0.01", "R": "10", "p": "0.0178" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "44.123km"
+      },
+      {
+        "desc": "Leiterlänge from x, R, A",
+        "fields": { "x": "58", "R": "10", "A": "0.0001" },
+        "button": "calculateLeitfaehigkeit",
+        "result": "#result_Leiter",
+        "expected": "58.000km"
+      }
+    ],
+    "temperaturabhaengigkeit": [
+      {
+        "desc": "Warmwiderstand from R20, alpha, T",
+        "fields": { "R20": "100", "alpha": "0.004", "T": "20" },
+        "button": "calculateTemperaturwiderstand",
+        "result": "#result_Temp",
+        "expected": "108.000Ω"
+      },
+      {
+        "desc": "Warmwert Tw from Rw, R, alpha, Tk",
+        "fields": { "Rw": "108", "R20": "100", "alpha": "0.004", "Tk": "0" },
+        "button": "calculateTemperaturwiderstand",
+        "result": "#result_Temp",
+        "expected": "20.000°C"
+      }
+    ],
+    "stromdichte": [
+      {
+        "desc": "Querschnittsfläche from I, J",
+        "fields": { "I_J": "0.01", "J": "1" },
+        "button": "calculateStromdichte",
+        "result": "#result_Stromd",
+        "expected": "112.838μm"
+      },
+      {
+        "desc": "Querschnittsfläche from I, J (area)",
+        "fields": { "I_J": "0.01", "J": "1" },
+        "button": "calculateStromdichte",
+        "result": "#result_Stromd",
+        "expected": "10000.00 μm2"
+      },
+      {
+        "desc": "Durchmesser from I, J",
+        "fields": { "I_J": "0.01", "J": "1" },
+        "button": "calculateStromdichte",
+        "result": "#result_Stromd",
+        "expected": "112.838μm"
+      }
+    ]
+  }

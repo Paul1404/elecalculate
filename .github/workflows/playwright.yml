@@ -1,0 +1,50 @@
+name: Playwright + Allure Report
+
+on:
+  push:
+    branches: [ EL-27-Playwright ]
+  pull_request:
+    branches: [ EL-27-Playwright ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Playwright tests with Allure
+        run: npx playwright test --reporter=allure-playwright
+
+      # Download previous Allure history from gh-pages
+      - name: Load Allure report history
+        uses: actions/checkout@v4
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      # Build Allure HTML report with history
+      - name: Build Allure HTML report
+        uses: simple-elf/allure-report-action@v1.7
+        if: always()
+        with:
+          gh_pages: gh-pages
+          allure_results: allure-results
+          allure_history: allure-history
+
+      # Publish Allure report to GitHub Pages
+      - name: Publish Allure report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
