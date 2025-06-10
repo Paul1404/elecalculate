@@ -51,6 +51,10 @@ jobs:
         with:
           path: merged-allure-results
 
+      # Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
       # Merge all allure-results into one directory
       - name: Merge Allure results
         run: |
