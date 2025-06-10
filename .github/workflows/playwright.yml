@@ -19,11 +19,7 @@ jobs:
         shardIndex: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
         shardTotal: [20]
     steps:
-      - name: 🐳 Cache Docker images for faster startup
-        uses: ScribeMD/docker-cache@0.5.0
-        with:
-          key: docker-${{ runner.os }}-playwright-v1.53.0-noble
-
+      
       - name: ⬇️ Checkout repository
         uses: actions/checkout@v4
 
