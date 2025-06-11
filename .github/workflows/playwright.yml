@@ -1,13 +1,15 @@
-name: Playwright + Allure CI
+name: Playwright E2E CI with Allure Reporting
 
 on:
   push:
-    branches: [ EL-27-Playwright, EL-33-BUG-No-Videos-or-Screenshots-in-Allure ]
+    branches: [ EL-27-Playwright ]
   pull_request:
-    branches: [ EL-27-Playwright, EL-33-BUG-No-Videos-or-Screenshots-in-Allure ]
+    branches: [ EL-27-Playwright ]
 
 jobs:
-  # 1. Run Playwright tests in 20 Docker shards
+  # -----------------------------------------------------------------------------
+  # 1. Distributed Playwright Test Execution (Sharded for Scalability)
+  # -----------------------------------------------------------------------------
   playwright:
     name: Playwright Shard ${{ matrix.shardIndex }} of ${{ matrix.shardTotal }}
     runs-on: ubuntu-latest
@@ -19,77 +21,116 @@ jobs:
         shardIndex: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
         shardTotal: [20]
     steps:
-
-      - name: ⬇️ Checkout repository
+      # --- Source Control Checkout ---
+      - name: ⬇️ Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: 🟢 Setup Node.js
+      # --- Node.js Dependency Caching for Performance ---
+      - name: 📦 Cache Node.js Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # --- Node.js Environment Setup ---
+      - name: 🟢 Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
-      - name: 📦 Install dependencies
+      # --- Install Project Dependencies ---
+      - name: 📦 Install NPM Dependencies
         run: npm ci
 
-      - name: 🧪 Run Playwright tests (sharded, Allure, screenshots, videos)
-        run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=allure-playwright,line
+      # --- Execute Playwright Tests with Sharding, Retries, and Allure Reporting ---
+      - name: 🧪 Execute Playwright E2E Tests (Sharded, Allure, Screenshots, Videos)
+        run: |
+          npx playwright test \
+            --retries=2 \
+            --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} \
+            --reporter=allure-playwright,line,github
 
-      - name: 📤 Upload Allure results for this shard
+      # --- Upload Allure Results for Each Shard ---
+      - name: 📤 Upload Allure Results (Shard)
         uses: actions/upload-artifact@v4
         with:
           name: allure-results-shard-${{ matrix.shardIndex }}
           path: allure-results/
           retention-days: 7
 
-  # 2. Merge Allure results and build HTML report
+  # -----------------------------------------------------------------------------
+  # 2. Allure Results Aggregation and HTML Report Generation
+  # -----------------------------------------------------------------------------
   build-allure:
-    name: 🛠️ Merge Allure Results & Build Report
+    name: 🛠️ Aggregate Allure Results & Generate HTML Report
     needs: playwright
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.53.0-noble
       options: --user 1001
     steps:
-      - name: ⬇️ Checkout repository
+      # --- Source Control Checkout ---
+      - name: ⬇️ Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: ⬇️ Download Allure results from all shards
+      # --- Download Allure Results from All Shards ---
+      - name: ⬇️ Download Allure Results Artifacts
         uses: actions/download-artifact@v4
         with:
           path: merged-allure-results
 
-      - name: 📦 Install dependencies
+      # --- Node.js Environment Setup ---
+      - name: 🟢 Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      # --- Install Project Dependencies ---
+      - name: 📦 Install NPM Dependencies
         run: npm ci
 
-      - name: ☕ Set up Java for Allure CLI
+      # --- Java Environment Setup for Allure CLI ---
+      - name: ☕ Setup Java Runtime for Allure CLI
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: 🗃️ Merge Allure results from all shards
+      # --- Allure Results Merge (Preserve Structure) ---
+      - name: 🗃️ Merge Allure Results from All Shards (Preserve Attachments)
         run: |
           mkdir -p allure-results
-          # Copy everything (JSON, PNG, WEBM, etc.) from all subfolders
-          cp -r merged-allure-results/*/ allure-results/
+          for d in merged-allure-results/*; do
+            cp -r "$d/." allure-results/
+          done
 
-      - name: 🕵️ List merged allure-results
-        run: find allure-results
-
-      - name: 🏗️ Generate Allure HTML report (with screenshots/videos)
+      # --- Generate Allure HTML Report (with Attachments) ---
+      - name: 🏗️ Generate Allure HTML Report
         run: npx allure generate allure-results --clean -o public
 
-      - name: 📂 List final public directory
+      # --- List Final Report Directory for Auditability ---
+      - name: 📂 List Allure Report Directory
         run: find ./public
 
-      - name: 📤 Upload Allure HTML report as artifact
+      # --- Upload Allure HTML Report as Artifact for Retention ---
+      - name: 📤 Upload Allure HTML Report Artifact
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: public/
           retention-days: 30
 
-  # 3. Deploy to GitHub Pages (modern way)
+      # --- Post Test Summary to GitHub Actions UI ---
+      - name: 📝 Post Test Summary
+        if: always()
+        run: |
+          echo "### :bar_chart: [Allure Test Report](https://paul1404.github.io/elecalculate/)" >> $GITHUB_STEP_SUMMARY
+
+  # -----------------------------------------------------------------------------
+  # 3. Automated Deployment of Allure Report to GitHub Pages
+  # -----------------------------------------------------------------------------
   deploy-pages:
     name: 🚀 Deploy Allure Report to GitHub Pages
     needs: build-allure
@@ -99,37 +140,38 @@ jobs:
       id-token: write
     runs-on: ubuntu-latest
     steps:
-      - name: ⬇️ Checkout repository
+      # --- Source Control Checkout ---
+      - name: ⬇️ Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: ⬇️ Download Allure report artifact
+      # --- Download Allure HTML Report Artifact ---
+      - name: ⬇️ Download Allure Report Artifact
         uses: actions/download-artifact@v4
         with:
           name: allure-report
           path: public
 
-      - name: 📂 List final public directory
+      # --- List Final Report Directory for Auditability ---
+      - name: 📂 List Allure Report Directory
         run: find ./public
 
-      - name: ⚙️ Setup Pages
+      # --- Configure GitHub Pages Deployment Environment ---
+      - name: ⚙️ Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: 📤 Upload artifact for Pages
+      # --- Upload Artifact for GitHub Pages Deployment ---
+      - name: 📤 Upload Artifact for Pages Deployment
         uses: actions/upload-pages-artifact@v3
         with:
           path: './public'
 
+      # --- Deploy to GitHub Pages ---
       - name: 🚀 Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: 📝 Post summary with report link
+      # --- Post Test Summary to GitHub Actions UI ---
+      - name: 📝 Post Test Summary
         if: always()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const url = `https://paul1404.github.io/elecalculate/`;
-            core.summary
-              .addHeading('Test Report')
-              .addLink('View Allure HTML Report (with screenshots/videos)', url)
-              .write();
+        run: |
+          echo "### :bar_chart: [Allure Test Report](https://paul1404.github.io/elecalculate/)" >> $GITHUB_STEP_SUMMARY
