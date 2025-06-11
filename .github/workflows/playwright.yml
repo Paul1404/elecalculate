@@ -2,9 +2,9 @@ name: Playwright + Allure CI
 
 on:
   push:
-    branches: [ EL-27-Playwright ]
+    branches: [ EL-27-Playwright, EL-33-BUG-No-Videos-or-Screenshots-in-Allure ]
   pull_request:
-    branches: [ EL-27-Playwright ]
+    branches: [ EL-27-Playwright, EL-33-BUG-No-Videos-or-Screenshots-in-Allure ]
 
 jobs:
   # 1. Run Playwright tests in 20 Docker shards
