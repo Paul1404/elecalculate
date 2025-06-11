@@ -35,14 +35,14 @@ export default defineConfig({
     // Record a video for every test
     video: {
       mode: 'on',
-      size: { width: 1920, height: 1080 }
+      size: { width: 1280, height: 720  }
     },
 
     // Emulates the user timezone.
     timezoneId: 'Europe/Paris',
 
     // Viewport used for all pages in the context.
-    viewport: { width: 1920, height: 1080 },
+    viewport: { width: 1280, height: 720  },
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',

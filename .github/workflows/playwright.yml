@@ -81,6 +81,23 @@ jobs:
         with:
           path: merged-allure-results
 
+      # --- Download previous Allure history artifact, if it exists ---
+      - name: 📥 Download Allure History Artifact
+        if: always()
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-history
+          path: allure-history
+
+      # --- Restore .history directory into allure-results ---
+      - name: ♻️ Restore Allure History for Trend Charts
+        if: always()
+        run: |
+          if [ -d allure-history ]; then
+            cp -r allure-history/.history allure-results/ || true
+          fi
+
       # --- Node.js Environment Setup ---
       - name: 🟢 Setup Node.js Environment
         uses: actions/setup-node@v4
@@ -110,6 +127,15 @@ jobs:
       - name: 🏗️ Generate Allure HTML Report
         run: npx allure generate allure-results --clean -o public
 
+      # --- Upload new Allure history for next run ---
+      - name: 📤 Upload Allure History Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-history
+          path: public/.history
+          retention-days: 7
+
       # --- List Final Report Directory for Auditability ---
       - name: 📂 List Allure Report Directory
         run: find ./public
@@ -121,12 +147,6 @@ jobs:
           name: allure-report
           path: public/
           retention-days: 30
-
-      # --- Post Test Summary to GitHub Actions UI ---
-      - name: 📝 Post Test Summary
-        if: always()
-        run: |
-          echo "### :bar_chart: [Allure Test Report](https://paul1404.github.io/elecalculate/)" >> $GITHUB_STEP_SUMMARY
 
   # -----------------------------------------------------------------------------
   # 3. Automated Deployment of Allure Report to GitHub Pages

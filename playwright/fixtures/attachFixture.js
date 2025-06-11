@@ -2,64 +2,43 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * General info about fixtures for all projects and audiences.
- */
-const FIXTURE_INFO = `
-What is a fixture?
-------------------
-A fixture is a set of sample or reference data used in automated tests.
-Fixtures help ensure tests are repeatable, reliable, and easy to understand.
-They represent the "expected" values or state that the application should use or display.
-
-Why use fixtures?
-- To provide consistent test data for every test run
-- To make tests easier to read and maintain
-- To separate test logic from test data
-`;
-
-/**
- * Attach a fixture file to the Playwright test report as both:
- *  - Plain text (with explanation and data)
- *  - JSON (collapsible, syntax-highlighted)
+ * Attach a JSON fixture file to the Playwright test report.
+ *
+ * This utility attaches the fixture as a JSON artifact, enabling
+ * collapsible, syntax-highlighted viewing in Allure and other reporters.
+ * It is recommended to use this for any structured test data that
+ * benefits from clear, machine-readable presentation.
+ *
+ * Usage:
+ *   await attachJsonFixture(testInfo, './fixtures/user.json', {
+ *     name: 'user-data', // Optional: custom attachment name
+ *   });
  *
  * @param {import('@playwright/test').TestInfo} testInfo
- * @param {string} fixturePath - Relative path to the fixture file (JSON, YAML, etc.)
+ *   Playwright's TestInfo object, available in test context.
+ * @param {string} fixturePath
+ *   Relative path to the JSON fixture file.
  * @param {object} [options]
- * @param {string} [options.description] - Optional extra description for this specific fixture
- * @param {string} [options.name] - Optional base name for the attachment (default: fixture file name)
+ * @param {string} [options.name]
+ *   Optional base name for the attachment (default: fixture file name).
  */
-async function attachFixture(testInfo, fixturePath, options = {}) {
+async function attachJsonFixture(testInfo, fixturePath, options = {}) {
   const absPath = path.resolve(__dirname, fixturePath);
   const body = fs.readFileSync(absPath, 'utf-8');
   const baseName = options.name || path.basename(fixturePath, path.extname(fixturePath));
 
-  // Attach as plain text with explanation
-  const explanation = `${FIXTURE_INFO}
-${options.description ? `\nAbout this fixture:\n-------------------\n${options.description}\n` : ''}
-Fixture data:
--------------
-${body}
-`;
-
-  await testInfo.attach(`${baseName}.txt`, {
-    body: explanation,
-    contentType: 'text/plain',
-  });
-
-  // If it's JSON, also attach as JSON for collapsible view
-  if (fixturePath.endsWith('.json')) {
-    // Pretty-print if not already
-    let pretty = body;
-    try {
-      pretty = JSON.stringify(JSON.parse(body), null, 2);
-    } catch (e) {
-      // Not valid JSON, skip pretty-print
-    }
-    await testInfo.attach(`${baseName}.json`, {
-      body: pretty,
-      contentType: 'application/json',
-    });
+  // Attempt to pretty-print JSON for readability in the report
+  let pretty = body;
+  try {
+    pretty = JSON.stringify(JSON.parse(body), null, 2);
+  } catch (e) {
+    // If not valid JSON, attach as-is (should rarely happen)
   }
+
+  await testInfo.attach(`${baseName}.json`, {
+    body: pretty,
+    contentType: 'application/json',
+  });
 }
 
-module.exports = { attachFixture };
+module.exports = { attachJsonFixture };
