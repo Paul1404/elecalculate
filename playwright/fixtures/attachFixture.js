@@ -41,4 +41,4 @@ async function attachJsonFixture(testInfo, fixturePath, options = {}) {
   });
 }
 
-module.exports = { attachJsonFixture };
+module.exports = { attachFixture };
