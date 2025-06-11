@@ -70,9 +70,11 @@ jobs:
       - name: 🗃️ Merge Allure results from all shards
         run: |
           mkdir -p allure-results
-          find merged-allure-results -type f -name '*.json' -exec cp {} allure-results/ \;
-          # Also copy any screenshots/videos/traces if present
-          find merged-allure-results -type f \( -name '*.png' -o -name '*.webm' -o -name '*.zip' \) -exec cp --parents {} allure-results/ \;
+          # Copy everything (JSON, PNG, WEBM, etc.) from all subfolders
+          cp -r merged-allure-results/*/ allure-results/
+
+      - name: 🕵️ List merged allure-results
+        run: find allure-results
 
       - name: 🏗️ Generate Allure HTML report (with screenshots/videos)
         run: npx allure generate allure-results --clean -o public
