@@ -21,12 +21,10 @@ jobs:
         shardIndex: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
         shardTotal: [20]
     steps:
-      # --- Source Control Checkout ---
       - name: ⬇️ Checkout Source Code
         uses: actions/checkout@v4
 
-      # --- Node.js Dependency Caching for Performance ---
-      - name: 📦 Cache Node.js Dependencies
+      - name: 📦 Cache npm Dependencies for Fast Installs
         uses: actions/cache@v4
         with:
           path: ~/.npm
@@ -34,26 +32,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      # --- Node.js Environment Setup ---
-      - name: 🟢 Setup Node.js Environment
+      - name: 🟢 Setup Node.js (LTS)
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
-      # --- Install Project Dependencies ---
-      - name: 📦 Install NPM Dependencies
+      - name: 📦 Install Project Dependencies (npm ci)
         run: npm ci
 
-      # --- Execute Playwright Tests with Sharding, Retries, and Allure Reporting ---
-      - name: 🧪 Execute Playwright E2E Tests (Sharded, Allure, Screenshots, Videos)
+      - name: 🧪 Run Playwright E2E Tests (Shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
         run: |
+          echo "Running Playwright tests for shard ${{ matrix.shardIndex }} of ${{ matrix.shardTotal }}..."
           npx playwright test \
             --retries=2 \
             --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} \
             --reporter=allure-playwright,line,github
 
-      # --- Upload Allure Results for Each Shard ---
-      - name: 📤 Upload Allure Results (Shard)
+      - name: 📤 Upload Allure Results for Shard ${{ matrix.shardIndex }}
         uses: actions/upload-artifact@v4
         with:
           name: allure-results-shard-${{ matrix.shardIndex }}
@@ -61,111 +56,99 @@ jobs:
           retention-days: 7
 
   # -----------------------------------------------------------------------------
-  # 2. Allure Results Aggregation and HTML Report Generation
+  # 2. Allure Results Aggregation, History Management, and HTML Report Generation
   # -----------------------------------------------------------------------------
   build-allure:
-    name: 🛠️ Aggregate Allure Results & Generate HTML Report
+    name: 🛠️ Aggregate Allure Results, Manage History & Generate HTML Report
     needs: playwright
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.53.0-noble
       options: --user 1001
     steps:
-      # --- Source Control Checkout ---
-      - name: ⬇️ Checkout Source Code
+      - name: ⬇️ Checkout Main Source Code
         uses: actions/checkout@v4
-  
-      # --- Download Allure Results from All Shards ---
-      - name: ⬇️ Download Allure Results Artifacts (All Shards)
+
+      - name: ⬇️ Download Allure Results from All Shards
         uses: actions/download-artifact@v4
         with:
           path: merged-allure-results
-  
-      # --- Download previous Allure history artifact, if it exists ---
-      - name: 📥 Download Previous Allure History (if available)
-        if: always()
-        continue-on-error: true
-        uses: actions/download-artifact@v4
+
+      - name: ⬇️ Checkout Allure History Branch (EL-34-allure-history)
+        uses: actions/checkout@v4
         with:
-          name: allure-history
-          path: previous-history
-  
-      # --- Merge Allure Results from All Shards (Preserve Attachments) ---
+          ref: EL-34-allure-history
+          path: allure-history-branch
+          fetch-depth: 1
+
       - name: 🗃️ Merge Allure Results from All Shards
         run: |
+          echo "Merging Allure results from all shards into a single directory..."
           mkdir -p allure-results
           for d in merged-allure-results/*; do
             cp -r "$d/." allure-results/
           done
-  
-      # --- Restore history directory into allure-results ---
+          echo "Allure results merged."
+
       - name: ♻️ Restore Allure History for Trend Charts
-        if: always()
         run: |
-          if [ -d previous-history/history ]; then
-            cp -r previous-history/history allure-results/
-            echo "Restored previous history for Allure trends."
+          if [ -d allure-history-branch/history ]; then
+            cp -r allure-history-branch/history allure-results/
+            echo "Restored previous Allure history for trend charts."
           else
-            echo "No previous history found. This may be the first run."
+            echo "No previous Allure history found. This may be the first run."
           fi
-  
-      # --- List allure-results for debugging ---
-      - name: 🕵️ List allure-results before report generation
-        run: ls -lR allure-results
-  
-      # --- Node.js Environment Setup ---
-      - name: 🟢 Setup Node.js Environment
+
+      - name: 🟢 Setup Node.js (LTS)
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-  
-      - name: 📦 Cache Node.js Dependencies
+
+      - name: 📦 Cache npm Dependencies for Fast Installs
         uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-  
-      - name: 📦 Install NPM Dependencies
+
+      - name: 📦 Install Project Dependencies (npm ci)
         run: npm ci
-  
-      # --- Java Environment Setup for Allure CLI ---
+
       - name: ☕ Setup Java Runtime for Allure CLI
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
-  
-      # --- Generate Allure HTML Report (with Attachments & Trends) ---
+
       - name: 🏗️ Generate Allure HTML Report (with Trends)
-        run: npx allure generate allure-results --clean -o public
-  
-      # --- List public directory for debugging ---
-      - name: 🕵️ List public directory after report generation
-        run: ls -lR public
-  
-      # --- Upload new Allure history for next run ---
-      - name: 📤 Upload Allure History for Next Run
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-history
-          path: public/history
-          retention-days: 7
-  
-      # --- Upload Allure HTML Report as Artifact for Retention ---
+        run: |
+          echo "Generating Allure HTML report with trend charts..."
+          npx allure generate allure-results --clean -o public
+          echo "Allure HTML report generated at ./public"
+
+      - name: 🚀 Commit and Push Allure History to EL-34-allure-history
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          cd allure-history-branch
+          rm -rf history
+          cp -r ../public/history ./
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add history
+          git commit -m "EL-34: Update Allure history [skip ci]" || echo "No changes to commit"
+          git push origin EL-34-allure-history
+          echo "Allure history updated and pushed to EL-34-allure-history branch."
+
       - name: 📤 Upload Allure HTML Report Artifact
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: public/
           retention-days: 30
-  
-      # --- List Final Report Directory for Auditability ---
-      - name: 📂 List Allure Report Directory (Final)
-        run: find ./public
-        
+
   # -----------------------------------------------------------------------------
   # 3. Automated Deployment of Allure Report to GitHub Pages
   # -----------------------------------------------------------------------------
@@ -178,38 +161,28 @@ jobs:
       id-token: write
     runs-on: ubuntu-latest
     steps:
-      # --- Source Control Checkout ---
       - name: ⬇️ Checkout Source Code
         uses: actions/checkout@v4
 
-      # --- Download Allure HTML Report Artifact ---
       - name: ⬇️ Download Allure Report Artifact
         uses: actions/download-artifact@v4
         with:
           name: allure-report
           path: public
 
-      # --- List Final Report Directory for Auditability ---
-      - name: 📂 List Allure Report Directory
-        run: find ./public
-
-      # --- Configure GitHub Pages Deployment Environment ---
-      - name: ⚙️ Configure GitHub Pages
+      - name: ⚙️ Configure GitHub Pages Deployment Environment
         uses: actions/configure-pages@v5
 
-      # --- Upload Artifact for GitHub Pages Deployment ---
       - name: 📤 Upload Artifact for Pages Deployment
         uses: actions/upload-pages-artifact@v3
         with:
           path: './public'
 
-      # --- Deploy to GitHub Pages ---
       - name: 🚀 Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
 
-      # --- Post Test Summary to GitHub Actions UI ---
-      - name: 📝 Post Test Summary
+      - name: 📝 Post Allure Report Link to GitHub Actions Summary
         if: always()
         run: |
           echo "### :bar_chart: [Allure Test Report](https://paul1404.github.io/elecalculate/)" >> $GITHUB_STEP_SUMMARY
