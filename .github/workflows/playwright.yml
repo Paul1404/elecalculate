@@ -74,76 +74,79 @@ jobs:
       # --- Source Control Checkout ---
       - name: ⬇️ Checkout Source Code
         uses: actions/checkout@v4
-
+  
       # --- Download Allure Results from All Shards ---
-      - name: ⬇️ Download Allure Results Artifacts
+      - name: ⬇️ Download Allure Results Artifacts (All Shards)
         uses: actions/download-artifact@v4
         with:
           path: merged-allure-results
-
+  
       # --- Download previous Allure history artifact, if it exists ---
-      - name: 📥 Download Allure History Artifact
+      - name: 📥 Download Previous Allure History (if available)
         if: always()
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: allure-history
-          path: allure-history
-
-      # --- Restore .history directory into allure-results ---
+          path: previous-history
+  
+      # --- Merge Allure Results from All Shards (Preserve Attachments) ---
+      - name: 🗃️ Merge Allure Results from All Shards
+        run: |
+          mkdir -p allure-results
+          for d in merged-allure-results/*; do
+            cp -r "$d/." allure-results/
+          done
+  
+      # --- Restore history directory into allure-results ---
       - name: ♻️ Restore Allure History for Trend Charts
         if: always()
         run: |
-          if [ -d allure-history/history ]; then
-            cp -r allure-history/history allure-results/
+          if [ -d previous-history/history ]; then
+            cp -r previous-history/history allure-results/
+            echo "Restored previous history for Allure trends."
+          else
+            echo "No previous history found. This may be the first run."
           fi
-
-      # List for debugging
-      - name: 🕵️ List allure-results before generate
+  
+      # --- List allure-results for debugging ---
+      - name: 🕵️ List allure-results before report generation
         run: ls -lR allure-results
-
+  
       # --- Node.js Environment Setup ---
       - name: 🟢 Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-
+  
       # --- Install Project Dependencies ---
       - name: 📦 Install NPM Dependencies
         run: npm ci
-
+  
       # --- Java Environment Setup for Allure CLI ---
       - name: ☕ Setup Java Runtime for Allure CLI
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
-
-      # --- Allure Results Merge (Preserve Structure) ---
-      - name: 🗃️ Merge Allure Results from All Shards (Preserve Attachments)
-        run: |
-          mkdir -p allure-results
-          for d in merged-allure-results/*; do
-            cp -r "$d/." allure-results/
-          done
-
-      # --- Generate Allure HTML Report (with Attachments) ---
-      - name: 🏗️ Generate Allure HTML Report
+  
+      # --- Generate Allure HTML Report (with Attachments & Trends) ---
+      - name: 🏗️ Generate Allure HTML Report (with Trends)
         run: npx allure generate allure-results --clean -o public
-
+  
+      # --- List public directory for debugging ---
+      - name: 🕵️ List public directory after report generation
+        run: ls -lR public
+  
       # --- Upload new Allure history for next run ---
-      - name: 📤 Upload Allure History Artifact
+      - name: 📤 Upload Allure History for Next Run
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-history
-          path: public/.history
+          path: public/history
           retention-days: 7
-
-      # --- List Final Report Directory for Auditability ---
-      - name: 📂 List Allure Report Directory
-        run: find ./public
-
+  
       # --- Upload Allure HTML Report as Artifact for Retention ---
       - name: 📤 Upload Allure HTML Report Artifact
         uses: actions/upload-artifact@v4
@@ -151,7 +154,11 @@ jobs:
           name: allure-report
           path: public/
           retention-days: 30
-
+  
+      # --- List Final Report Directory for Auditability ---
+      - name: 📂 List Allure Report Directory (Final)
+        run: find ./public
+        
   # -----------------------------------------------------------------------------
   # 3. Automated Deployment of Allure Report to GitHub Pages
   # -----------------------------------------------------------------------------
