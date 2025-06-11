@@ -94,9 +94,13 @@ jobs:
       - name: ♻️ Restore Allure History for Trend Charts
         if: always()
         run: |
-          if [ -d allure-history ]; then
-            cp -r allure-history/.history allure-results/ || true
+          if [ -d allure-history/history ]; then
+            cp -r allure-history/history allure-results/
           fi
+
+      # List for debugging
+      - name: 🕵️ List allure-results before generate
+        run: ls -lR allure-results
 
       # --- Node.js Environment Setup ---
       - name: 🟢 Setup Node.js Environment
