@@ -1,1 +1,0 @@
-# Allure history branch
