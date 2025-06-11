@@ -2,9 +2,9 @@ name: Playwright E2E CI with Allure Reporting
 
 on:
   push:
-    branches: [ EL-27-Playwright ]
+    branches: [ EL-27-Playwright, EL-33-BUG-No-Videos-or-Screenshots-in-Allure ]
   pull_request:
-    branches: [ EL-27-Playwright ]
+    branches: [ EL-27-Playwright, EL-33-BUG-No-Videos-or-Screenshots-in-Allure ]
 
 jobs:
   # -----------------------------------------------------------------------------
