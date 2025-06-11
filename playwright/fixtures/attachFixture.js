@@ -10,7 +10,7 @@ const path = require('path');
  * benefits from clear, machine-readable presentation.
  *
  * Usage:
- *   await attachJsonFixture(testInfo, './fixtures/user.json', {
+ *   await attachFixture(testInfo, './fixtures/user.json', {
  *     name: 'user-data', // Optional: custom attachment name
  *   });
  *
@@ -22,7 +22,7 @@ const path = require('path');
  * @param {string} [options.name]
  *   Optional base name for the attachment (default: fixture file name).
  */
-async function attachJsonFixture(testInfo, fixturePath, options = {}) {
+async function attachFixture(testInfo, fixturePath, options = {}) {
   const absPath = path.resolve(__dirname, fixturePath);
   const body = fs.readFileSync(absPath, 'utf-8');
   const baseName = options.name || path.basename(fixturePath, path.extname(fixturePath));
