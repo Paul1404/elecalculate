@@ -44,8 +44,8 @@ test.describe('Allgemein | Werkstoffe.html', () => {
       await page.goto(url);
       await openDropdown(page, 'Spezifischer Widerstand');
       await fillFields(page, tc.fields);
-      await page.locator(`input[onclick="${tc.button}()"]`).click();
-      const text = await page.locator(tc.result).innerText();
+      await page.locator('input[onclick="calculateLeitfaehigkeit()"]').click();
+      const text = await page.locator('#result_Leiter').innerText();
       await expect(text).toContain(tc.expected);
     });
   }
@@ -56,8 +56,8 @@ test.describe('Allgemein | Werkstoffe.html', () => {
       await page.goto(url);
       await openDropdown(page, 'Temperaturabhängigkeit Widerstände');
       await fillFields(page, tc.fields);
-      await page.locator(`input[onclick="${tc.button}()"]`).click();
-      const text = await page.locator(tc.result).innerText();
+      await page.locator('input[onclick="calculateTemperaturwiderstand()"]').click();
+      const text = await page.locator('#result_Temp').innerText();
       await expect(text).toContain(tc.expected);
     });
   }
@@ -68,8 +68,8 @@ test.describe('Allgemein | Werkstoffe.html', () => {
       await page.goto(url);
       await openDropdown(page, 'Stromdichte');
       await fillFields(page, tc.fields);
-      await page.locator(`input[onclick="${tc.button}()"]`).click();
-      const text = await page.locator(tc.result).innerText();
+      await page.locator('input[onclick="calculateStromdichte()"]').click();
+      const text = await page.locator('#result_Stromd').innerText();
       await expect(text).toContain(tc.expected);
     });
   }
