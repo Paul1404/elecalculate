@@ -49,6 +49,7 @@ jobs:
             --reporter=allure-playwright,line,github
 
       - name: 📤 Upload Allure Results for Shard ${{ matrix.shardIndex }}
+        if: always()  # 🔥 Always upload results, even if tests failed
         uses: actions/upload-artifact@v4
         with:
           name: allure-results-shard-${{ matrix.shardIndex }}
@@ -60,6 +61,7 @@ jobs:
   # -----------------------------------------------------------------------------
   build-allure:
     name: 🛠️ Aggregate Allure Results, Manage History & Generate HTML Report
+    if: always()  # 🔥 Always run this job, even if some tests failed
     needs: playwright
     runs-on: ubuntu-latest
     container:
@@ -86,7 +88,9 @@ jobs:
           echo "Merging Allure results from all shards into a single directory..."
           mkdir -p allure-results
           for d in merged-allure-results/*; do
-            cp -r "$d/." allure-results/
+            if [ -d "$d" ]; then
+              cp -r "$d/." allure-results/
+            fi
           done
           echo "Allure results merged."
 
@@ -154,6 +158,7 @@ jobs:
   # -----------------------------------------------------------------------------
   deploy-pages:
     name: 🚀 Deploy Allure Report to GitHub Pages
+    if: always()  # 🔥 Always deploy the report
     needs: build-allure
     permissions:
       contents: read
