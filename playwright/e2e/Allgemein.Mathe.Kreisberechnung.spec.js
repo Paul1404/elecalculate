@@ -1,57 +1,61 @@
 // playwright/e2e/Allgemein.Mathe.Kreisberechnung.spec.js
-const { test: base, expect } = require('@playwright/test');
-const { attachFixture } = require('../fixtures/attachFixture');
+const { test, expect } = require('@playwright/test');
 const matheInputs = require('../fixtures/matheInputs.json');
 
-const test = base.extend({
-  matheInputs: async ({}, use) => {
-    await use(matheInputs);
-  },
-});
+function normalizeText(text) {
+  return text.replace(/\s+/g, ' ').trim();
+}
 
 test.describe('Mathe.html Kreisberechnung', () => {
   const url = '/Allgemein/Mathe.html';
 
-  test.beforeEach(async ({}, testInfo) => {
-    await attachFixture(
-      testInfo,
-      '../fixtures/matheInputs.json',
-      {
-        description: `This fixture contains input and expected output values for circle area/radius calculations and reset defaults on Mathe.html.`
-      }
-    );
+  test('should calculate diameter from area', async ({ page }) => {
+    await page.goto(url);
+    await page.getByText('Kreisberechnung').click();
+
+    await page.locator('#A').fill(matheInputs.diameterFromArea.area);
+    await page.locator('#d').fill('');
+    await page.getByRole('button', { name: /Berechnen/i }).click();
+
+    const result = await page.locator('#result_Kreis').textContent();
+    expect(normalizeText(result)).toContain('Leiterdurchmesser d');
+    // Match "= 4", "= 4.0", "= 4.00", "= 4.001",
+    expect(normalizeText(result)).toMatch(/= *4(\.0{0,3}1?)? *m/);
   });
 
-  test('should calculate area from radius', async ({ page, matheInputs }) => {
+  test('should calculate area from diameter', async ({ page }) => {
     await page.goto(url);
+    await page.getByText('Kreisberechnung').click();
 
-    await page.locator('#radius').fill(matheInputs.areaFromRadius.radius);
-    await page.locator('#radiusUnit').selectOption(matheInputs.areaFromRadius.radiusUnit);
-    await page.locator('#areaUnit').selectOption(matheInputs.areaFromRadius.areaUnit);
+    await page.locator('#A').fill('');
+    await page.locator('#d').fill(matheInputs.areaFromDiameter.diameter);
+    await page.getByRole('button', { name: /Berechnen/i }).click();
 
-    await expect(page.locator('#area')).toHaveValue(matheInputs.areaFromRadius.expectedArea);
+    const result = await page.locator('#result_Kreis').textContent();
+    expect(normalizeText(result)).toContain('Fläche A');
+    // Match "= 12.57", "= 12.570", "= 12.57 m2",
+    expect(normalizeText(result)).toMatch(/= *12\.57\d* *m/);
   });
 
-  test('should calculate radius from area', async ({ page, matheInputs }) => {
+  test('should show nothing if both fields are empty', async ({ page }) => {
     await page.goto(url);
+    await page.getByText('Kreisberechnung').click();
 
-    await page.locator('#area').fill(matheInputs.radiusFromArea.area);
-    await page.locator('#areaUnit').selectOption(matheInputs.radiusFromArea.areaUnit);
-    await page.locator('#radiusUnit').selectOption(matheInputs.radiusFromArea.radiusUnit);
+    await page.locator('#A').fill('');
+    await page.locator('#d').fill('');
+    await page.getByRole('button', { name: /Berechnen/i }).click();
 
-    await expect(page.locator('#radius')).toHaveValue(matheInputs.radiusFromArea.expectedRadius);
+    await expect(page.locator('#result_Kreis')).toHaveText('');
   });
 
-  test('should reset all fields', async ({ page, matheInputs }) => {
+  test('should show nothing if both fields are filled', async ({ page }) => {
     await page.goto(url);
+    await page.getByText('Kreisberechnung').click();
 
-    await page.locator('#radius').fill(matheInputs.areaFromRadius.radius);
-    await page.locator('#area').fill(matheInputs.areaFromRadius.expectedArea);
-    await page.getByRole('button', { name: /Zurücksetzen/i }).click();
+    await page.locator('#A').fill(matheInputs.diameterFromArea.area);
+    await page.locator('#d').fill(matheInputs.areaFromDiameter.diameter);
+    await page.getByRole('button', { name: /Berechnen/i }).click();
 
-    await expect(page.locator('#radius')).toHaveValue('');
-    await expect(page.locator('#area')).toHaveValue('');
-    await expect(page.locator('#radiusUnit')).toHaveValue(matheInputs.resetDefaults.radiusUnit);
-    await expect(page.locator('#areaUnit')).toHaveValue(matheInputs.resetDefaults.areaUnit);
+    await expect(page.locator('#result_Kreis')).toHaveText('');
   });
 });
