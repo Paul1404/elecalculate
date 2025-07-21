@@ -2,7 +2,7 @@
     "sinus": {
         "up": "10",
         "upp": "20",
-        "expected": "7.071 V"
+        "expected": "7.071"
     },
     "dreieck": {
         "up": "10",
